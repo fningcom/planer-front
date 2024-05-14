@@ -44,13 +44,50 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
+    '@nuxtjs/axios'
   ],
+
+  auth: {
+    strategies: {
+      cookie: {
+        cookie: {
+          name: 'XSRF-TOKEN',
+        }
+      },
+      laravelSanctum: {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:8000',
+        endpoints: {
+          login: {
+            url: '/api/login',
+            method: 'post'
+          },
+          logout: {
+            url: '/api/logout',
+            method: 'post'
+          },
+          user: {
+            url: '/api/user',
+            method: 'get'
+          },
+        },
+      },
+    },
+    redirect: {
+      login: "/login",
+      logout: "/",
+      home: "/"
+    }
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: 'http://localhost:8000',
+    credentials: true,
+    headers: {
+      Authorization: `Bearer ${process.env.API_TOKEN}`
+    }
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -71,7 +108,9 @@ export default {
       }
     }
   },
-
+  router: {
+    middleware: ['auth']
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   }
