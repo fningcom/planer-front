@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "cross-env NODE_ENV=develop nuxt --hostname 'localhost' --port 3000\"",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "cross-env NODE_ENV=production nuxt generate"
