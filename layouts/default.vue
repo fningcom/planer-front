@@ -4,25 +4,27 @@
                 v-model="drawer"
                 :mini-variant="miniVariant"
                 :clipped="clipped"
-                color="indigo"
+                color="#37474F"
                 dark
                 fixed
                 app
         >
-                        <template v-slot:prepend>
-                            <v-list-item two-line>
-                                <v-list-item-avatar>
-                                    <img src="/img/avatar.jpg">
-                                </v-list-item-avatar>
+            <template v-slot:prepend>
+                <v-list-item two-line>
+                    <v-list-item-avatar>
+                        <img src="/img/avatar.jpg">
+                    </v-list-item-avatar>
 
-                                <v-list-item-content>
-                                    <v-list-item-title style="font-weight: bold; letter-spacing: 1.2px; text-transform: uppercase;">{{ $auth.user.name }}</v-list-item-title>
-                                    <span @click="logout" class="light-blue--text pointer">Выход</span>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </template>
+                    <v-list-item-content>
+                        <v-list-item-title style="font-weight: bold; letter-spacing: 1.2px; text-transform: uppercase;">
+                            {{ $auth.user.name }}
+                        </v-list-item-title>
+                        <span @click="logout" class="light-blue--text pointer">Выход</span>
+                    </v-list-item-content>
+                </v-list-item>
+            </template>
             <v-divider></v-divider>
-            <Menu/>
+            <v-menu />
         </v-navigation-drawer>
 
         <v-app-bar
@@ -40,16 +42,14 @@
             </v-container>
         </v-main>
 
-
     </v-app>
 </template>
 
 <script>
-    import Menu from "../components/menu";
-
+    import VMenu from "../components/vMenu";
     export default {
         name: 'DefaultLayout',
-        components: {Menu},
+        components: {VMenu},
         data() {
             return {
                 clipped: false,
@@ -79,8 +79,8 @@
 <style>
     .v-application .light-blue--text {
         font-size: 15px;
-        margin-left: 5px;
     }
+
     .pointer {
         cursor: pointer;
     }

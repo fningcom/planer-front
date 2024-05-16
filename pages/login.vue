@@ -1,6 +1,8 @@
 <template>
     <div class="mx-auto col-md-3 col-sm-6">
-        <div style="text-align: center;margin: 15px;font-size: 30px;color: #fff;text-shadow: 1px 1px 4px #1f285c;"> Планировщик</div>
+        <div style="text-align: center;margin: 15px;font-size: 30px;color: #fff;text-shadow: 1px 1px 4px #1f285c;">
+            Планировщик
+        </div>
         <v-card
                 min-width="200"
                 class=" pa-4"
@@ -33,7 +35,7 @@
                         outlined
                         dense
                         hide-details
-                        label="Password"
+                        label="Пароль"
                         required
                         class="my-2"
                         @keydown.enter="login"
@@ -46,7 +48,7 @@
                         @click="login"
                         block
                 >
-                    Submit
+                    Войти
                 </v-btn>
 
             </v-form>
@@ -54,17 +56,19 @@
     </div>
 
 
-
 </template>
 
 <script>
     export default {
+        head: {
+            title: 'Авторизация'
+        },
         layout: "auth",
         data() {
             return {
                 valid: true,
                 errors: false,
-                error_text:[],
+                error_text: [],
                 emailRules: [
                     v => !!v || 'E-mail is required',
                     v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
@@ -78,11 +82,9 @@
         mounted() {
             this.$axios.$get("/sanctum/csrf-cookie");
         },
-        computed: {
-
-        },
+        computed: {},
         methods: {
-            validate () {
+            validate() {
                 this.$refs.form.validate()
             },
             async login() {

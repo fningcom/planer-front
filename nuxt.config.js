@@ -8,7 +8,7 @@ require('dotenv').config({ path: resolve(__dirname, envFile) });
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - планер',
+    titleTemplate: '%s - Планировщик',
     title: 'Планировщик',
     htmlAttrs: {
       lang: 'en'
@@ -77,7 +77,7 @@ export default {
     redirect: {
       login: "/login",
       logout: "/",
-      home: "/"
+      home: "/personal/tasks"
     }
   },
 
@@ -97,7 +97,7 @@ export default {
       light: true,
       themes: {
         light: {
-          primary: '#343a40',
+          primary: '#37474f',
           accent: colors.grey.darken3,
           secondary: "#4b555e",
           info: "#2196f3",

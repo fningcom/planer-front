@@ -1,10 +1,10 @@
 <template>
-    <div></div>
+    <div>Фильтр</div>
 </template>
 
 <script>
     export default {
-        name: "index"
+        name: "filters"
     }
 </script>
 

@@ -1,10 +1,10 @@
 <template>
-    <div></div>
+    <div> Data  </div>
 </template>
 
 <script>
     export default {
-        name: "index"
+        name: "DataTable"
     }
 </script>
 
