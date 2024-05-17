@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div v-if="documents">
             <v-data-table
                     v-model="selected"
@@ -58,7 +57,6 @@
 </template>
 
 <script>
-
     import Filters from "./filters";
     export default {
         name: "DataTable",
@@ -87,6 +85,7 @@
                     // {text: 'Исполнитель', value: 'user.name', sortable: false},
                     {text: 'Дата создания', value: 'formatted_created_at', sortable: false},
                     {text: 'Дата исполнения', value: 'formatted_execution_date', sortable: false},
+                    {text: 'Срок исполнения', value: 'formatted_deadline_date', sortable: false},
                 ],
                 lastPage: 0,
                 currentPage: 0,
