@@ -1,15 +1,18 @@
 <template>
     <div>
-        <h2>Мои документы</h2>
-        <v-btn prepend-icon="mdi mdi-account-box-plus-outline" variant="outlined" @click="dialog=true">
-            Добавить
-        </v-btn>
+        <v-card class="d-flex" flat tile>
+            <h2 class="pa-2 mr-auto">Мои документы </h2>
+            <v-btn color="#66BB6A" @click="openDialog" dark small>
+                <v-icon left>mdi mdi-plus</v-icon>Новый документ
+            </v-btn>
+        </v-card>
         <data-table/>
         <v-form :dialog="dialog" />
     </div>
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     import DataTable from "../../components/personal/documents/table";
     import VForm from "../../components/personal/documents/vForm";
 
@@ -19,9 +22,16 @@
         head: {
             title: 'Мои документы'
         },
+        computed: {
+            ...mapState('documents', ['dialog']),
+        },
         data() {
             return {
-                dialog: false
+            }
+        },
+        methods: {
+            openDialog(){
+                this.$store.commit('documents/SET_DIALOG');
             }
         }
     }

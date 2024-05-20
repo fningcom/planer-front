@@ -72,7 +72,6 @@
                 selected: [],
                 activeMessage: null,
                 singleSelect: true,
-                dialog: false,
                 count: 0,
                 msg: {},
                 headers: [

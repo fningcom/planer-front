@@ -163,9 +163,13 @@
         methods: {
             async getGroups() {
                 this.groups = await this.$axios.$get('/api/helpers/groups');
+                this.task_types = await this.$axios.$get('/api/helpers/task_types');
+                this.$store.commit('documents/SET_GROUPS', this.groups);
+                this.$store.commit('documents/SET_TYPES', this.task_types);
             },
             async getStatuses() {
                 this.statuses = await this.$axios.$get('/api/helpers/statuses');
+                this.$store.commit('documents/SET_STATUSES',this.statuses);
             },
             submitFilter() {
                 this.$emit('submitFilter', {
