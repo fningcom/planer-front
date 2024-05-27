@@ -43,6 +43,9 @@
                     <v-icon color="#66BB6A" dense>mdi mdi-arrow-bottom-left</v-icon>
                     {{ item.incoming_number }} от {{ item.formatted_incoming_date }} г.
                 </template>
+                <template v-slot:item.actions="{ item }">
+                    <v-icon style="cursor:pointer" @click="editDialog(item.id)">mdi-pencil</v-icon>
+                </template>
             </v-data-table>
             <v-pagination
                     v-model="currentPage"
@@ -58,6 +61,7 @@
 
 <script>
     import Filters from "./filters";
+
     export default {
         name: "DataTable",
         components: {Filters},
@@ -85,6 +89,7 @@
                     {text: 'Дата создания', value: 'formatted_created_at', sortable: false},
                     {text: 'Дата исполнения', value: 'formatted_execution_date', sortable: false},
                     {text: 'Срок исполнения', value: 'formatted_deadline_date', sortable: false},
+                    {text: "", value: 'actions', sortable: false}
                 ],
                 lastPage: 0,
                 currentPage: 0,
@@ -101,6 +106,7 @@
         },
         methods: {
             async getDocumentsList(data, page) {
+                console.log(data)
                 let url = '';
                 this.loading = true;
                 this.filter_data = data;
@@ -126,6 +132,11 @@
                 this.getDocumentsList([], 1);
                 this.currentPage = 1;
             },
+            editDialog(id){
+                this.$store.commit('documents/SET_DIALOG');
+                this.$store.commit('documents/SET_OPEN_DOC_ID', id);
+                this.$store.dispatch('documents/GET_DOCUMENT_FROM_API', id);
+            }
         }
     }
 </script>

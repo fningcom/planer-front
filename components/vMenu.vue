@@ -73,8 +73,8 @@
                     },
                     {
                         icon: 'mdi mdi-account-group',
-                        title: 'Объекты',
-                        to: '/objects'
+                        title: 'Контакты',
+                        to: '/contacts'
                     },
                     {
                         icon: 'mdi mdi-list-status',

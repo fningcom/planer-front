@@ -72,7 +72,27 @@
                                 color="#66BB6A"
                         ></v-text-field>
                     </v-col>
-
+                    <div class="d_type_block"
+                    >
+                    <v-radio-group
+                            v-model="date_type"
+                            column
+                            dense
+                    >
+                        <v-radio
+                                label="Дата создания"
+                                value="2"
+                        ></v-radio>
+                        <v-radio
+                                label="Дата исполнения"
+                                value="1"
+                        ></v-radio>
+                        <v-radio
+                                label="Срок исполнения"
+                                value="3"
+                        ></v-radio>
+                    </v-radio-group>
+                    </div>
                     <v-col
                             cols="12"
                             md="2"
@@ -80,7 +100,7 @@
                         <v-text-field
                                 type="date"
                                 v-model="finish_from"
-                                label="Исполнен с"
+                                label="с"
                                 v-on:keyup.enter="submitFilter"
                                 outlined
                                 dense
@@ -122,10 +142,10 @@
                     >
 
                         <div>
-                            <v-btn color="info" dark @click="submitFilter">Фильтр</v-btn>
+                            <v-btn color="green lighten-1" dark  @click="submitFilter">Фильтр</v-btn>
                         </div>
                         <div class="mt-1">
-                            <v-btn color="error" dark @click="resetForm">Сбросить</v-btn>
+                            <v-btn color="red lighten-1" dark  @click="resetForm">Сбросить</v-btn>
                         </div>
                     </v-col>
                 </v-row>
@@ -153,6 +173,7 @@
                 outgoing_number: '',
                 finish_from: '',
                 finish_to: '',
+                date_type: 1
             }
         },
         mounted() {
@@ -179,6 +200,7 @@
                     finish_from: this.finish_from,
                     finish_to: this.finish_to,
                     status: this.status,
+                    date_type: this.date_type,
                 })
             },
             resetForm(e) {
@@ -188,6 +210,7 @@
                 this.finish_from = "";
                 this.finish_to = "";
                 this.status = "";
+                this.date_type = 1;
                 this.$emit('resetFilter', {
                     group: "",
                     incoming_number: "",
@@ -195,6 +218,7 @@
                     finish_from: "",
                     finish_to: "",
                     status: "",
+                    date_type: "",
                 })
             },
             toDay() {
@@ -286,5 +310,17 @@
     .tab_day {
         width: 285px;
         margin-top: 15px;
+    }
+    .v-input--selection-controls {
+        margin: 5px 0 0 0;
+        padding: 0;
+    }
+    .v-input--radio-group--column .v-radio:not(:last-child):not(:only-child) {
+        margin-bottom: 3px;
+    }
+    .d_type_block {
+        margin-top: 10px;
+        margin-left: 20px;
+        margin-bottom: -2px;
     }
 </style>

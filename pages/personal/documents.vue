@@ -2,8 +2,8 @@
     <div>
         <v-card class="d-flex" flat tile>
             <h2 class="pa-2 mr-auto">Мои документы </h2>
-            <v-btn color="#66BB6A" @click="openDialog" dark small>
-                <v-icon left>mdi mdi-plus</v-icon>Новый документ
+            <v-btn color="info" @click="openDialog" dark small>
+                <v-icon left>mdi mdi-plus</v-icon>документ
             </v-btn>
         </v-card>
         <data-table/>
@@ -15,6 +15,7 @@
     import {mapState} from 'vuex'
     import DataTable from "../../components/personal/documents/table";
     import VForm from "../../components/personal/documents/vForm";
+    import VContactForm from "../../components/personal/contacts/vContactForm";
 
     export default {
         name: "documents",

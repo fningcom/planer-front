@@ -30,6 +30,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~plugins/helpers.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -103,7 +104,7 @@ export default {
           info: "#2196f3",
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: "#20c997",
+          success: colors.green,
         }
       }
     }
