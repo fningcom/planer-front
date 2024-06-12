@@ -82,14 +82,15 @@
                         <v-radio
                                 label="Дата создания"
                                 value="2"
-                        ></v-radio>
-                        <v-radio
-                                label="Дата исполнения"
-                                value="1"
+
                         ></v-radio>
                         <v-radio
                                 label="Срок исполнения"
                                 value="3"
+                        ></v-radio>
+                        <v-radio
+                                label="Дата исполнения"
+                                value="1"
                         ></v-radio>
                     </v-radio-group>
                     </div>
@@ -142,10 +143,13 @@
                     >
 
                         <div>
-                            <v-btn color="green lighten-1" dark  @click="submitFilter">Фильтр</v-btn>
+                            <v-btn color="cyan darken-3" dark  @click="submitFilter">
+                                <v-icon dark left>mdi mdi-filter-check-outline</v-icon>
+                                Фильтр</v-btn>
                         </div>
                         <div class="mt-1">
-                            <v-btn color="red lighten-1" dark  @click="resetForm">Сбросить</v-btn>
+                            <v-btn color="pink lighten-1" dark  @click="resetForm">
+                                <v-icon dark left>mdi mdi-close-thick</v-icon>Сбросить</v-btn>
                         </div>
                     </v-col>
                 </v-row>
@@ -157,16 +161,11 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     export default {
         name: "filters",
         data() {
             return {
-                groups: [
-                    {title: 'Загрузка данных...'}
-                ],
-                statuses: [
-                    {title: 'Загрузка данных...'}
-                ],
                 group: '',
                 status: '',
                 incoming_number: '',
@@ -176,22 +175,10 @@
                 date_type: 1
             }
         },
-        mounted() {
-            this.getStatuses();
-            this.getGroups();
+        computed: {
+            ...mapState('documents', ['groups', 'statuses']),
         },
-
         methods: {
-            async getGroups() {
-                this.groups = await this.$axios.$get('/api/helpers/groups');
-                this.task_types = await this.$axios.$get('/api/helpers/task_types');
-                this.$store.commit('documents/SET_GROUPS', this.groups);
-                this.$store.commit('documents/SET_TYPES', this.task_types);
-            },
-            async getStatuses() {
-                this.statuses = await this.$axios.$get('/api/helpers/statuses');
-                this.$store.commit('documents/SET_STATUSES',this.statuses);
-            },
             submitFilter() {
                 this.$emit('submitFilter', {
                     group: this.group,

@@ -15,7 +15,6 @@
     import {mapState} from 'vuex'
     import DataTable from "../../components/personal/documents/table";
     import VForm from "../../components/personal/documents/vForm";
-    import VContactForm from "../../components/personal/contacts/vContactForm";
 
     export default {
         name: "documents",

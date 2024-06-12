@@ -6,6 +6,7 @@ const envFile = `.env.${env}`;
 require('dotenv').config({ path: resolve(__dirname, envFile) });
 
 export default {
+  target: 'static',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - Планировщик',

@@ -80,7 +80,7 @@
             };
         },
         mounted() {
-            this.$axios.$get("/sanctum/csrf-cookie");
+            //this.$axios.$get("/sanctum/csrf-cookie");
         },
         computed: {},
         methods: {
@@ -92,14 +92,9 @@
                 this.valid = false;
                 this.errors = false;
                 try {
-                    await this.$axios.$get('sanctum/csrf-cookie')
-                    await this.$axios.$post('/api/login', this.form)
+                    this.$auth.loginWith('laravelSanctum', {data: this.form})
                         .then((resp) => {
-                            if (!resp.two_factor) {
-                                this.$auth.loginWith('laravelSanctum', {data: this.form})
-                            } else {
-                                this.valid = true
-                            }
+                            this.valid = true
                         })
                         .catch((error) => {
                             this.errors = true;
