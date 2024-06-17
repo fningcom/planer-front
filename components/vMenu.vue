@@ -3,7 +3,7 @@
         <v-subheader>
             Профиль
         </v-subheader>
-        <v-list>
+        <v-list v-if="personal_menus && personal_menus.length > 0">
             <v-list-item
                     v-for="(item, i) in personal_menus"
                     :key="i"
@@ -23,7 +23,7 @@
         <v-subheader>
             Меню
         </v-subheader>
-        <v-list>
+        <v-list v-if="menus && menus.length > 0">
             <v-list-item
                     v-for="(item, i) in menus"
                     :key="i"
@@ -88,12 +88,6 @@
                     }
                 ],
             }
-        },
-        methods: {
-
-        },
-        computed: {
-
         },
     }
 </script>

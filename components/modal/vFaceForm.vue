@@ -206,8 +206,8 @@
                     full_name: "",
                     birthday: "",
                     address: "",
-                    image: "",
                     sex: 'none',
+                    image: null
                 }
             }
         },
@@ -215,6 +215,7 @@
             ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading']),
             ...mapState('layout', ['device_types']),
             ...mapState('documents', ['open_document_id']),
+            ...mapState('tasks', ['open_task_id']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -255,7 +256,7 @@
                 this.form.full_name = "";
                 this.form.birthday = "";
                 this.form.address = "";
-                this.form.image = "";
+                this.form.image = null;
                 this.form.sex = 'none'
                 this.onFileClear()
             },
@@ -268,6 +269,9 @@
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
                 }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
                 formData.append('user_id', this.user_id);
 
                 if(this.form_editing) {
@@ -275,8 +279,14 @@
                 }else{
                     await this.$store.dispatch('faces/CREATE_FACE', formData)
                 }
-                const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if(this.open_document_id){
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if(this.open_task_id){
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
                 this.clearFields()
             },
             async close() {

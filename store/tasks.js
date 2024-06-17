@@ -7,19 +7,20 @@ export const state = () => ({
     statuses: [],
     task_types: [],
     form_loading: false,
-    document: [],
-    open_document_id: null,
-    open_document_events: [],
-    documents: [],
+    task: [],
+    open_task_id: null,
+    open_task_events: [],
+    tasks: [],
     lastPage: 0,
     currentPage: 0,
     count: 0,
-    filter_data: []
+    filter_data: [],
+    task_subtypes: []
 });
 
 export const mutations = {
-    STORE_DOCUMENTS(state, payload) {
-        state.documents = payload
+    STORE_TASKS(state, payload) {
+        state.tasks = payload
     },
     STORE_LAST_PAGE(state, payload) {
         state.lastPage = payload
@@ -43,24 +44,27 @@ export const mutations = {
     SET_STATUSES(state, payload) {
         state.statuses = payload
     },
-    SET_OPEN_DOC_ID(state, payload) {
-        state.open_document_id = payload
+    SET_OPEN_TASK_ID(state, payload) {
+        state.open_task_id = payload
     },
-    STORE_DOCUMENT(state, payload) {
-        state.document = payload.data
+    STORE_TASK(state, payload) {
+        state.task = payload.data
     },
-    SET_DOCUMENT(state, payload) {
-        state.document = payload
+    SET_TASK(state, payload) {
+        state.task = payload
     },
     STORE_EVENTS(state, payload) {
-        state.open_document_events = payload.data
+        state.open_task_events = payload.data
     },
     SET_EVENTS(state, payload) {
-        state.open_document_events = payload
+        state.open_task_events = payload
     },
     SET_TYPES(state, payload) {
         // state.task_types = payload.map(task_types => task_types.title);
         state.task_types = payload
+    },
+    SET_SUBTYPES(state, payload) {
+        state.task_subtypes = payload
     },
     FORM_LOADING_OFF(state) {
         state.form_loading = false
@@ -80,20 +84,20 @@ export const mutations = {
     SUCCESS_STORE(state, success) {
         state.success = success
     },
-    UPDATE_DOCUMENT_FIELD(state, {key, value}) {
-        state.document[key] = value
+    UPDATE_TASK_FIELD(state, {key, value}) {
+        state.task[key] = value
     },
-    CHANGE_DOC_STATUS(state, status_id) {
-        state.document.status_id = status_id
-        state.document.status = state.statuses[status_id - 1]
+    CHANGE_TASK_STATUS(state, status_id) {
+        state.task.status_id = status_id
+        state.task.status = state.statuses[status_id - 1]
     },
 };
 
 export const actions = {
-    async CREATE_DOCUMENT({commit, state}, data) {
+    async CREATE_TASK({commit, state}, data) {
         commit('FORM_LOADING_ON')
         try {
-            const response = await this.$axios.post('/api/documents/', data,
+            const response = await this.$axios.post('/api/tasks/', data,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -107,8 +111,8 @@ export const actions = {
                         commit('ERROR_OFF')
                         commit("ERRORS_STORE", [])
                         commit("SUCCESS_STORE", response.data.message)
-                        commit("SET_OPEN_DOC_ID", response.data.open_document_id)
-                        commit("SET_DOCUMENT", response.data.document)
+                        commit("SET_OPEN_TASK_ID", response.data.open_task_id)
+                        commit("SET_TASK", response.data.task)
                         commit('SET_EVENTS', response.data.events)
                     }
                 })
@@ -120,10 +124,19 @@ export const actions = {
         }
         commit('FORM_LOADING_OFF')
     },
-    async GET_DOCUMENTS_FROM_API({commit, state}, [filter_data, user_id, page]) {
+    async GET_TASK_FROM_API({commit, state}, task_id) {
+        commit('STORE_TASK', [])
+        commit("ERRORS_STORE", [])
+        commit('ERROR_OFF')
+        const response = await this.$axios.get('/api/tasks/' + task_id + '/edit');
+        const events = await this.$axios.get('/api/tasks/' + task_id + '/events');
+        commit('STORE_EVENTS', events)
+        commit('STORE_TASK', response)
+    },
+    async GET_TASKS_FROM_API({commit, state}, [filter_data, user_id, page]) {
         commit('FORM_LOADING_ON')
         try {
-            const response = await this.$axios.get(`/api/documents/${user_id}?page=${page}`, {
+            const response = await this.$axios.get(`/api/tasks/${user_id}?page=${page}`, {
                 params: filter_data
             });
 
@@ -133,8 +146,7 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit("ERRORS_STORE", []);
-                // commit("SUCCESS_STORE", response.data.message);
-                commit("STORE_DOCUMENTS", response.data.data);
+                commit("STORE_TASKS", response.data.data);
                 commit("STORE_CURRENT_PAGE", response.data.current_page);
                 commit("STORE_LAST_PAGE", response.data.last_page);
                 commit("STORE_COUNT", response.data.total);
@@ -144,19 +156,10 @@ export const actions = {
         }
         commit('FORM_LOADING_OFF')
     },
-    async GET_DOCUMENT_FROM_API({commit, state}, document_id) {
-        commit('STORE_DOCUMENT', [])
-        commit("ERRORS_STORE", [])
-        commit('ERROR_OFF')
-        const response = await this.$axios.get('/api/documents/' + document_id + '/edit');
-        const events = await this.$axios.get('/api/documents/' + document_id + '/events');
-        commit('STORE_EVENTS', events)
-        commit('STORE_DOCUMENT', response)
-    },
-    async UPDATE_DOCUMENT({commit, state}, data) {
+    async UPDATE_TASK({commit, state}, data) {
         commit('FORM_LOADING_ON')
         try {
-            const response = await this.$axios.post('/api/documents/' + state.open_document_id + '/update', data)
+            const response = await this.$axios.post('/api/tasks/' + state.open_task_id + '/update', data)
                 .then(function (response) {
                     if (response.data.success === false) {
                         commit('ERROR_ON')
@@ -175,4 +178,4 @@ export const actions = {
         }
         commit('FORM_LOADING_OFF')
     },
-};
+}

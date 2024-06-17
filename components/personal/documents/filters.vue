@@ -74,25 +74,25 @@
                     </v-col>
                     <div class="d_type_block"
                     >
-                    <v-radio-group
-                            v-model="date_type"
-                            column
-                            dense
-                    >
-                        <v-radio
-                                label="Дата создания"
-                                value="2"
+                        <v-radio-group
+                                v-model="date_type"
+                                column
+                                dense
+                        >
+                            <v-radio
+                                    label="Дата создания"
+                                    value="2"
 
-                        ></v-radio>
-                        <v-radio
-                                label="Срок исполнения"
-                                value="3"
-                        ></v-radio>
-                        <v-radio
-                                label="Дата исполнения"
-                                value="1"
-                        ></v-radio>
-                    </v-radio-group>
+                            ></v-radio>
+                            <v-radio
+                                    label="Срок исполнения"
+                                    value="3"
+                            ></v-radio>
+                            <v-radio
+                                    label="Дата исполнения"
+                                    value="1"
+                            ></v-radio>
+                        </v-radio-group>
                     </div>
                     <v-col
                             cols="12"
@@ -137,21 +137,56 @@
                             За прошлый месяц
                         </v-chip>
                     </div>
-                    <v-col
-                            cols="12"
-                            md="2"
-                    >
-
-                        <div>
-                            <v-btn color="cyan darken-3" dark  @click="submitFilter">
+                    <v-col cols="2"
+                           md="2">
+                        <v-row>
+                            <v-col>
+                                <v-select
+                                        v-if="isAdmin"
+                                        v-model="user_id"
+                                        :items="users"
+                                        label="Исполнитель"
+                                        outlined
+                                        dense
+                                        hide-details
+                                        clearable
+                                        @change="submitFilter"
+                                        class="mb-1"
+                                        item-value="id"
+                                        item-text="name"
+                                >
+                                </v-select>
+                                <v-select
+                                        v-else
+                                        v-model="user_id"
+                                        :items="users"
+                                        label="Исполнитель"
+                                        outlined
+                                        dense
+                                        hide-details
+                                        clearable
+                                        @change="submitFilter"
+                                        class="mb-1"
+                                        item-value="id"
+                                        item-text="name"
+                                        disabled
+                                >
+                                </v-select>
+                            </v-col>
+                        </v-row>
+                        <div class="d-flex justify-start">
+                            <v-btn color="cyan darken-3" dark @click="submitFilter" class="mr-2">
                                 <v-icon dark left>mdi mdi-filter-check-outline</v-icon>
-                                Фильтр</v-btn>
+                                Фильтр
+                            </v-btn>
+                            <v-btn color="pink lighten-1" dark @click="resetForm">
+                                <v-icon dark left>mdi mdi-close-thick</v-icon>
+                                Сбросить
+                            </v-btn>
                         </div>
-                        <div class="mt-1">
-                            <v-btn color="pink lighten-1" dark  @click="resetForm">
-                                <v-icon dark left>mdi mdi-close-thick</v-icon>Сбросить</v-btn>
-                        </div>
+
                     </v-col>
+
                 </v-row>
 
             </v-container>
@@ -162,6 +197,7 @@
 
 <script>
     import {mapState} from 'vuex'
+
     export default {
         name: "filters",
         data() {
@@ -172,11 +208,19 @@
                 outgoing_number: '',
                 finish_from: '',
                 finish_to: '',
-                date_type: 1
+                date_type: '2',
+                user_id: null
             }
         },
         computed: {
             ...mapState('documents', ['groups', 'statuses']),
+            ...mapState('layout', ['users']),
+            isAdmin() {
+                return this.$auth.user.isAdmin
+            }
+        },
+        mounted() {
+            this.user_id = this.$auth.user.id
         },
         methods: {
             submitFilter() {
@@ -188,6 +232,7 @@
                     finish_to: this.finish_to,
                     status: this.status,
                     date_type: this.date_type,
+                    user_id: this.user_id,
                 })
             },
             resetForm(e) {
@@ -197,7 +242,8 @@
                 this.finish_from = "";
                 this.finish_to = "";
                 this.status = "";
-                this.date_type = 1;
+                this.date_type = '2';
+                this.user_id = null;
                 this.$emit('resetFilter', {
                     group: "",
                     incoming_number: "",
@@ -206,6 +252,7 @@
                     finish_to: "",
                     status: "",
                     date_type: "",
+                    user_id: null
                 })
             },
             toDay() {
@@ -298,13 +345,16 @@
         width: 285px;
         margin-top: 15px;
     }
+
     .v-input--selection-controls {
         margin: 5px 0 0 0;
         padding: 0;
     }
+
     .v-input--radio-group--column .v-radio:not(:last-child):not(:only-child) {
         margin-bottom: 3px;
     }
+
     .d_type_block {
         margin-top: 10px;
         margin-left: 20px;

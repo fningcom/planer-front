@@ -101,33 +101,37 @@
                                                 <v-img src="/img/icons/tiktok.png" max-width="24" class="v-icon-a"
                                                        @click="selectIcon(14)"></v-img>
                                             </div>
-                                            <v-autocomplete
-                                                    v-model="form.type_id"
-                                                    :items="contact_types"
-                                                    item-value="id"
-                                                    item-text="type"
-                                                    label="Тип контакта *"
-                                                    :error-messages="error ? errors.data.type_id: ''"
-                                            ></v-autocomplete>
+                                            <v-row >
+                                                <v-col col="6" md="6">
+                                                    <v-autocomplete
+                                                            v-model="form.type_id"
+                                                            :items="contact_types"
+                                                            item-value="id"
+                                                            item-text="type"
+                                                            label="Тип контакта *"
+                                                            :error-messages="error ? errors.data.type_id: ''"
+                                                    ></v-autocomplete>
+                                                </v-col>
+                                                <v-col col="6" md="6"
+                                                        v-if="form.type_id !== 1 && !multi_insert && selectType">
+                                                    <v-text-field
+                                                            :label="hint"
+                                                            required
+                                                            v-model="form.code"
+                                                            :error-messages="error ? errors.data.code: ''"
+                                                            :loading="loading"
+                                                            hint="Для проверки по базе, жми Enter"
+                                                            @change="onInput"
+
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                            </v-row>
 
                                         </v-col>
                                     </v-row>
 
-                                    <v-row v-if="form.type_id !== 1 && !multi_insert && selectType">
-                                        <v-col>
-                                            <v-text-field
-                                                    :label="hint"
-                                                    required
-                                                    v-model="form.code"
-                                                    :error-messages="error ? errors.data.code: ''"
-                                                    :loading="loading"
-                                                    hint="Для проверки по базе, жми Enter"
-                                                    @change="onInput"
-                                                    dense
-                                            >
-                                            </v-text-field>
-                                        </v-col>
-                                    </v-row>
+
                                     <div v-if="contact_found && !multi_insert" class="scrollable-container mt-3">
                                         <v-row v-for="item in contact_found"
                                                :key="item.id"
@@ -179,7 +183,15 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-                                    <v-row>
+                                    <v-row v-if="!multi_insert && selectType">
+                                        <v-col cols="12" md="12">
+                                            <v-text-field
+                                                    label="Должность"
+                                                    required
+                                                    v-model="form.job"
+                                                    :error-messages="error ? errors.data.job: ''"
+                                            ></v-text-field>
+                                        </v-col>
                                         <v-col cols="12" md="12">
                                             <v-file-input
                                                     accept="image/png, image/jpeg, image/bmp"
@@ -339,12 +351,13 @@
                 form: {
                     type_id: "",
                     code: "",
-                    image: "",
+                    image: null,
                     screenshots: [],
                     import: "",
                     comment: "",
                     name: "",
                     birthday: "",
+                    job: ""
                 }
             }
         },
@@ -355,6 +368,7 @@
             ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found', 'edit_contact_loading']),
             ...mapState('layout', ['contact_types']),
             ...mapState('documents', ['open_document_id']),
+            ...mapState('tasks', ['open_task_id']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -380,6 +394,7 @@
                     this.form.name = value.name
                     this.form.birthday = value.birthday
                     this.form.image = value.image
+                    this.form.job = value.job
                     if (value.image_url) {
                         this.viewImage = true
                         this.imageUrl = value.image_url
@@ -463,7 +478,8 @@
                 this.form.code = "";
                 this.form.name = "";
                 this.form.birthday = "";
-                this.form.image = "";
+                this.form.job = "";
+                this.form.image = null;
                 this.form.comment = "";
                 this.form.import = "";
                 this.screenshots_src = [];
@@ -497,6 +513,9 @@
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
                 }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
                 formData.append('user_id', this.user_id);
 
                 // Если массовая загрузка контактов
@@ -519,8 +538,15 @@
                         await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
                     }
                 }
-                const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if(this.open_document_id){
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if(this.open_task_id){
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
+
                 this.clearFields()
             },
             async bindContact(contact_id) {
@@ -528,10 +554,19 @@
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
                 }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
                 formData.append('contact_id', contact_id);
                 await this.$store.dispatch('contacts/BIND_CONTACT', formData);
-                const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if(this.open_document_id){
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if(this.open_task_id){
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
                 this.clearFields();
             },

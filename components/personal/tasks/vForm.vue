@@ -7,7 +7,7 @@
         >
 
             <v-card
-                    v-if="open_document_id && !document"
+                    v-if="open_task_id && !task"
                     color="primary"
                     dark
             >
@@ -22,36 +22,38 @@
             </v-card>
             <div v-else>
                 <v-alert
-                        v-if="open_document_id && document"
+                        v-if="open_task_id && task"
                         dense
-                        type="info"
+                        type="success"
+                        color="#4e4caf"
                 >
-                    Документ № {{document.id}}
+                    Задача № {{task.id}}
                 </v-alert>
                 <v-alert
                         v-else
                         dense
                         type="info"
+                        color="#4e4caf"
                 >
-                    Создать документ
+                    Создать задачу
                 </v-alert>
                 <v-tabs v-model="tab">
                     <v-tab href="#tab-1">
                         Общее
                     </v-tab>
-                    <v-tab href="#tab-2" v-if="open_document_id">
+                    <v-tab href="#tab-2" v-if="open_task_id">
                         Контакты
                     </v-tab>
-                    <v-tab href="#tab-3" v-if="open_document_id">
+                    <v-tab href="#tab-3" v-if="open_task_id">
                         Устройство
                     </v-tab>
-                    <v-tab href="#tab-4" v-if="open_document_id">
+                    <v-tab href="#tab-4" v-if="open_task_id">
                         Лицо
                     </v-tab>
-                    <v-tab href="#tab-5" v-if="open_document_id">
+                    <v-tab href="#tab-5" v-if="open_task_id">
                         Результат
                     </v-tab>
-                    <v-tab href="#tab-6" v-if="open_document_id">
+                    <v-tab href="#tab-6" v-if="open_task_id">
                         История
                     </v-tab>
                 </v-tabs>
@@ -64,51 +66,38 @@
                                     <v-row>
                                         <v-col cols="6" md="6">
                                             <v-text-field
-                                                    label="Исходящий номер документа"
-                                                    append-icon="mdi mdi-arrow-top-right"
-                                                    color="red"
+                                                    label="Заголовок задачи"
                                                     required
-                                                    v-model="form.outgoing_number"
-                                                    :error-messages="error ? errors.data.outgoing_number: ''"
+                                                    v-model="form.title"
+                                                    :error-messages="error ? errors.data.title: ''"
                                                     dense
-
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="6" md="6">
-                                            <v-text-field
-                                                    type="date"
-                                                    label="Дата исходящего номера"
-                                                    required
-                                                    v-model="form.outgoing_date"
-                                                    :error-messages="error ? errors.data.outgoing_date: ''"
+                                            <v-autocomplete
+                                                    v-model="form.type_id"
+                                                    :items="task_types"
+                                                    item-value="id"
+                                                    item-text="title"
                                                     dense
-
-                                            ></v-text-field>
+                                                    label="Тип задачи"
+                                                    :error-messages="error ? errors.data.type_id: ''"
+                                            ></v-autocomplete>
                                         </v-col>
-
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="6" md="6">
-                                            <v-text-field
-                                                    label="Входящий номер документа"
-                                                    required
-                                                    append-icon="mdi mdi-arrow-bottom-left"
-                                                    v-model="form.incoming_number"
-                                                    :error-messages="error ? errors.data.incoming_number: ''"
+                                        <div v-if="task_subtypes[form.type_id] && task_subtypes[form.type_id].length > 0"
+                                             v-for="item in task_subtypes[form.type_id]"
+                                             :key="item.id"
+                                             style="margin: -19px 0 0 6px;">
+                                            <a href="#" class="help" @click.prevent="helpClick(item.title)">{{ item.title }}</a>
+                                        </div>
+                                        <v-col cols="12" md="12">
+                                            <v-textarea
+                                                    v-model="form.comment"
+                                                    outlined
+                                                    name="input-7-4"
+                                                    label="Детальное описание задачи"
                                                     dense
-                                                    color="#66BB6A"
-                                            ></v-text-field>
-                                        </v-col>
-                                        <v-col cols="6" md="6">
-                                            <v-text-field
-                                                    type="date"
-                                                    label="Дата входящего номера"
-                                                    required
-                                                    v-model="form.incoming_date"
-                                                    :error-messages="error ? errors.data.incoming_date: ''"
-                                                    dense
-                                                    @change="changeIncomingDate"
-                                            ></v-text-field>
+                                            ></v-textarea>
                                         </v-col>
                                     </v-row>
                                     <v-row>
@@ -124,28 +113,23 @@
                                             ></v-autocomplete>
                                         </v-col>
                                         <v-col cols="6" md="6">
-                                            <v-text-field
-                                                    label="Исполнитель-заказчик"
-                                                    required
-                                                    v-model="form.executor"
-                                                    :error-messages="error ? errors.data.executor: ''"
+                                            <v-autocomplete
+                                                    v-model="form.customer_id"
+                                                    :items="customers"
+                                                    :search-input.sync="search"
+                                                    @change="onChange"
+                                                    :loading="loading"
+                                                    :no-data-text="noDataText"
+                                                    @blur="addIfNotExists"
+                                                    item-value="id"
+                                                    item-text="title"
+                                                    label="Заказчик"
                                                     dense
-                                            ></v-text-field>
+                                                    :error-messages="error ? errors.data.customer_id: ''"
+                                            ></v-autocomplete>
                                         </v-col>
                                     </v-row>
                                     <v-row>
-                                        <v-col cols="6" md="6">
-                                            <v-autocomplete
-                                                    v-model="form.type_id"
-                                                    :items="task_types"
-                                                    item-value="id"
-                                                    item-text="title"
-                                                    dense
-                                                    label="Тип задачи"
-                                                    :error-messages="error ? errors.data.type_id: ''"
-                                            ></v-autocomplete>
-
-                                        </v-col>
                                         <v-col cols="3" md="3">
                                             <v-text-field
                                                     type="date"
@@ -164,22 +148,8 @@
                                                     dense
                                                     @change="changeQuickly"
                                             ></v-checkbox>
-
                                         </v-col>
-                                    </v-row>
-
-                                    <v-row>
-                                        <v-col cols="12" md="12">
-                                            <v-textarea
-                                                    v-model="form.comment"
-                                                    outlined
-                                                    name="input-7-4"
-                                                    label="Коментарий"
-                                                    dense
-                                            ></v-textarea>
-                                        </v-col>
-
-                                        <v-col cols="5" md="5">
+                                        <v-col cols="6" md="6">
                                             <v-checkbox
                                                     v-model="form.control"
                                                     label="На контроле руководства"
@@ -187,6 +157,10 @@
                                                     dense
                                             ></v-checkbox>
                                         </v-col>
+                                    </v-row>
+
+                                    <v-row>
+
                                         <v-col cols="2" md="2">
                                             <v-checkbox
                                                     v-model="form.deanon"
@@ -194,7 +168,7 @@
                                                     dense
                                             ></v-checkbox>
                                         </v-col>
-                                        <v-col>
+                                        <v-col cols="6" md="6">
                                             <v-text-field
                                                     type="number"
                                                     label="Число успешных деанонов"
@@ -209,7 +183,7 @@
                                     <v-row>
                                         <v-col cols="5" md="5">
                                             <v-text-field
-                                                    label="Документ создан"
+                                                    label="Задача создана"
                                                     v-model="creator"
                                                     dense
                                                     disabled
@@ -221,18 +195,19 @@
                                                     v-model="form.users"
                                                     :items="users"
                                                     :menu-props="{ maxHeight: '400' }"
-                                                    label="Исполнители документа"
+                                                    label="Исполнители задачи"
                                                     multiple
                                                     item-value="id"
                                                     item-text="name"
                                                     dense
+                                                    :error-messages="error ? errors.data.users: ''"
                                             ></v-select>
                                             <v-select
                                                     v-else
                                                     v-model="form.users"
                                                     :items="users"
                                                     :menu-props="{ maxHeight: '400' }"
-                                                    label="Исполнители документа"
+                                                    label="Исполнители задачи"
                                                     multiple
                                                     item-value="id"
                                                     item-text="name"
@@ -251,7 +226,7 @@
                             <v-card-text>
                                 <v-row>
                                     <v-col>
-                                        <v-btn color="info" @click="openContactDialog(false)" dark small
+                                        <v-btn color="#4e4caf" @click="openContactDialog(false)" dark small
                                                class="float-end">
                                             <v-icon left>mdi mdi-plus</v-icon>
                                             контакт
@@ -261,10 +236,10 @@
                                     </v-col>
                                 </v-row>
                                 <v-row>
-                                    <v-col v-if="document && document.contacts">
+                                    <v-col v-if="task && task.contacts">
                                         <v-data-table
                                                 :headers="contact_headers"
-                                                :items="document.contacts"
+                                                :items="task.contacts"
                                                 item-key="id"
                                                 class="elevation-1 my-2"
                                                 :loading="removeLoader"
@@ -280,8 +255,8 @@
                                             </template>
                                             <template v-slot:item.code="{ item }">
                                                 <template v-if="item.code">
-                                                    {{ item.name }} <br>
-                                                    {{ item.code }}
+                                                    <div v-if="item.name">&#171;{{ item.name }}&#187;</div>
+                                                    <div style="font-size: 12px;">{{ item.code }}</div>
                                                 </template>
                                                 <template v-else>
                                                     {{ item.name }}
@@ -292,7 +267,7 @@
                                                     mdi-pencil
                                                 </v-icon>
                                                 <v-icon style="cursor:pointer"
-                                                        @click="removeLink(item.id, document.id)">mdi mdi-close
+                                                        @click="removeLink(item.id, task.id)">mdi mdi-close
                                                 </v-icon>
                                             </template>
                                         </v-data-table>
@@ -304,8 +279,8 @@
                     <v-tab-item value="tab-3">
                         <v-card-text>
                             <v-row>
-                                <v-col v-if="document && document.devices">
-                                    <v-btn color="info" @click="openDeviceDialog(false)" dark small class="float-end">
+                                <v-col>
+                                    <v-btn color="#4e4caf" @click="openDeviceDialog(false)" dark small class="float-end">
                                         <v-icon left>mdi mdi-plus</v-icon>
                                         устройство
                                     </v-btn>
@@ -313,10 +288,10 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col v-if="document && document.devices">
+                                <v-col v-if="task && task.devices">
                                     <v-data-table
                                             :headers="device_headers"
-                                            :items="document.devices"
+                                            :items="task.devices"
                                             item-key="id"
                                             class="elevation-1 my-2"
                                             :loading="removeLoader"
@@ -332,7 +307,7 @@
                                                 mdi-pencil
                                             </v-icon>
                                             <v-icon style="cursor:pointer"
-                                                    @click="removeDeviceLink(item.id, document.id)">mdi mdi-close
+                                                    @click="removeDeviceLink(item.id, task.id)">mdi mdi-close
                                             </v-icon>
                                         </template>
                                     </v-data-table>
@@ -345,7 +320,7 @@
                         <v-card-text>
                             <v-row>
                                 <v-col>
-                                    <v-btn color="info" @click="openFaceDialog(false)" dark small class="float-end">
+                                    <v-btn color="#4e4caf" @click="openFaceDialog(false)" dark small class="float-end">
                                         <v-icon left>mdi mdi-plus</v-icon>
                                         лицо
                                         <!--                                        <v-icon small>mdi mdi-account-check</v-icon>-->
@@ -354,10 +329,10 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col v-if="document && document.faces">
+                                <v-col v-if="task && task.faces">
                                     <v-data-table
                                             :headers="face_headers"
-                                            :items="document.faces"
+                                            :items="task.faces"
                                             item-key="id"
                                             class="elevation-1 my-2"
                                             :loading="removeLoader"
@@ -376,7 +351,7 @@
                                                 mdi-pencil
                                             </v-icon>
                                             <v-icon style="cursor:pointer"
-                                                    @click="removeFaceLink(item.id, document.id)">mdi mdi-close
+                                                    @click="removeFaceLink(item.id, task.id)">mdi mdi-close
                                             </v-icon>
                                         </template>
                                     </v-data-table>
@@ -388,15 +363,15 @@
                         <v-card flat>
                             <v-card-text>
                                 <v-row>
-                                    <v-col cols="12" md="12">
-                                        <v-textarea
-                                                v-model="form.result"
-                                                outlined
-                                                name="input-7-4"
-                                                label="Результат выполнения документа"
-                                                dense
-                                        ></v-textarea>
-                                    </v-col>
+                                        <v-col cols="12" md="12">
+                                            <v-textarea
+                                                    v-model="form.result"
+                                                    outlined
+                                                    name="input-7-4"
+                                                    label="Результат выполнения задачи"
+                                                    dense
+                                            ></v-textarea>
+                                        </v-col>
                                     <v-col cols="6" md="6">
                                         <v-file-input
                                                 accept=".pdf,.doc,.docx,.xls,.xlsx"
@@ -409,7 +384,7 @@
                                     </v-col>
                                 </v-row>
                                 <v-row>
-                                    <v-col v-if="document && document.media && result_files && result_files.length > 0">
+                                    <v-col v-if="task && task.media && result_files && result_files.length > 0">
                                         <v-data-table
                                                 :headers="result_headers"
                                                 :items="result_files"
@@ -432,7 +407,7 @@
                                             <template v-slot:item.action="{ item }">
                                                 <a :href="item.original_url"><v-icon>mdi mdi-download</v-icon></a>
                                                 <v-icon style="cursor:pointer"
-                                                        @click="removeFile(item.id, document.id)">mdi mdi-close
+                                                        @click="removeFile(item.id, task.id)">mdi mdi-close
                                                 </v-icon>
                                             </template>
                                         </v-data-table>
@@ -442,7 +417,7 @@
                         </v-card>
                     </v-tab-item>
                     <v-tab-item value="tab-6">
-                        <v-card flat v-if="open_document_events">
+                        <v-card flat v-if="open_task_events">
                             <v-card-text>
                                 <v-simple-table height="520" fixed-header="true">
                                     <template v-slot:default>
@@ -461,7 +436,7 @@
                                         </thead>
                                         <tbody>
                                         <tr
-                                                v-for="item in open_document_events"
+                                                v-for="item in open_task_events"
                                                 :key="item.id"
                                         >
                                             <td>{{ item.formatted_created_at }}</td>
@@ -493,19 +468,19 @@
                         </v-alert>
                     </div>
                     <v-card-actions>
-                        <v-chip :style="{backgroundColor:document.status.color }"
-                                v-if="document && document.status && document.status.color"
+                        <v-chip :style="{backgroundColor:task.status.color }"
+                                v-if="task && task.status && task.status.color"
                                 dark
                                 label
                                 class="mt-1 mb-1"
                                 variant="outlined"
                         >
-                            <v-icon dark left small>{{ document.status.icon }}</v-icon>
-                            {{ document.status.title }} {{ document.formatted_execution_date }}
+                            <v-icon dark left small>{{ task.status.icon }}</v-icon>
+                            {{ task.status.title }} {{ task.formatted_execution_date }}
                         </v-chip>
                         <v-spacer></v-spacer>
                         <v-btn
-                                v-if="document && document.status_id === 1"
+                                v-if="task && task.status_id === 1"
                                 color="red darken-2"
                                 text
                                 @click="setStatus(2)"
@@ -513,7 +488,7 @@
                             В работу
                         </v-btn>
                         <v-btn
-                                v-if="document && document.status_id === 2"
+                                v-if="task && task.status_id === 2"
                                 color="red darken-2"
                                 text
                                 @click="setStatus(3)"
@@ -535,7 +510,6 @@
                         >
                             Сохранить
                         </v-btn>
-
                     </v-card-actions>
 
                 </v-card>
@@ -559,6 +533,10 @@
             return {
                 removeLoader: false,
                 tab: null,
+                customers: [],
+                loading: false,
+                search: '',
+                noDataText: 'Ничего не найдено',
                 contact_headers: [
                     {text: '', value: 'number', sortable: false},
                     {text: '', value: 'icon', sortable: false},
@@ -590,20 +568,18 @@
                 // форма
                 result_files: [],
                 form: {
+                    title: "",
                     status_id: 1,
-                    outgoing_number: "",
-                    outgoing_date: "",
-                    incoming_number: "",
-                    incoming_date: "",
-                    group_id: "",
+                    group_id: 1,
                     type_id: 1,
+                    customer_id: 1,
                     quickly: false,
                     deanon: false,
                     deanon_success_count: 0,
                     deadline_date: "",
                     comment: '',
+                    result: '',
                     execution_date: "",
-                    executor: "",
                     control: false,
                     users: [],
                     results: []
@@ -611,9 +587,10 @@
             }
         },
         computed: {
-            ...mapState('documents', ['groups', 'task_types', 'form_loading', 'error', 'errors', 'success',
-                'open_document_id', 'document', 'open_document_events', 'filter_data'
+            ...mapState('tasks', ['form_loading', 'error', 'errors', 'success',
+                'open_task_id', 'task', 'open_task_events', 'filter_data', 'task_subtypes'
             ]),
+            ...mapState('documents', ['groups', 'task_types']),
             ...mapState('contacts', ['contactDialog']),
             ...mapState('devices', ['deviceDialog']),
             ...mapState('faces', ['faceDialog']),
@@ -626,8 +603,8 @@
                 return this.$auth.user.isAdmin
             },
             creator() {
-                if (this.document && this.document.creator && this.document.creator.name && this.document.formatted_created_at) {
-                    return this.document.creator.name + ", " + this.document.formatted_created_at
+                if (this.task && this.task.creator && this.task.creator.name && this.task.formatted_created_at) {
+                    return this.task.creator.name + ", " + this.task.formatted_created_at
                 }
             },
             currentUserId() {
@@ -636,21 +613,20 @@
         },
         props: ['dialog'],
         mounted() {
-            if (!this.open_document_id) {
-                this.form.incoming_date = toDay();
+            if (!this.open_task_id) {
                 this.changeIncomingDate();
                 this.form.users[0] = this.$auth.user.id
             }
         },
         watch: {
-            document(value) {
+            search(val) {
+                this.fetchCustomers(val);
+            },
+            task(value) {
                 if (value) {
-                    this.form.outgoing_number = value.outgoing_number;
-                    this.form.outgoing_date = value.formatted_outgoing_doc_date;
-                    this.form.incoming_number = value.incoming_number;
-                    this.form.incoming_date = value.formatted_incoming_date;
                     this.form.group_id = value.group_id;
                     this.form.type_id = value.type_id;
+                    this.form.customer_id = value.customer_id;
                     this.form.users = value.users.map(user => user.id);
                     this.form.quickly = value.quickly;
                     this.form.deanon = value.deanon;
@@ -659,9 +635,9 @@
                     this.form.comment = value.comment;
                     this.form.result = value.result;
                     this.form.execution_date = value.execution_date ? value.execution_date : null;
-                    this.form.executor = value.executor;
                     this.form.control = value.control;
                     this.form.status_id = value.status_id;
+                    this.form.title = value.title;
                     if (value.media){
                         this.result_files = filterMediaByCollection(value.media, 'results');
                     }
@@ -670,6 +646,39 @@
             }
         },
         methods: {
+            helpClick(value){
+                this.form.title = value;
+            },
+            async fetchCustomers(query) {
+                this.loading = true;
+                try {
+                    const response = await this.$axios.get('api/tasks-customers', {
+                        params: { q: query }
+                    });
+                    this.customers = response.data;
+                } catch (error) {
+                    console.error('Error fetching items:', error);
+                } finally {
+                    this.loading = false;
+                }
+            },
+            async addIfNotExists() {
+                if (!this.customers.find(item => item.title === this.search) && this.search) {
+                    try {
+                        const response = await this.$axios.post('api/tasks-customers', { title: this.search });
+                        this.customers.push(response.data);
+                        this.form.customer_id = response.data.id;
+                    } catch (error) {
+                        console.error('Error adding item:', error);
+                    }
+                }
+            },
+            onChange(value) {
+                if (!value) {
+                    this.search = '';
+                }
+            },
+            // -----------------
             formatBirthday(item) {
                 return formatDate(item)
             },
@@ -695,93 +704,75 @@
                 }
             },
             async setStatus(status_id) {
-                this.$store.commit('documents/CHANGE_DOC_STATUS', status_id);
-                let url = '/api/documents/' + this.open_document_id + '/status/' + status_id + '/' + this.user_id;
+                this.$store.commit('tasks/CHANGE_TASK_STATUS', status_id);
+                let url = '/api/tasks/' + this.open_task_id + '/status/' + status_id + '/' + this.user_id;
                 const response = await this.$axios.$post(url);
             },
-            async removeLink(contact_id, document_id) {
+            async removeLink(contact_id, task_id) {
                 this.removeLoader = true;
                 const formData = new FormData();
-                formData.append('document_id', document_id);
+                formData.append('task_id', task_id);
                 formData.append('contact_id', contact_id);
-                const response = await this.$axios.$post('/api/documents/remove-contact-doc', formData);
+                const response = await this.$axios.$post('/api/tasks/remove-contact-task', formData);
                 if (response) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.removeLoader = false;
                 }
             },
-            async removeDeviceLink(device_id, document_id) {
+            async removeDeviceLink(device_id, task_id) {
                 this.removeLoader = true;
                 const formData = new FormData();
-                formData.append('document_id', document_id);
+                formData.append('task_id', task_id);
                 formData.append('device_id', device_id);
-                const response = await this.$axios.$post('/api/documents/remove-device-doc', formData);
+                const response = await this.$axios.$post('/api/tasks/remove-device-task', formData);
                 if (response) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.removeLoader = false;
                 }
             },
-            async removeFaceLink(face_id, document_id) {
+            async removeFaceLink(face_id, task_id) {
                 this.removeLoader = true;
                 const formData = new FormData();
-                formData.append('document_id', document_id);
+                formData.append('task_id', task_id);
                 formData.append('face_id', face_id);
-                const response = await this.$axios.$post('/api/documents/remove-face-doc', formData);
+                const response = await this.$axios.$post('/api/tasks/remove-face-task', formData);
                 if (response) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.removeLoader = false;
                 }
             },
-            async removeFile(file_id, document_id) {
+            async removeFile(file_id, task_id) {
                 this.removeLoader = true;
                 const formData = new FormData();
                 formData.append('photo_id', file_id);
                 const response = await this.$axios.$post('/api/media/remove', formData);
                 if (response) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.removeLoader = false;
                 }
             },
             clearFields() {
-                this.form.outgoing_number = "";
-                this.form.outgoing_date = "";
-                this.form.incoming_number = "";
-                this.form.incoming_date = "";
-                this.form.group_id = "";
+                this.form.title = "";
+                this.form.group_id = 1;
                 this.form.type_id = 1;
                 this.form.status_id = 1;
-                this.form.users = this.$auth.user.id;
+                this.form.customer_id = "";
+                this.form.users[0] = this.$auth.user.id;
                 this.form.quickly = false;
                 this.form.deanon = false;
                 this.form.deanon_success_count = "";
                 this.form.deadline_date = "";
                 this.form.comment = "";
                 this.form.result = "";
-                this.form.execution_date = "";
-                this.form.executor = "";
-                this.form.control = false
                 this.form.results = [];
+                this.form.execution_date = "";
+                this.form.control = false
             },
-            async close() {
-                this.$store.commit('documents/SET_DIALOG');
-                this.$store.commit('documents/ERROR_OFF')
-                this.$store.commit('documents/ERRORS_STORE', [])
-                this.$store.commit('documents/SUCCESS_STORE', [])
-                this.$store.commit('documents/SET_OPEN_DOC_ID', null)
-                this.$store.commit('documents/STORE_DOCUMENT', []);
-                this.$store.commit('documents/STORE_EVENTS', []);
-                this.clearFields();
-                if (!this.open_document_id) {
-                    this.form.incoming_date = toDay();
-                    this.changeIncomingDate();
-                }
-                await this.$store.dispatch('documents/GET_DOCUMENTS_FROM_API', [this.filter_data, this.currentUserId, 1]);
-            },
-            async save() {
+            getFilterData(){
                 const formData = new FormData();
                 for (const [key, value] of Object.entries(this.form)) {
                     formData.append(key, value);
@@ -793,43 +784,54 @@
                 formData.append('quickly', this.form.quickly ? 1 : 0);
                 formData.append('deanon', this.form.deanon ? 1 : 0);
                 formData.append('control', this.form.control ? 1 : 0);
-                if (this.open_document_id) {
-                    formData.append('open_document_id', this.open_document_id);
-                    await this.$store.dispatch('documents/UPDATE_DOCUMENT', formData)
-                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                return formData;
+            },
+            async close() {
+                this.$store.commit('tasks/SET_DIALOG');
+                this.$store.commit('tasks/ERROR_OFF');
+                this.$store.commit('tasks/ERRORS_STORE', []);
+                this.$store.commit('tasks/SUCCESS_STORE', []);
+                this.$store.commit('tasks/SET_OPEN_TASK_ID', null);
+                this.$store.commit('tasks/STORE_TASK', []);
+                this.$store.commit('tasks/STORE_EVENTS', []);
+                this.clearFields();
+                if (!this.open_task_id) {
+                    this.form.incoming_date = toDay();
+                    this.changeIncomingDate();
+                }
+                await this.$store.dispatch('tasks/GET_TASKS_FROM_API', [this.filter_data, this.currentUserId, 1]);
+            },
+            async save() {
+                const formData = this.getFilterData();
+                if (this.open_task_id) {
+                    formData.append('open_task_id', this.open_task_id);
+                    await this.$store.dispatch('tasks/UPDATE_TASK', formData);
+                    const taskResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.form.results = []
                 } else {
-                    await this.$store.dispatch('documents/CREATE_DOCUMENT', formData)
+                    await this.$store.dispatch('tasks/CREATE_TASK', formData)
                     this.form.results = []
                 }
             },
             changeQuickly() {
-                if (this.form.incoming_date) {
                     if (this.form.quickly === true) {
-                        const startDate = new Date(this.form.incoming_date);
+                        const startDate = new Date();
                         const endDate = new Date(startDate);
-                        endDate.setDate(startDate.getDate() + 3);
+                        endDate.setDate(startDate.getDate());
                         this.form.deadline_date = endDate.toISOString().split('T')[0];
                     } else {
-                        const startDate = new Date(this.form.incoming_date);
+                        const startDate = new Date();
                         const endDate = new Date(startDate);
-                        endDate.setDate(startDate.getDate() + 21);
+                        endDate.setDate(startDate.getDate() + 2);
                         this.form.deadline_date = endDate.toISOString().split('T')[0];
                     }
-                } else {
-                    this.form.deadline_date = '';
-                }
             },
             changeIncomingDate() {
-                if (this.form.incoming_date) {
-                    const startDate = new Date(this.form.incoming_date);
+                    const startDate = new Date();
                     const endDate = new Date(startDate);
-                    endDate.setDate(startDate.getDate() + 21);
+                    endDate.setDate(startDate.getDate() + 2);
                     this.form.deadline_date = endDate.toISOString().split('T')[0];
-                } else {
-                    this.form.deadline_date = '';
-                }
             },
         }
     }
@@ -846,5 +848,12 @@
 
     .v-dialog:not(.v-dialog--fullscreen) {
         max-height: 95%;
+    }
+    a.help {
+        font-size: 12px;
+        text-decoration: none;
+        border-bottom: 1px dashed;
+        margin: 0 5px;
+        color:#91a7d9;
     }
 </style>

@@ -167,6 +167,7 @@
             ...mapState('devices', ['device','errors', 'success', 'form_loading', 'error', 'edit_device_loading']),
             ...mapState('layout', ['device_types']),
             ...mapState('documents', ['open_document_id']),
+            ...mapState('tasks', ['open_task_id']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -210,14 +211,24 @@
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
                 }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
                 formData.append('user_id', this.user_id);
                 if(this.form_editing) {
                     await this.$store.dispatch('devices/UPDATE_DEVICE', formData)
                 }else{
                     await this.$store.dispatch('devices/CREATE_DEVICE', formData)
                 }
-                const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+
+                if(this.open_document_id){
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if(this.open_task_id){
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
                 this.clearFields()
             },
             async close() {

@@ -62,13 +62,14 @@
             }
         },
         mounted() {
-            this.loadData()
+           this.loadData()
         },
         methods: {
             async loadData(){
                 // Справочник -> Статусы (Выпадающий список)
                 this.statuses = await this.$axios.$get('/api/helpers/statuses');
                 this.$store.commit('documents/SET_STATUSES',this.statuses);
+                this.$store.commit('tasks/SET_STATUSES',this.statuses);
                 // Список подразделений (Выпадающий список)
                 this.groups = await this.$axios.$get('/api/helpers/groups');
                 this.$store.commit('documents/SET_GROUPS', this.groups);
@@ -78,6 +79,8 @@
                 // Справочник -> Типы задач (Выпадающий список)
                 this.task_types = await this.$axios.$get('/api/helpers/task_types');
                 this.$store.commit('documents/SET_TYPES', this.task_types);
+                this.task_subtypes = await this.$axios.$get('/api/helpers/task_subtypes');
+                this.$store.commit('tasks/SET_SUBTYPES', this.task_subtypes);
                 // Справочник -> Типы контактов (Выпадающий список)
                 const contact_types = await this.$axios.$get('/api/helpers/contact-types');
                 this.$store.commit('layout/SET_CONTACT_TYPES', contact_types);
