@@ -20,32 +20,32 @@
             </v-list-item>
         </v-list>
 
-        <v-subheader>
-            Меню
-        </v-subheader>
-        <v-list v-if="menus && menus.length > 0">
-            <v-list-item
-                    v-for="(item, i) in menus"
-                    :key="i"
-                    :to="item.to"
-                    router
-                    exact
-            >
-                <v-list-item-action>
-                    <v-icon>{{ item.icon }}</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-        </v-list>
+<!--        <v-subheader>-->
+<!--            Меню-->
+<!--        </v-subheader>-->
+<!--        <v-list v-if="menus && menus.length > 0">-->
+<!--            <v-list-item-->
+<!--                    v-for="(item, i) in menus"-->
+<!--                    :key="i"-->
+<!--                    :to="item.to"-->
+<!--                    router-->
+<!--                    exact-->
+<!--            >-->
+<!--                <v-list-item-action>-->
+<!--                    <v-icon>{{ item.icon }}</v-icon>-->
+<!--                </v-list-item-action>-->
+<!--                <v-list-item-content>-->
+<!--                    <v-list-item-title>{{ item.title }}</v-list-item-title>-->
+<!--                </v-list-item-content>-->
+<!--            </v-list-item>-->
+<!--        </v-list>-->
 
     </div>
 </template>
 
 <script>
     export default {
-        name: "vMenu",
+        name: "Menu",
         data(){
             return {
                 personal_menus: [
@@ -89,6 +89,7 @@
                 ],
             }
         },
+
     }
 </script>
 
@@ -100,5 +101,4 @@
     .v-application .primary--text {
         color: #ffff !important;
     }
-
 </style>

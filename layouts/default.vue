@@ -4,7 +4,7 @@
                 v-model="drawer"
                 :mini-variant="miniVariant"
                 :clipped="clipped"
-                color="#37474F"
+                :color="$config.NAVIGATOR_COLOR"
                 dark
                 fixed
                 app
@@ -24,7 +24,7 @@
                 </v-list-item>
             </template>
             <v-divider></v-divider>
-            <v-menu />
+            <Menu />
         </v-navigation-drawer>
 
         <v-app-bar
@@ -34,7 +34,7 @@
                 color="#fff"
         >
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
-            <v-app-bar-title>Планировщик</v-app-bar-title>
+            <v-app-bar-title>{{ $config.TITLE }}</v-app-bar-title>
         </v-app-bar>
         <v-main>
             <v-container>
@@ -46,10 +46,10 @@
 </template>
 
 <script>
-    import VMenu from "../components/vMenu";
+    import Menu from "../components/Menu";
     export default {
         name: 'DefaultLayout',
-        components: {VMenu},
+        components: {Menu},
         data() {
             return {
                 clipped: false,

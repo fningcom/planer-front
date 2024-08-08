@@ -107,18 +107,30 @@
                             label
 
                     >
-                        <v-icon dark left small>mdi mdi-check-all</v-icon> {{ item.formatted_execution_date }}
+                        <v-icon dark left small>mdi mdi-check-all</v-icon> {{ item.status.title }}
                     </v-chip>
                     <v-chip
                             v-else-if="item.started_work_date"
                             style="font-size: 12px;"
-                            color="#EF5350"
+                            color="#00838f"
                             dark
                             label
                             outlined
                     >
                         <b>В работе:&nbsp;</b> {{ timeAgo(item.started_work_date) }}
                     </v-chip>
+                </template>
+                <template v-slot:item.type.title="{ item }">
+                    <div style="display: flex; align-items: center;">
+                        <div style="margin-right: 5px;">
+                            <img v-if="item.type.icon === null" src="/img/icons/task2.png" height="25" width="25"/>
+                            <img v-else :src="item.type.icon" height="25" width="25"/>
+                        </div>
+                        <div>
+                            <b>{{ item.type.title }} </b>
+                            <div class="smallRow"><i class="title-text">{{ item.title }}</i></div>
+                        </div>
+                    </div>
                 </template>
                 <template v-slot:item.actions="{ item }">
                     <v-icon style="cursor:pointer" @click="editDialog(item.id)">mdi-pencil</v-icon>
@@ -158,6 +170,7 @@
                 msg: {},
                 headers: [
                     {text: 'id', value: 'id', sortable: false, width: "40"},
+                    {text: 'Дата создания', value: 'formatted_created_at', sortable: false},
                     {text: 'Статус', value: 'status', sortable: false},
                     {text: '', value: 'control', sortable: false, width: "40"},
                     {text: 'Исходящий номер', value: 'outgoing_number', sortable: false, width: "150"},
@@ -168,7 +181,6 @@
                     {text: 'Устройств', value: 'devices', sortable: false},
                     {text: 'Лиц', value: 'faces', sortable: false},
                     {text: 'Файлов', value: 'files', sortable: false},
-                    {text: 'Дата создания', value: 'formatted_created_at', sortable: false},
                     {text: 'Срок исполнения', value: 'formatted_deadline_date', sortable: false, width: "150"},
                     {text: '', value: 'actions', sortable: false}
                 ],
@@ -225,7 +237,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .smallRow {
         font-size: 11px;
     }

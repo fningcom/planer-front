@@ -76,6 +76,8 @@
                                             <div class="icons mb-3">
                                                 <v-img src="/img/icons/phone.png" max-width="24" class="v-icon-a"
                                                        @click="selectIcon(11)"></v-img>
+                                                <v-img src="/img/icons/face.png" max-width="24" class="v-icon-a"
+                                                       @click="selectIcon(20)"></v-img>
                                                 <v-img src="/img/icons/mail.png" max-width="24" class="v-icon-a"
                                                        @click="selectIcon(15)"></v-img>
                                                 <v-img src="/img/icons/telegram.png" max-width="24" class="v-icon-a"
@@ -121,7 +123,7 @@
                                                             :error-messages="error ? errors.data.code: ''"
                                                             :loading="loading"
                                                             hint="Для проверки по базе, жми Enter"
-                                                            @change="onInput"
+                                                            @input="onInput"
 
                                                     >
                                                     </v-text-field>
@@ -164,7 +166,7 @@
                                         </v-row>
 
                                     </div>
-                                    <v-row v-if="!multi_insert && contact_found.length === 0 && selectType">
+                                    <v-row v-if="!isFaceTypeSelected && !multi_insert && contact_found.length === 0 && selectType">
                                         <v-col cols="6" md="6">
                                             <v-text-field
                                                     label="ФИО / Имя / Подписан"
@@ -183,8 +185,8 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-                                    <v-row v-if="!multi_insert && selectType">
-                                        <v-col cols="12" md="12">
+                                    <v-row v-if="!multi_insert && selectType && contact_found.length === 0">
+                                        <v-col cols="12" md="12" v-if="!isFaceTypeSelected">
                                             <v-text-field
                                                     label="Должность"
                                                     required
@@ -205,7 +207,7 @@
                                         </v-col>
                                     </v-row>
                                     <div style="width: 230px; margin: 0 auto; position: relative"
-                                         v-if="avatar && avatar.length >0 &&!multi_insert && viewImage">
+                                         v-if="avatar && avatar.length >0 &&!multi_insert && viewImage && contact_found.length === 0">
                                         <image-preview
                                                 :previewUrl="avatar[0]['preview_url']"
                                                 :fullImageUrl="avatar[0]['original_url']"
@@ -331,7 +333,7 @@
     import ImagePreview from "../imagePreview";
 
     export default {
-        name: "vContactForm",
+        name: "ContactForm",
         components: {ImagePreview},
         data() {
             return {
@@ -347,6 +349,7 @@
                 preview_url: "",
                 avatar: [],
                 screenshots_src: [],
+                isFaceTypeSelected: false,
                 // форма
                 form: {
                     type_id: "",
@@ -431,7 +434,7 @@
                         code: this.form.code,
                         type_id: this.form.type_id,
                     };
-                    const response = await this.$axios.$get('/api/contacts/code/', {params});
+                    const response = await this.$axios.$get('/api/contacts/code', {params});
                     if (response && response.success && response.success === true) {
                         this.loading = false;
                         this.$store.commit('contacts/SET_CONTACT_FOUND', response.contact);
@@ -490,9 +493,17 @@
                 return contact_types.find(contact_type => contact_type.id === id);
             },
             selectIcon(id) {
-                if (id === 11 || id === 2) {
-                    this.form.code = '+373'
+                if (id === 20) {
+                    this.isFaceTypeSelected = true
+                }else{
+                    if (id === 11 || id === 2) {
+                        this.form.code = '+373'
+                    }else{
+                        this.form.code = ''
+                    }
+                    this.isFaceTypeSelected = false
                 }
+
                 this.form.type_id = id
                 const contactType = this.findContactTypeById(this.contact_types, id);
                 this.hint = contactType['code']

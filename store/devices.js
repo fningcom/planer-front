@@ -43,7 +43,7 @@ export const actions = {
     async CREATE_DEVICE({commit}, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/devices/', data, {
+            const response = await this.$axios.post('/api/devices', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

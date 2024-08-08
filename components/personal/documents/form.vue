@@ -40,13 +40,13 @@
                         Общее
                     </v-tab>
                     <v-tab href="#tab-2" v-if="open_document_id">
-                        Контакты
+                        Контакты <span v-if="contact_count">&nbsp;({{ contact_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3" v-if="open_document_id">
-                        Устройство
+                        Устройство <span v-if="device_count">&nbsp;({{ device_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-4" v-if="open_document_id">
-                        Лицо
+                        Лицо <span v-if="face_count">&nbsp;({{ face_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-5" v-if="open_document_id">
                         Результат
@@ -257,7 +257,7 @@
                                             контакт
                                             <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
                                         </v-btn>
-                                        <v-contact-form :dialog="contactDialog"/>
+                                        <contact-form :dialog="contactDialog"/>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -309,7 +309,7 @@
                                         <v-icon left>mdi mdi-plus</v-icon>
                                         устройство
                                     </v-btn>
-                                    <v-device-form :dialog="deviceDialog"/>
+                                    <device-form :dialog="deviceDialog"/>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -350,7 +350,7 @@
                                         лицо
                                         <!--                                        <v-icon small>mdi mdi-account-check</v-icon>-->
                                     </v-btn>
-                                    <v-face-form :dialog="faceDialog"/>
+                                    <face-form :dialog="faceDialog"/>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -547,14 +547,14 @@
 <script>
     import {mapState} from 'vuex'
     import {filterMediaByCollection, formatDate, formatDateTime, toDay} from '../../../plugins/helpers.js'
-    import VContactForm from "../../modal/vContactForm";
-    import VDeviceForm from "../../modal/vDeviceForm";
-    import VFaceForm from "../../modal/vFaceForm";
+    import ContactForm from "../../modal/ContactForm";
+    import DeviceForm from "../../modal/DeviceForm";
+    import FaceForm from "../../modal/FaceForm";
     import ImagePreview from "../../imagePreview";
 
     export default {
-        name: "vForm",
-        components: {ImagePreview, VFaceForm, VDeviceForm, VContactForm},
+        name: "DocumentForm",
+        components: {ImagePreview, FaceForm, DeviceForm, ContactForm},
         data() {
             return {
                 removeLoader: false,
@@ -632,6 +632,21 @@
             },
             currentUserId() {
                 return this.$auth.user.id;
+            },
+            contact_count(){
+                if(this.document && this.document.contacts){
+                    return this.document.contacts.length
+                }
+            },
+            device_count(){
+                if(this.document && this.document.devices) {
+                    return this.document.devices.length
+                }
+            },
+            face_count(){
+                if(this.document && this.document.faces){
+                    return this.document.faces.length
+                }
             },
         },
         props: ['dialog'],

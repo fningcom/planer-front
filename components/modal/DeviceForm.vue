@@ -148,7 +148,7 @@
     import {mapState} from 'vuex'
 
     export default {
-        name: "vDeviceForm",
+        name: "DeviceForm",
         data() {
             return {
                 tab: null,

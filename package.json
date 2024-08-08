@@ -6,9 +6,11 @@
     "dev": "cross-env NODE_ENV=develop nuxt --hostname 'localhost' --port 3000\"",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "cross-env NODE_ENV=production nuxt generate"
+    "generate": "cross-env NODE_ENV=production nuxt generate",
+    "generate-local": "cross-env NODE_ENV=develop nuxt generate"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.25.3",

@@ -7,20 +7,20 @@
             </v-btn>
         </v-card>
         <data-table/>
-        <v-form :dialog="dialog" />
+        <task-form :dialog="dialog" />
     </div>
 </template>
 
 <script>
     import {mapState} from 'vuex'
     import DataTable from "../../components/personal/tasks/table";
-    import VForm from "../../components/personal/tasks/vForm";
+    import TaskForm from "../../components/personal/tasks/form";
     export default {
         name: 'MyTasks',
         head: {
             title: 'Мои задачи'
         },
-        components: {VForm, DataTable},
+        components: {TaskForm, DataTable},
         computed: {
             ...mapState('tasks', ['dialog']),
         },

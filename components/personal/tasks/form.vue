@@ -42,13 +42,13 @@
                         Общее
                     </v-tab>
                     <v-tab href="#tab-2" v-if="open_task_id">
-                        Контакты
+                        Контакты <span v-if="contact_count">&nbsp;({{ contact_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3" v-if="open_task_id">
-                        Устройство
+                        Устройство <span v-if="device_count">&nbsp;({{ device_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-4" v-if="open_task_id">
-                        Лицо
+                        Лицо <span v-if="face_count">&nbsp;({{ face_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-5" v-if="open_task_id">
                         Результат
@@ -90,7 +90,7 @@
                                              style="margin: -19px 0 0 6px;">
                                             <a href="#" class="help" @click.prevent="helpClick(item.title)">{{ item.title }}</a>
                                         </div>
-                                        <v-col cols="12" md="12">
+                                        <v-col cols="7" md="7">
                                             <v-textarea
                                                     v-model="form.comment"
                                                     outlined
@@ -98,6 +98,34 @@
                                                     label="Детальное описание задачи"
                                                     dense
                                             ></v-textarea>
+                                        </v-col>
+                                        <v-col cols="5" md="5">
+                                            <div style="border: 1px dotted #ccc; padding: 5px; min-height: 145px">
+                                                <v-file-input
+                                                        class="att_file"
+                                                        accept=".pdf,.doc,.docx,.xls,.xlsx"
+                                                        placeholder="Выберите файл"
+                                                        prepend-icon="mdi mdi-paperclip-check"
+                                                        label="Дополнительные файлы"
+                                                        v-model="form.files"
+                                                        multiple
+                                                ></v-file-input>
+                                                <div>
+                                                    <div v-for="item in files_files" style="display: flex; justify-content: space-between">
+                                                        <div>
+                                                            <v-icon small>mdi mdi-paperclip</v-icon>{{ item.file_name }}
+                                                        </div>
+                                                        <div style="min-width: 55px;">
+                                                            <a :href="item.original_url"><v-icon>mdi mdi-download</v-icon></a>
+                                                            <v-icon style="cursor:pointer"
+                                                                    @click="removeFile(item.id, task.id)">mdi mdi-close
+                                                            </v-icon>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
                                         </v-col>
                                     </v-row>
                                     <v-row>
@@ -232,7 +260,7 @@
                                             контакт
                                             <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
                                         </v-btn>
-                                        <v-contact-form :dialog="contactDialog"/>
+                                        <contact-form :dialog="contactDialog"/>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -244,8 +272,7 @@
                                                 class="elevation-1 my-2"
                                                 :loading="removeLoader"
                                                 loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                                hide-default-footer
-                                                :items-per-page=15
+                                                :items-per-page=8
                                         >
                                             <template v-slot:item.number="{ item, index }">
                                                 {{ index + 1 }}
@@ -284,7 +311,7 @@
                                         <v-icon left>mdi mdi-plus</v-icon>
                                         устройство
                                     </v-btn>
-                                    <v-device-form :dialog="deviceDialog"/>
+                                    <device-form :dialog="deviceDialog"/>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -325,7 +352,7 @@
                                         лицо
                                         <!--                                        <v-icon small>mdi mdi-account-check</v-icon>-->
                                     </v-btn>
-                                    <v-face-form :dialog="faceDialog"/>
+                                    <face-form :dialog="faceDialog"/>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -521,14 +548,14 @@
 <script>
     import {mapState} from 'vuex'
     import {filterMediaByCollection, formatDate, formatDateTime, toDay} from '../../../plugins/helpers.js'
-    import VContactForm from "../../modal/vContactForm";
-    import VDeviceForm from "../../modal/vDeviceForm";
-    import VFaceForm from "../../modal/vFaceForm";
     import ImagePreview from "../../imagePreview";
+    import ContactForm from "../../modal/ContactForm";
+    import DeviceForm from "../../modal/DeviceForm";
+    import FaceForm from "../../modal/FaceForm";
 
     export default {
-        name: "vForm",
-        components: {ImagePreview, VFaceForm, VDeviceForm, VContactForm},
+        name: "TaskForm",
+        components: {FaceForm, DeviceForm, ContactForm, ImagePreview},
         data() {
             return {
                 removeLoader: false,
@@ -567,6 +594,8 @@
                 ],
                 // форма
                 result_files: [],
+                files_files: [],
+                //
                 form: {
                     title: "",
                     status_id: 1,
@@ -582,7 +611,8 @@
                     execution_date: "",
                     control: false,
                     users: [],
-                    results: []
+                    results: [],
+                    files: []
                 }
             }
         },
@@ -609,6 +639,21 @@
             },
             currentUserId() {
                 return this.$auth.user.id;
+            },
+            contact_count(){
+                if(this.task && this.task.contacts){
+                    return this.task.contacts.length
+                }
+            },
+            device_count(){
+                if(this.task && this.task.devices) {
+                    return this.task.devices.length
+                }
+            },
+            face_count(){
+                if(this.task && this.task.faces){
+                    return this.task.faces.length
+                }
             },
         },
         props: ['dialog'],
@@ -640,6 +685,7 @@
                     this.form.title = value.title;
                     if (value.media){
                         this.result_files = filterMediaByCollection(value.media, 'results');
+                        this.files_files = filterMediaByCollection(value.media, 'files');
                     }
                 }
                 //
@@ -706,6 +752,8 @@
             async setStatus(status_id) {
                 this.$store.commit('tasks/CHANGE_TASK_STATUS', status_id);
                 let url = '/api/tasks/' + this.open_task_id + '/status/' + status_id + '/' + this.user_id;
+                this.form.status_id = status_id;
+                this.form.execution_date = new Date().toISOString();
                 const response = await this.$axios.$post(url);
             },
             async removeLink(contact_id, task_id) {
@@ -760,7 +808,7 @@
                 this.form.group_id = 1;
                 this.form.type_id = 1;
                 this.form.status_id = 1;
-                this.form.customer_id = "";
+                this.form.customer_id = 1;
                 this.form.users[0] = this.$auth.user.id;
                 this.form.quickly = false;
                 this.form.deanon = false;
@@ -769,6 +817,7 @@
                 this.form.comment = "";
                 this.form.result = "";
                 this.form.results = [];
+                this.form.files = [];
                 this.form.execution_date = "";
                 this.form.control = false
             },
@@ -779,6 +828,9 @@
                 }
                 this.form.results.forEach((file) => {
                     formData.append('results[]', file);
+                });
+                this.form.files.forEach((file) => {
+                    formData.append('files[]', file);
                 });
                 formData.append('user_id', this.user_id);
                 formData.append('quickly', this.form.quickly ? 1 : 0);
@@ -809,9 +861,11 @@
                     const taskResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', taskResponse);
                     this.form.results = []
+                    this.form.files = []
                 } else {
                     await this.$store.dispatch('tasks/CREATE_TASK', formData)
                     this.form.results = []
+                    this.form.files = []
                 }
             },
             changeQuickly() {
@@ -855,5 +909,8 @@
         border-bottom: 1px dashed;
         margin: 0 5px;
         color:#91a7d9;
+    }
+    .att_file label {
+        font-size: 12px;
     }
 </style>

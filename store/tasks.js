@@ -97,12 +97,7 @@ export const actions = {
     async CREATE_TASK({commit, state}, data) {
         commit('FORM_LOADING_ON')
         try {
-            const response = await this.$axios.post('/api/tasks/', data,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
+            const response = await this.$axios.post('/api/tasks', data)
                 .then(function (response) {
                     if (response.data.success === false) {
                         commit('ERROR_ON')

@@ -7,18 +7,18 @@
             </v-btn>
         </v-card>
         <data-table/>
-        <v-form :dialog="dialog" />
+        <document-form :dialog="dialog" />
     </div>
 </template>
 
 <script>
     import {mapState} from 'vuex'
     import DataTable from "../../components/personal/documents/table";
-    import VForm from "../../components/personal/documents/vForm";
+    import DocumentForm from "../../components/personal/documents/form";
 
     export default {
         name: "documents",
-        components: {VForm, DataTable},
+        components: {DocumentForm, DataTable},
         head: {
             title: 'Мои документы'
         },

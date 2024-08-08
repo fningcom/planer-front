@@ -185,7 +185,7 @@
     import {filterMediaByCollection} from '../../plugins/helpers.js'
 
     export default {
-        name: "vFaceForm",
+        name: "FaceForm",
         components: {ImagePreview},
         data() {
             return {

@@ -53,6 +53,7 @@
                                 v-model="date_type"
                                 column
                                 dense
+                                @change="submitFilter"
                         >
                             <v-radio
                                     label="Дата создания"
@@ -145,6 +146,7 @@
                                         disabled
                                 >
                                 </v-select>
+
                             </v-col>
                         </v-row>
 
@@ -240,6 +242,7 @@
                 }
                 this.finish_from = `${year}-${month}-${day}`;
                 this.finish_to = `${year}-${month}-${day}`;
+                this.submitFilter();
             },
             yesterday() {
                 const yesterday = new Date();
@@ -255,6 +258,7 @@
                 }
                 this.finish_from = `${year}-${month}-${day}`;
                 this.finish_to = `${year}-${month}-${day}`;
+                this.submitFilter();
             },
             this_week() {
                 const today = new Date();
@@ -273,6 +277,7 @@
 
                 this.finish_from = format(firstDayOfWeek);
                 this.finish_to = format(lastDayOfWeek);
+                this.submitFilter();
             },
             this_month() {
                 const today = new Date();
@@ -290,6 +295,7 @@
 
                 this.finish_from = format(firstDayOfMonth);
                 this.finish_to = format(lastDayOfMonth);
+                this.submitFilter();
             },
             last_month() {
                 const today = new Date();
@@ -307,6 +313,7 @@
 
                 this.finish_from = format(firstDayOfPrevMonth);
                 this.finish_to = format(lastDayOfPrevMonth);
+                this.submitFilter();
             }
         },
     }

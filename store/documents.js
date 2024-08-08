@@ -93,12 +93,7 @@ export const actions = {
     async CREATE_DOCUMENT({commit, state}, data) {
         commit('FORM_LOADING_ON')
         try {
-            const response = await this.$axios.post('/api/documents/', data,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    },
-                })
+            const response = await this.$axios.post('/api/documents', data)
                 .then(function (response) {
                     if (response.data.success === false) {
                         commit('ERROR_ON')

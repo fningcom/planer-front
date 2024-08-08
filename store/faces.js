@@ -43,7 +43,7 @@ export const actions = {
     async CREATE_FACE({commit}, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/faces/', data, {
+            const response = await this.$axios.post('/api/faces', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

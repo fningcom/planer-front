@@ -45,7 +45,7 @@ export const actions = {
     async CREATE_CONTACT({ commit }, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/contacts/', data, {
+            const response = await this.$axios.post('/api/contacts', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -89,7 +89,7 @@ export const actions = {
     async BIND_CONTACT({ commit }, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/contacts/bind/', data);
+            const response = await this.$axios.post('/api/contacts/bind', data);
             if (response.data.success === false) {
                 commit('ERROR_ON');
                 commit('ERRORS_STORE', response.data);
@@ -106,7 +106,7 @@ export const actions = {
     async IMPORT_CONTACTS({ commit }, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/contacts-import/', data);
+            const response = await this.$axios.post('/api/contacts-import', data);
             if (response.data.success === false) {
                 commit('ERROR_ON');
                 commit('ERRORS_STORE', response.data);

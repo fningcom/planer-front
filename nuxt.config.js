@@ -6,6 +6,10 @@ const envFile = `.env.${env}`;
 require('dotenv').config({ path: resolve(__dirname, envFile) });
 
 export default {
+  publicRuntimeConfig: {
+    TITLE: process.env.TITLE,
+    NAVIGATOR_COLOR: process.env.NAVIGATOR_COLOR
+  },
   target: 'static',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -21,12 +25,14 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/' + process.env.FAVICON }
     ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    'vuetify/dist/vuetify.min.css',
+    '@mdi/font/css/materialdesignicons.min.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -87,9 +93,6 @@ export default {
   axios: {
     baseURL: process.env.API_BASE_URL,
     credentials: true,
-    headers: {
-      Authorization: `Bearer ${process.env.API_TOKEN}`
-    }
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
