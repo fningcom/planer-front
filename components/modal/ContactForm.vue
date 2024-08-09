@@ -207,7 +207,14 @@
                                         </v-col>
                                     </v-row>
                                     <div style="width: 230px; margin: 0 auto; position: relative"
-                                         v-if="avatar && avatar.length >0 &&!multi_insert && viewImage && contact_found.length === 0">
+                                         v-if="imageUrl && !avatar &&!multi_insert && viewImage && contact_found.length === 0">
+                                        <image-preview
+                                                :previewUrl="imageUrl"
+                                                :fullImageUrl="imageUrl"
+                                        />
+                                    </div>
+                                    <div style="width: 230px; margin: 0 auto; position: relative"
+                                         v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage && contact_found.length === 0">
                                         <image-preview
                                                 :previewUrl="avatar[0]['preview_url']"
                                                 :fullImageUrl="avatar[0]['original_url']"
@@ -215,8 +222,6 @@
                                         <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
                                         </v-icon>
                                     </div>
-
-
                                     <v-row v-if="multi_insert && selectType">
                                         <v-col cols="12" md="12">
                                             <v-textarea
@@ -445,6 +450,7 @@
                 }
             },
             createImage(file) {
+                this.avatar = null;
                 const reader = new FileReader();
                 reader.onload = e => {
                     this.imageUrl = e.target.result;

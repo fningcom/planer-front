@@ -139,15 +139,22 @@
                                                 ></v-file-input>
                                             </v-col>
                                         </v-row>
-                                        <div style="width: 230px; margin: 0 auto; position: relative"
-                                             v-if="avatar && avatar.length >0 &&!multi_insert && viewImage">
-                                            <image-preview
-                                                    :previewUrl="avatar[0]['preview_url']"
-                                                    :fullImageUrl="avatar[0]['original_url']"
-                                            />
-                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
-                                            </v-icon>
-                                        </div>
+                                    <div style="width: 230px; margin: 0 auto; position: relative"
+                                         v-if="imageUrl && !avatar &&!multi_insert && viewImage">
+                                        <image-preview
+                                                :previewUrl="imageUrl"
+                                                :fullImageUrl="imageUrl"
+                                        />
+                                    </div>
+                                    <div style="width: 230px; margin: 0 auto; position: relative"
+                                         v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">
+                                        <image-preview
+                                                :previewUrl="avatar[0]['preview_url']"
+                                                :fullImageUrl="avatar[0]['original_url']"
+                                        />
+                                        <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
+                                        </v-icon>
+                                    </div>
                                 </v-container>
                             </v-card-text>
                         </v-card>
@@ -297,14 +304,6 @@
                 this.$store.commit('faces/SUCCESS_STORE', []);
                 this.clearFields()
             },
-            createImage(file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    this.imageUrl = e.target.result;
-                };
-                reader.readAsDataURL(file);
-                this.viewImage = true
-            },
             async removePhoto(photo_id) {
                 const formData = new FormData();
                 formData.append('photo_id', photo_id);
@@ -314,6 +313,15 @@
                 } catch (error) {
                     console.error('Error removing photo:', error);
                 }
+            },
+            createImage(file) {
+                this.avatar = null;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    this.imageUrl = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                this.viewImage = true
             },
             onFileChange(file) {
                 if (!file) {
