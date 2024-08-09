@@ -110,43 +110,8 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-<!--                                    <v-row>-->
-<!--                                        <v-col>-->
-<!--                                            <v-file-input-->
-<!--                                                    accept="image/png, image/jpeg, image/bmp"-->
-<!--                                                    placeholder="Выберите файл"-->
-<!--                                                    prepend-icon="mdi-camera"-->
-<!--                                                    label="Фото"-->
-<!--                                                    v-model="form.image"-->
-<!--                                                    @change="onFileChange"-->
-<!--                                                    @click:clear="onFileClear"-->
-<!--                                            ></v-file-input>-->
-<!--                                        </v-col>-->
-<!--                                    </v-row>-->
-<!--                                    <div style="width: 275px; margin: 0 auto;" v-if="viewImage">-->
-<!--                                        <v-img :src="imageUrl"/>-->
-<!--                                    </div>-->
-                                        <v-row>
-                                            <v-col cols="12" md="12">
-                                                <v-file-input
-                                                        accept="image/png, image/jpeg, image/bmp"
-                                                        placeholder="Выберите файл"
-                                                        prepend-icon="mdi-camera"
-                                                        label="Фото профиля"
-                                                        v-model="form.image"
-                                                        @change="onFileChange"
-                                                        @click:clear="onFileClear"
-                                                ></v-file-input>
-                                            </v-col>
-                                        </v-row>
-                                    <div style="width: 230px; margin: 0 auto; position: relative"
-                                         v-if="imageUrl && !avatar &&!multi_insert && viewImage">
-                                        <image-preview
-                                                :previewUrl="imageUrl"
-                                                :fullImageUrl="imageUrl"
-                                        />
-                                    </div>
-                                    <div style="width: 230px; margin: 0 auto; position: relative"
+                                    <p>Фото профиля</p>
+                                    <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
                                          v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">
                                         <image-preview
                                                 :previewUrl="avatar[0]['preview_url']"
@@ -155,6 +120,37 @@
                                         <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
                                         </v-icon>
                                     </div>
+                                    <drag-drop v-model="form.image" v-if="!viewImage"/>
+
+<!--                                        <v-row>-->
+<!--                                            <v-col cols="12" md="12">-->
+<!--                                                <v-file-input-->
+<!--                                                        accept="image/png, image/jpeg, image/bmp"-->
+<!--                                                        placeholder="Выберите файл"-->
+<!--                                                        prepend-icon="mdi-camera"-->
+<!--                                                        label="Фото профиля"-->
+<!--                                                        v-model="form.image"-->
+<!--                                                        @change="onFileChange"-->
+<!--                                                        @click:clear="onFileClear"-->
+<!--                                                ></v-file-input>-->
+<!--                                            </v-col>-->
+<!--                                        </v-row>-->
+<!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
+<!--                                             v-if="imageUrl && !avatar &&!multi_insert && viewImage">-->
+<!--                                            <image-preview-->
+<!--                                                    :previewUrl="imageUrl"-->
+<!--                                                    :fullImageUrl="imageUrl"-->
+<!--                                            />-->
+<!--                                        </div>-->
+<!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
+<!--                                             v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">-->
+<!--                                            <image-preview-->
+<!--                                                    :previewUrl="avatar[0]['preview_url']"-->
+<!--                                                    :fullImageUrl="avatar[0]['original_url']"-->
+<!--                                            />-->
+<!--                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close-->
+<!--                                            </v-icon>-->
+<!--                                        </div>-->
                                 </v-container>
                             </v-card-text>
                         </v-card>
@@ -190,10 +186,11 @@
     import {mapState} from 'vuex'
     import ImagePreview from "../imagePreview";
     import {filterMediaByCollection} from '../../plugins/helpers.js'
+    import DragDrop from "../DragDrop";
 
     export default {
         name: "FaceForm",
-        components: {ImagePreview},
+        components: {DragDrop, ImagePreview},
         data() {
             return {
                 tab: null,
@@ -310,6 +307,7 @@
                 try {
                     this.avatar = this.avatar.filter(item => item.id !== photo_id);
                     const response = await this.$axios.$post('/api/media/remove', formData);
+                    this.viewImage = false
                 } catch (error) {
                     console.error('Error removing photo:', error);
                 }
