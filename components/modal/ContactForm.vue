@@ -215,7 +215,7 @@
 <!--                                    </div>-->
                                     <p>Фото профиля</p>
                                     <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
-                                         v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage && contact_found.length === 0">
+                                         v-if="avatar && avatar.length > 0 && !multi_insert && viewImage && contact_found.length === 0">
                                         <image-preview
                                                 :previewUrl="avatar[0]['preview_url']"
                                                 :fullImageUrl="avatar[0]['original_url']"
@@ -223,7 +223,7 @@
                                         <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
                                         </v-icon>
                                     </div>
-                                    <drag-drop v-model="form.image" v-if="!viewImage"/>
+                                    <drag-drop v-model="form.image" v-if="!viewImage && !multi_insert"/>
 
 
                                     <v-row v-if="multi_insert && selectType">
@@ -499,7 +499,8 @@
                 this.form.import = "";
                 this.screenshots_src = [];
                 this.tab = 1;
-                this.onFileClear()
+                this.onFileClear();
+                this.form_editing = false;
             },
             findContactTypeById(contact_types, id) {
                 return contact_types.find(contact_type => contact_type.id === id);

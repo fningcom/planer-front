@@ -269,8 +269,7 @@
                                                 class="elevation-1 my-2"
                                                 :loading="removeLoader"
                                                 loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                                hide-default-footer
-                                                :items-per-page=15
+                                                :items-per-page=8
                                         >
                                             <template v-slot:item.number="{ item, index }">
                                                 {{ index + 1 }}
@@ -321,8 +320,7 @@
                                             class="elevation-1 my-2"
                                             :loading="removeLoader"
                                             loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                            hide-default-footer
-                                            :items-per-page=15
+                                            :items-per-page=8
                                     >
                                         <template v-slot:item.number="{ item, index }">
                                             {{ index + 1 }}
@@ -362,8 +360,7 @@
                                             class="elevation-1 my-2"
                                             :loading="removeLoader"
                                             loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                            hide-default-footer
-                                            :items-per-page=15
+                                            :items-per-page=8
                                     >
                                         <template v-slot:item.number="{ item, index }">
                                             {{ index + 1 }}
