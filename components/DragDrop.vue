@@ -6,7 +6,7 @@
             @drop.prevent="onDrop"
             @paste="onPaste"
     >
-        <p>Перетащите сюда изображение, вставьте из буфера обмена или нажмите для выбора файла</p>
+        <p v-if="!previewUrl">Перетащите сюда изображение, вставьте из буфера обмена или нажмите для выбора файла</p>
         <input
                 type="file"
                 ref="fileInput"
@@ -89,7 +89,7 @@
         text-align: center;
         cursor: pointer;
         width: 100%;
-        height: 200px;
+        height: 250px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -97,7 +97,7 @@
     }
 
     .preview-container {
-        margin-top: 20px;
+        /*margin-top: 20px;*/
     }
 
     .preview-image {

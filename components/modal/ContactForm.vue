@@ -213,18 +213,19 @@
 <!--                                                :fullImageUrl="imageUrl"-->
 <!--                                        />-->
 <!--                                    </div>-->
-                                    <p>Фото профиля</p>
-                                    <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
-                                         v-if="avatar && avatar.length > 0 && !multi_insert && viewImage && contact_found.length === 0">
-                                        <image-preview
-                                                :previewUrl="avatar[0]['preview_url']"
-                                                :fullImageUrl="avatar[0]['original_url']"
-                                        />
-                                        <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
-                                        </v-icon>
+                                    <div v-if="!multi_insert">
+                                        <p>Фото профиля</p>
+                                        <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
+                                             v-if="avatar && avatar.length > 0 && viewImage && contact_found.length === 0">
+                                            <image-preview
+                                                    :previewUrl="avatar[0]['preview_url']"
+                                                    :fullImageUrl="avatar[0]['original_url']"
+                                            />
+                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
+                                            </v-icon>
+                                        </div>
+                                        <drag-drop v-model="form.image" v-else/>
                                     </div>
-                                    <drag-drop v-model="form.image" v-if="!viewImage && !multi_insert"/>
-
 
                                     <v-row v-if="multi_insert && selectType">
                                         <v-col cols="12" md="12">
@@ -267,14 +268,25 @@
                             <v-card-text>
                                 <v-row>
                                     <v-col>
-                                        <v-file-input
-                                                accept="image/png, image/jpeg, image/bmp"
-                                                placeholder="Выберите файл"
-                                                prepend-icon="mdi-camera"
-                                                label="Скриншоты"
-                                                v-model="form.screenshots"
-                                                multiple
-                                        ></v-file-input>
+                                        <div style="display: flex; align-items: center;">
+                                            <v-file-input
+                                                    accept="image/png, image/jpeg, image/bmp"
+                                                    placeholder="Выберите файл"
+                                                    prepend-icon="mdi-camera"
+                                                    label="Скриншоты"
+                                                    v-model="form.screenshots"
+                                                    multiple
+                                            ></v-file-input>
+
+                                            <v-btn
+                                                    color="blue darken-1"
+                                                    text
+                                                    @click="showUploadForm()"
+                                            >
+                                                Из Буфера
+                                            </v-btn>
+                                        </div>
+                                        <upload-form :dialog="uploadForm" @uploadImage="uploadImage"/>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -341,12 +353,14 @@
     import {filterMediaByCollection, formatDate} from '../../plugins/helpers.js'
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
+    import UploadForm from "./UploadForm";
 
     export default {
         name: "ContactForm",
-        components: {DragDrop, ImagePreview},
+        components: {UploadForm, DragDrop, ImagePreview},
         data() {
             return {
+                bufferForm: false,
                 tab: null,
                 hint: "",
                 multi_insert: false,
@@ -379,7 +393,7 @@
         },
         computed: {
             ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found', 'edit_contact_loading']),
-            ...mapState('layout', ['contact_types']),
+            ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
             user_id() {
@@ -422,6 +436,33 @@
             }
         },
         methods: {
+            async uploadImage(fileObject){
+                const file = fileObject.image;
+                if (!(file instanceof File)) {
+                    console.error('The provided image is not a valid File object:', fileObject);
+                    return;
+                }
+                this.$store.commit('layout/UPLOAD_FORM_TRIGGER');
+                this.$store.commit('contacts/EDIT_CONTACT_LOADING');
+                const formData = new FormData();
+                formData.append('image', file);  // Добавляем непосредственно файл
+                formData.append('collection_name', 'screenshots');
+                formData.append('id', this.contact.id);
+                try {
+                    const response = await this.$axios.$post('/api/media/upload-image-to-contact', formData);
+                    if (this.contact.id) {
+                        const response_data = await this.$axios.get('/api/contacts/' + this.contact.id + '/edit');
+                        this.$store.commit('contacts/STORE_CONTACT', response_data.data)
+                    }
+                    console.log('Upload successful:', response);
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                }
+                this.$store.commit('contacts/EDIT_CONTACT_LOADING');
+            },
+            showUploadForm(){
+                this.$store.commit('layout/UPLOAD_FORM_TRIGGER');
+            },
             getFormattedHint(item) {
                 let hint = '';
                 if (item.name) {
@@ -498,6 +539,7 @@
                 this.form.comment = "";
                 this.form.import = "";
                 this.screenshots_src = [];
+                this.form.screenshots = [];
                 this.tab = 1;
                 this.onFileClear();
                 this.form_editing = false;

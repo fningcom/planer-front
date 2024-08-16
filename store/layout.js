@@ -2,6 +2,7 @@ export const state = () => ({
     users: [],
     contact_types: [],
     device_types: [],
+    uploadForm: false
 });
 
 export const mutations = {
@@ -14,4 +15,7 @@ export const mutations = {
     SET_DEVICE_TYPES(state, payload) {
         state.device_types = payload
     },
+    UPLOAD_FORM_TRIGGER(state){
+        state.uploadForm = !state.uploadForm
+    }
 };
