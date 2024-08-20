@@ -360,7 +360,7 @@
                                             class="elevation-1 my-2"
                                             :loading="removeLoader"
                                             loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                            :items-per-page=8
+ы                                            :items-per-page=8
                                     >
                                         <template v-slot:item.number="{ item, index }">
                                             {{ index + 1 }}
@@ -791,7 +791,7 @@
                     this.form.incoming_date = toDay();
                     this.changeIncomingDate();
                 }
-                await this.$store.dispatch('documents/GET_DOCUMENTS_FROM_API', [this.filter_data, this.currentUserId, 1]);
+
             },
             async save() {
                 const formData = new FormData();
@@ -814,6 +814,7 @@
                 } else {
                     await this.$store.dispatch('documents/CREATE_DOCUMENT', formData)
                     this.form.results = []
+                    await this.$store.dispatch('documents/GET_DOCUMENTS_FROM_API', [this.filter_data, this.currentUserId, 1]);
                 }
             },
             changeQuickly() {
