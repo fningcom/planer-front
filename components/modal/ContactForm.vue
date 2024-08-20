@@ -28,10 +28,13 @@
                         <v-icon small>mdi-pencil</v-icon>
                         <span style="width: 10px"></span>ID#{{ contact.id }}
                     </v-tab>
-                    <v-tab href="#tab-2">
+                    <v-tab href="#tab-2" v-if="form_editing">
+                        Связь
+                    </v-tab>
+                    <v-tab href="#tab-3">
                         Комментарий
                     </v-tab>
-                    <v-tab href="#tab-3" v-if="!multi_insert">
+                    <v-tab href="#tab-4" v-if="!multi_insert">
                         Скриншоты
                     </v-tab>
                 </v-tabs>
@@ -245,6 +248,47 @@
                         </v-card>
                     </v-tab-item>
                     <v-tab-item value="tab-2" v-if="selectType">
+                        <v-card flat class="d-flex justify-end">
+                            <v-card-text>
+                                <v-row>
+                                    <v-col>
+                                        <v-btn color="#cb205f" @click="openFaceDialog(false)" dark small
+                                               class="float-end">
+                                            <v-icon left>mdi mdi-plus</v-icon>
+                                            связать с лицом
+                                            <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
+                                        </v-btn>
+                                        <face-form :dialog="faceDialog"/>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col v-if="contact && contact.faces">
+                                        <v-data-table
+                                                :headers="faces_headers"
+                                                :items="contact.faces"
+                                                item-key="id"
+                                                class="elevation-1 my-2"
+                                                loading-text="Загрузка данных... Пожалуйста ожидайте"
+                                                :items-per-page=8
+                                        >
+                                            <template v-slot:item.number="{ item, index }">
+                                                {{ index + 1 }}
+                                            </template>
+                                            <template v-slot:item.birthday="{ item }">
+                                                {{ formatBirthday(item.birthday) }}
+                                            </template>
+                                            <template v-slot:item.action="{ item }">
+                                                <v-icon style="cursor:pointer"
+                                                        @click="removeLink(item.id, task.id)">mdi mdi-close
+                                                </v-icon>
+                                            </template>
+                                        </v-data-table>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                    <v-tab-item value="tab-3" v-if="selectType">
                         <v-card flat>
                             <v-card-text>
                                 <v-row v-if="!multi_insert && contact_found.length === 0 && selectType">
@@ -263,7 +307,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-3" v-if="selectType">
+                    <v-tab-item value="tab-4" v-if="selectType">
                         <v-card flat>
                             <v-card-text>
                                 <v-row>
@@ -354,10 +398,11 @@
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
+    import FaceForm from "./FaceForm";
 
     export default {
         name: "ContactForm",
-        components: {UploadForm, DragDrop, ImagePreview},
+        components: {FaceForm, UploadForm, DragDrop, ImagePreview},
         data() {
             return {
                 bufferForm: false,
@@ -385,7 +430,13 @@
                     name: "",
                     birthday: "",
                     job: ""
-                }
+                },
+                faces_headers: [
+                    {text: '', value: 'number', sortable: false},
+                    {text: 'ФИО', value: 'full_name', sortable: false},
+                    {text: 'Дата рождения', value: 'birthday', sortable: false},
+                    {text: '', value: 'action', sortable: false, width: '85'},
+                ],
             }
         },
         mounted() {
@@ -396,6 +447,7 @@
             ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
+            ...mapState('faces', ['faceDialog']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -436,6 +488,14 @@
             }
         },
         methods: {
+            formatBirthday(item) {
+                return formatDate(item)
+            },
+            openFaceDialog() {
+                // this.$store.commit('contacts/SET_DIALOG');
+                this.$store.commit('faces/SET_FACE_RELATION_ON', { contact_id: this.contact.id });
+                this.$store.commit('faces/SET_FACE_DIALOG');
+            },
             async uploadImage(fileObject){
                 const file = fileObject.image;
                 if (!(file instanceof File)) {
@@ -571,6 +631,7 @@
                 this.$store.commit('contacts/SUCCESS_STORE', []);
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
                 this.$store.commit('contacts/STORE_CONTACT', []);
+                this.$store.commit('faces/SET_FACE_RELATION_OFF');
                 this.clearFields()
                 this.tab = 1
             },

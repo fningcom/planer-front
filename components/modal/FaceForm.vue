@@ -216,7 +216,7 @@
             }
         },
         computed: {
-            ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading']),
+            ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading', 'face_relation', 'face_relation_contact_id']),
             ...mapState('layout', ['device_types']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
@@ -281,8 +281,15 @@
                 if(this.form_editing) {
                     await this.$store.dispatch('faces/UPDATE_FACE', formData)
                 }else{
+                    // Привязываем к контакту если есть такая необходимость
+                    if(this.face_relation){
+                        formData.append('relation', true);
+                        formData.append('contact_id', this.face_relation_contact_id);
+                    }
                     await this.$store.dispatch('faces/CREATE_FACE', formData)
+                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
                 }
+
                 if(this.open_document_id){
                     const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
                     this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
@@ -291,6 +298,7 @@
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
+
                 this.clearFields()
             },
             async close() {
@@ -299,6 +307,7 @@
                 this.$store.commit('faces/ERROR_OFF');
                 this.$store.commit('faces/ERRORS_STORE', []);
                 this.$store.commit('faces/SUCCESS_STORE', []);
+                this.$store.commit('faces/SET_FACE_RELATION_OFF');
                 this.clearFields()
             },
             async removePhoto(photo_id) {

@@ -5,13 +5,23 @@ export const state = () => ({
     success: '',
     form_loading: false,
     face: [],
-    edit_face_loading: false
+    edit_face_loading: false,
+    face_relation: false, // Включен если при создании лица добавляетя связь к контакту
+    face_relation_contact_id: null,
 });
 
 
 export const mutations = {
     SET_FACE_DIALOG(state) {
         state.faceDialog = !state.faceDialog
+    },
+    SET_FACE_RELATION_ON(state, { contact_id }) {
+        state.face_relation_contact_id = contact_id;
+        state.face_relation = true
+    },
+    SET_FACE_RELATION_OFF(state) {
+        state.face_relation_contact_id = null;
+        state.face_relation = false
     },
     FORM_LOADING_OFF(state) {
         state.form_loading = false
