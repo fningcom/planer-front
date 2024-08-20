@@ -42,8 +42,8 @@
                 </template>
                 <template v-slot:item.control="{ item }" >
                     <div style="display: flex;">
-                        <v-icon v-if="item.control" color="#37474f" dense>mdi mdi-account-clock-outline</v-icon>
                         <v-icon v-if="item.quickly" color="error">mdi mdi-lightning-bolt-outline</v-icon>
+                        <v-icon v-if="item.control" color="#37474f" dense>mdi mdi-account-clock-outline</v-icon>
                     </div>
                 </template>
                 <template v-slot:item.title="{ item }">
