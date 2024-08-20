@@ -266,6 +266,7 @@
                                         <v-data-table
                                                 :headers="faces_headers"
                                                 :items="contact.faces"
+                                                :loading="removeLoader"
                                                 item-key="id"
                                                 class="elevation-1 my-2"
                                                 loading-text="Загрузка данных... Пожалуйста ожидайте"
@@ -278,8 +279,11 @@
                                                 {{ formatBirthday(item.birthday) }}
                                             </template>
                                             <template v-slot:item.action="{ item }">
+                                                <v-icon style="cursor:pointer" @click="openEditFaceDialog(item.id)">
+                                                    mdi-pencil
+                                                </v-icon>
                                                 <v-icon style="cursor:pointer"
-                                                        @click="removeLink(item.id, task.id)">mdi mdi-close
+                                                        @click="removeLink(item.id, contact.id)">mdi mdi-close
                                                 </v-icon>
                                             </template>
                                         </v-data-table>
@@ -405,6 +409,7 @@
         components: {FaceForm, UploadForm, DragDrop, ImagePreview},
         data() {
             return {
+                removeLoader: false,
                 bufferForm: false,
                 tab: null,
                 hint: "",
@@ -495,6 +500,23 @@
                 // this.$store.commit('contacts/SET_DIALOG');
                 this.$store.commit('faces/SET_FACE_RELATION_ON', { contact_id: this.contact.id });
                 this.$store.commit('faces/SET_FACE_DIALOG');
+            },
+            async openEditFaceDialog(id) {
+                this.$store.commit('faces/SET_FACE_DIALOG');
+                if (id) {
+                    this.$store.dispatch('faces/GET_FACE_FROM_API', id);
+                }
+            },
+            async removeLink(face_id, contact_id){
+                this.removeLoader = true;
+                const formData = new FormData();
+                formData.append('face_id', face_id);
+                formData.append('contact_id', contact_id);
+                const response = await this.$axios.$post('/api/contacts-face-relation/remove', formData);
+                if (response) {
+                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', contact_id)
+                    this.removeLoader = false;
+                }
             },
             async uploadImage(fileObject){
                 const file = fileObject.image;

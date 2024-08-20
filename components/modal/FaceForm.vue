@@ -280,6 +280,9 @@
 
                 if(this.form_editing) {
                     await this.$store.dispatch('faces/UPDATE_FACE', formData)
+                    if(this.face_relation) {
+                        await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
+                    }
                 }else{
                     // Привязываем к контакту если есть такая необходимость
                     if(this.face_relation){
@@ -287,7 +290,9 @@
                         formData.append('contact_id', this.face_relation_contact_id);
                     }
                     await this.$store.dispatch('faces/CREATE_FACE', formData)
-                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
+                    if(this.face_relation) {
+                        await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
+                    }
                 }
 
                 if(this.open_document_id){
