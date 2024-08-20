@@ -202,6 +202,7 @@
                 this.form.os = "";
                 this.form.sn = "";
                 this.form.comment = "";
+                this.form_editing = false;
             },
             async save() {
                 const formData = new FormData();

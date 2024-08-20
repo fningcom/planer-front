@@ -60,6 +60,8 @@
                                                     required
                                                     v-model="form.surname"
                                                     :error-messages="error ? errors.data.surname: ''"
+                                                    :loading="loading"
+                                                    @input="onInput"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="4" md="4">
@@ -79,6 +81,37 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
+                                    <div v-if="face_found" class="scrollable-container mt-3">
+                                        <v-row v-for="item in face_found"
+                                               :key="item.id"
+                                               class="mb-5"
+                                        >
+<!--                                            <v-col cols="1" md="1" style="display: flex; align-items: center;">-->
+<!--                                                <v-img :src="item.type.icon" min-width="24"/>-->
+<!--                                            </v-col>-->
+                                            <v-col cols="9" md="9">
+                                                <div style="font-size: 14px;">
+                                                    <v-text-field
+                                                            v-if="item.full_name"
+                                                            :label="item.full_name + (item.birthday ? ', ' + formatBirthday(item.birthday) + ' г.р.' : '')"
+                                                            persistent-hint
+                                                            disabled
+                                                    ></v-text-field>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="3" md="3" style="display: flex; align-items: center;">
+                                                <v-btn
+                                                        color="blue darken-1"
+                                                        outlined
+                                                        small
+                                                        dense
+                                                        @click="bindContact(item.id)"
+                                                >
+                                                    Привязать
+                                                </v-btn>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
                                     <v-row>
                                         <v-col cols="6" md="6">
                                             <v-autocomplete
@@ -99,8 +132,6 @@
                                                     :error-messages="error ? errors.data.birthday   : ''"
                                             ></v-text-field>
                                         </v-col>
-                                    </v-row>
-                                    <v-row>
                                         <v-col cols="12" md="12">
                                             <v-text-field
                                                     label="Адрес"
@@ -109,7 +140,18 @@
                                                     :error-messages="error ? errors.data.address   : ''"
                                             ></v-text-field>
                                         </v-col>
+                                        <v-col>
+                                            <v-textarea
+                                                    v-model="form.comment"
+                                                    outlined
+                                                    name="input-7-4"
+                                                    label="Коментарий"
+                                                    height="100"
+                                                    dense
+                                            ></v-textarea>
+                                        </v-col>
                                     </v-row>
+
                                     <p>Фото профиля</p>
                                     <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
                                          v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">
@@ -185,7 +227,7 @@
 <script>
     import {mapState} from 'vuex'
     import ImagePreview from "../imagePreview";
-    import {filterMediaByCollection} from '../../plugins/helpers.js'
+    import {filterMediaByCollection, formatDate} from '../../plugins/helpers.js'
     import DragDrop from "../DragDrop";
 
     export default {
@@ -193,6 +235,7 @@
         components: {DragDrop, ImagePreview},
         data() {
             return {
+                loading: false,
                 tab: null,
                 form_editing: false,
                 sex: [
@@ -211,12 +254,14 @@
                     birthday: "",
                     address: "",
                     sex: 'none',
+                    comment: '',
                     image: null
                 }
             }
         },
         computed: {
-            ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading', 'face_relation', 'face_relation_contact_id']),
+            ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading',
+                'face_relation', 'face_relation_contact_id', 'face_found']),
             ...mapState('layout', ['device_types']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
@@ -244,6 +289,7 @@
                     this.form.sex = value.sex
                     this.form.birthday = value.birthday
                     this.form.address = value.address
+                    this.form.comment = value.comment
                     this.form.image = value.image
                     if (value.media && value.media.length > 0) {
                         this.viewImage = true;
@@ -253,6 +299,27 @@
             }
         },
         methods: {
+            formatBirthday(item) {
+                return formatDate(item)
+            },
+            async onInput(){
+                if (this.form.surname.length !== 0) {
+                    this.loading = true;
+                    const params = {
+                        query: this.form.surname,
+                    };
+                    const response = await this.$axios.$get('/api/faces/search', {params});
+                    if (response && response.success && response.success === true) {
+                        this.loading = false;
+                        this.$store.commit('faces/SET_FACE_FOUND', response.data);
+                    } else {
+                        this.loading = false;
+                        this.$store.commit('faces/SET_FACE_FOUND', []);
+                    }
+                }else{
+                    this.$store.commit('faces/SET_FACE_FOUND', []);
+                }
+            },
             clearFields() {
                 this.form.surname = "";
                 this.form.name = "";
@@ -260,9 +327,11 @@
                 this.form.full_name = "";
                 this.form.birthday = "";
                 this.form.address = "";
+                this.form.comment = "";
                 this.form.image = null;
-                this.form.sex = 'none'
-                this.onFileClear()
+                this.form.sex = 'none';
+                this.onFileClear();
+                this.form_editing = false;
             },
             async save() {
                 this.form.full_name = this.full_name;
@@ -289,7 +358,7 @@
                         formData.append('relation', true);
                         formData.append('contact_id', this.face_relation_contact_id);
                     }
-                    await this.$store.dispatch('faces/CREATE_FACE', formData)
+                    await this.$store.dispatch('faces/CREATE_FACE', formData);
                     if(this.face_relation) {
                         await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
                     }

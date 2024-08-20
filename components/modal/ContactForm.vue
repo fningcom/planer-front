@@ -106,7 +106,7 @@
                                                 <v-img src="/img/icons/tiktok.png" max-width="24" class="v-icon-a"
                                                        @click="selectIcon(14)"></v-img>
                                             </div>
-                                            <v-row >
+                                            <v-row>
                                                 <v-col col="6" md="6">
                                                     <v-autocomplete
                                                             v-model="form.type_id"
@@ -118,7 +118,7 @@
                                                     ></v-autocomplete>
                                                 </v-col>
                                                 <v-col col="6" md="6"
-                                                        v-if="form.type_id !== 1 && !multi_insert && selectType">
+                                                       v-if="form.type_id !== 1 && !multi_insert && selectType">
                                                     <v-text-field
                                                             :label="hint"
                                                             required
@@ -197,25 +197,25 @@
                                                     :error-messages="error ? errors.data.job: ''"
                                             ></v-text-field>
                                         </v-col>
-<!--                                        <v-col cols="12" md="12">-->
-<!--                                            <v-file-input-->
-<!--                                                    accept="image/png, image/jpeg, image/bmp"-->
-<!--                                                    placeholder="Выберите файл"-->
-<!--                                                    prepend-icon="mdi-camera"-->
-<!--                                                    label="Фото профиля"-->
-<!--                                                    v-model="form.image"-->
-<!--                                                    @change="onFileChange"-->
-<!--                                                    @click:clear="onFileClear"-->
-<!--                                            ></v-file-input>-->
-<!--                                        </v-col>-->
+                                        <!--                                        <v-col cols="12" md="12">-->
+                                        <!--                                            <v-file-input-->
+                                        <!--                                                    accept="image/png, image/jpeg, image/bmp"-->
+                                        <!--                                                    placeholder="Выберите файл"-->
+                                        <!--                                                    prepend-icon="mdi-camera"-->
+                                        <!--                                                    label="Фото профиля"-->
+                                        <!--                                                    v-model="form.image"-->
+                                        <!--                                                    @change="onFileChange"-->
+                                        <!--                                                    @click:clear="onFileClear"-->
+                                        <!--                                            ></v-file-input>-->
+                                        <!--                                        </v-col>-->
                                     </v-row>
-<!--                                    <div style="width: 230px; margin: 0 auto; position: relative"-->
-<!--                                         v-if="imageUrl && !avatar &&!multi_insert && viewImage && contact_found.length === 0">-->
-<!--                                        <image-preview-->
-<!--                                                :previewUrl="imageUrl"-->
-<!--                                                :fullImageUrl="imageUrl"-->
-<!--                                        />-->
-<!--                                    </div>-->
+                                    <!--                                    <div style="width: 230px; margin: 0 auto; position: relative"-->
+                                    <!--                                         v-if="imageUrl && !avatar &&!multi_insert && viewImage && contact_found.length === 0">-->
+                                    <!--                                        <image-preview-->
+                                    <!--                                                :previewUrl="imageUrl"-->
+                                    <!--                                                :fullImageUrl="imageUrl"-->
+                                    <!--                                        />-->
+                                    <!--                                    </div>-->
                                     <div v-if="!multi_insert">
                                         <p>Фото профиля</p>
                                         <div style="width: 230px; margin: 0 auto; position: relative; margin-top: 10px"
@@ -224,7 +224,8 @@
                                                     :previewUrl="avatar[0]['preview_url']"
                                                     :fullImageUrl="avatar[0]['original_url']"
                                             />
-                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close
+                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi
+                                                mdi-close
                                             </v-icon>
                                         </div>
                                         <drag-drop v-model="form.image" v-else/>
@@ -305,7 +306,6 @@
                                                 height="300"
                                                 dense
                                         ></v-textarea>
-
                                     </v-col>
                                 </v-row>
                             </v-card-text>
@@ -498,7 +498,7 @@
             },
             openFaceDialog() {
                 // this.$store.commit('contacts/SET_DIALOG');
-                this.$store.commit('faces/SET_FACE_RELATION_ON', { contact_id: this.contact.id });
+                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: this.contact.id});
                 this.$store.commit('faces/SET_FACE_DIALOG');
             },
             async openEditFaceDialog(id) {
@@ -507,7 +507,7 @@
                     this.$store.dispatch('faces/GET_FACE_FROM_API', id);
                 }
             },
-            async removeLink(face_id, contact_id){
+            async removeLink(face_id, contact_id) {
                 this.removeLoader = true;
                 const formData = new FormData();
                 formData.append('face_id', face_id);
@@ -518,7 +518,7 @@
                     this.removeLoader = false;
                 }
             },
-            async uploadImage(fileObject){
+            async uploadImage(fileObject) {
                 const file = fileObject.image;
                 if (!(file instanceof File)) {
                     console.error('The provided image is not a valid File object:', fileObject);
@@ -542,7 +542,7 @@
                 }
                 this.$store.commit('contacts/EDIT_CONTACT_LOADING');
             },
-            showUploadForm(){
+            showUploadForm() {
                 this.$store.commit('layout/UPLOAD_FORM_TRIGGER');
             },
             getFormattedHint(item) {
@@ -632,10 +632,10 @@
             selectIcon(id) {
                 if (id === 20) {
                     this.isFaceTypeSelected = true
-                }else{
+                } else {
                     if (id === 11 || id === 2) {
                         this.form.code = '+373'
-                    }else{
+                    } else {
                         this.form.code = ''
                     }
                     this.isFaceTypeSelected = false
@@ -687,11 +687,11 @@
                         await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
                     }
                 }
-                if(this.open_document_id){
+                if (this.open_document_id) {
                     const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
                     this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
                 }
-                if(this.open_task_id){
+                if (this.open_task_id) {
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
@@ -708,11 +708,11 @@
                 }
                 formData.append('contact_id', contact_id);
                 await this.$store.dispatch('contacts/BIND_CONTACT', formData);
-                if(this.open_document_id){
+                if (this.open_document_id) {
                     const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
                     this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
                 }
-                if(this.open_task_id){
+                if (this.open_task_id) {
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
