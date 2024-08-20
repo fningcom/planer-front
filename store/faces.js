@@ -101,4 +101,21 @@ export const actions = {
         commit('STORE_FACE', response.data)
         commit('EDIT_FACE_LOADING')
     },
+    async BIND_FACE({ commit }, data) {
+        commit('FORM_LOADING_ON');
+        try {
+            const response = await this.$axios.post('/api/faces/bind', data);
+            if (response.data.success === false) {
+                commit('ERROR_ON');
+                commit('ERRORS_STORE', response.data);
+            } else {
+                commit('SET_FACE_DIALOG');
+                commit('ERROR_OFF');
+                commit('ERRORS_STORE', []);
+            }
+        } catch (error) {
+            console.info(error);
+        }
+        commit('FORM_LOADING_OFF');
+    },
 };

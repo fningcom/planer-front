@@ -82,35 +82,26 @@
                                         </v-col>
                                     </v-row>
                                     <div v-if="face_found" class="scrollable-container mt-3">
-                                        <v-row v-for="item in face_found"
+                                        <div v-for="item in face_found"
                                                :key="item.id"
                                                class="mb-5"
+                                               style="display: flex; justify-content: space-between;align-items: flex-end;"
                                         >
-<!--                                            <v-col cols="1" md="1" style="display: flex; align-items: center;">-->
-<!--                                                <v-img :src="item.type.icon" min-width="24"/>-->
-<!--                                            </v-col>-->
-                                            <v-col cols="9" md="9">
-                                                <div style="font-size: 14px;">
-                                                    <v-text-field
-                                                            v-if="item.full_name"
-                                                            :label="item.full_name + (item.birthday ? ', ' + formatBirthday(item.birthday) + ' г.р.' : '')"
-                                                            persistent-hint
-                                                            disabled
-                                                    ></v-text-field>
-                                                </div>
-                                            </v-col>
-                                            <v-col cols="3" md="3" style="display: flex; align-items: center;">
+                                            <div style="font-size: 15px;font-style: italic;border-bottom: 1px dotted #999999;">
+                                                {{ item.full_name + (item.birthday ? ', ' + formatBirthday(item.birthday) + ' г.р.' : '') }}
+                                            </div>
+                                            <div>
                                                 <v-btn
-                                                        color="blue darken-1"
-                                                        outlined
-                                                        small
-                                                        dense
-                                                        @click="bindContact(item.id)"
-                                                >
-                                                    Привязать
-                                                </v-btn>
-                                            </v-col>
-                                        </v-row>
+                                                    color="blue darken-1"
+                                                    outlined
+                                                    small
+                                                    dense
+                                                    @click="bindFace(item.id)"
+                                            >
+                                                Привязать
+                                            </v-btn>
+                                            </div>
+                                        </div>
                                     </div>
                                     <v-row>
                                         <v-col cols="6" md="6">
@@ -332,6 +323,7 @@
                 this.form.sex = 'none';
                 this.onFileClear();
                 this.form_editing = false;
+                this.$store.commit('faces/SET_FACE_FOUND', []);
             },
             async save() {
                 this.form.full_name = this.full_name;
@@ -412,6 +404,27 @@
             },
             onFileClear() {
                 this.viewImage = false
+            },
+            async bindFace(face_id) {
+                const formData = new FormData();
+                if (this.open_document_id) {
+                    formData.append('document_id', this.open_document_id);
+                }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
+                formData.append('face_id', face_id);
+                await this.$store.dispatch('faces/BIND_FACE', formData);
+                if (this.open_document_id) {
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if (this.open_task_id) {
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
+                this.$store.commit('faces/SET_FACE_FOUND', []);
+                this.clearFields();
             },
         }
     }
