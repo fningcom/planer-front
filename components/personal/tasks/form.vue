@@ -849,7 +849,7 @@
                     this.form.incoming_date = toDay();
                     this.changeIncomingDate();
                 }
-                await this.$store.dispatch('tasks/GET_TASKS_FROM_API', [this.filter_data, this.currentUserId, 1]);
+                //
             },
             async save() {
                 const formData = this.getFilterData();
@@ -864,6 +864,7 @@
                     await this.$store.dispatch('tasks/CREATE_TASK', formData)
                     this.form.results = []
                     this.form.files = []
+                    await this.$store.dispatch('tasks/GET_TASKS_FROM_API', [this.filter_data, this.currentUserId, 1]);
                 }
             },
             changeQuickly() {
