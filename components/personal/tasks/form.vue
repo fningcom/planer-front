@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <face-form :dialog="faceDialog"/>
         <v-dialog
                 v-model="dialog"
                 persistent
@@ -351,7 +352,7 @@
                                         лицо
                                         <!--                                        <v-icon small>mdi mdi-account-check</v-icon>-->
                                     </v-btn>
-                                    <face-form :dialog="faceDialog"/>
+
                                 </v-col>
                             </v-row>
                             <v-row>

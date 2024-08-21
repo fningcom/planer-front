@@ -18,8 +18,14 @@
                 <template v-slot:top>
                     <filters @submitFilter="submitFilter" @resetFilter="resetFilter"/>
                     <v-alert dense type="info" color="#4e4caf" style="margin-top: 5px;">
-                        По вашему запросу найдено: {{ count }} задач
+                        <div style="display: flex;justify-content: space-between;">
+                            <span>По вашему запросу найдено: {{ count }} задач</span>
+                            <v-icon @click="refreshTable()">
+                                mdi mdi-refresh-circle
+                            </v-icon>
+                        </div>
                     </v-alert>
+
                 </template>
                 <template v-slot:[`header.contacts`]="{ header }">
                     <v-icon dense>mdi mdi-at</v-icon>
@@ -184,6 +190,9 @@
             this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
         },
         methods: {
+            async refreshTable(){
+                await this.$store.dispatch('tasks/GET_TASKS_FROM_API', [[], this.currentUserId, 1]);
+            },
             timeAgo(date) {
                 return timeAgo(date)
             },
