@@ -6,8 +6,8 @@
                 <v-icon left>mdi mdi-plus</v-icon>документ
             </v-btn>
         </v-card>
-        <data-table/>
         <document-form :dialog="dialog" />
+        <data-table/>
     </div>
 </template>
 
