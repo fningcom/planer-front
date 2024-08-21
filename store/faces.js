@@ -101,10 +101,10 @@ export const actions = {
         commit('STORE_FACE', response.data)
         commit('EDIT_FACE_LOADING')
     },
-    async BIND_FACE({ commit }, data) {
+    async BIND_FACE_TO_CONTACT({ commit }, data) {
         commit('FORM_LOADING_ON');
         try {
-            const response = await this.$axios.post('/api/faces/bind', data);
+            const response = await this.$axios.post('/api/faces/bind-to-contact', data);
             if (response.data.success === false) {
                 commit('ERROR_ON');
                 commit('ERRORS_STORE', response.data);
@@ -112,6 +112,43 @@ export const actions = {
                 commit('SET_FACE_DIALOG');
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
+                commit('SET_FACE_RELATION_OFF');
+            }
+        } catch (error) {
+            console.info(error);
+        }
+        commit('FORM_LOADING_OFF');
+    },
+    async BIND_FACE_TO_TASK({ commit }, data) {
+        commit('FORM_LOADING_ON');
+        try {
+            const response = await this.$axios.post('/api/faces/bind-to-task', data);
+            if (response.data.success === false) {
+                commit('ERROR_ON');
+                commit('ERRORS_STORE', response.data);
+            } else {
+                commit('SET_FACE_DIALOG');
+                commit('ERROR_OFF');
+                commit('ERRORS_STORE', []);
+                commit('SET_FACE_RELATION_OFF');
+            }
+        } catch (error) {
+            console.info(error);
+        }
+        commit('FORM_LOADING_OFF');
+    },
+    async BIND_FACE_TO_DOCUMENT({ commit }, data) {
+        commit('FORM_LOADING_ON');
+        try {
+            const response = await this.$axios.post('/api/faces/bind-to-document', data);
+            if (response.data.success === false) {
+                commit('ERROR_ON');
+                commit('ERRORS_STORE', response.data);
+            } else {
+                commit('SET_FACE_DIALOG');
+                commit('ERROR_OFF');
+                commit('ERRORS_STORE', []);
+                commit('SET_FACE_RELATION_OFF');
             }
         } catch (error) {
             console.info(error);

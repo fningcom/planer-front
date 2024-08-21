@@ -37,6 +37,9 @@ export function filterMediaByCollection(media, collectionName) {
 }
 
 export function formatDate(date) {
+    if (!date) {
+        return ''; // Возвращаем пустую строку, если дата пустая
+    }
     const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
     return new Date(date).toLocaleDateString('ru-RU', options);
 }

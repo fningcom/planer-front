@@ -259,7 +259,6 @@
                                             связать с лицом
                                             <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
                                         </v-btn>
-                                        <face-form :dialog="faceDialog"/>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -402,11 +401,10 @@
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
-    import FaceForm from "./FaceForm";
 
     export default {
         name: "ContactForm",
-        components: {FaceForm, UploadForm, DragDrop, ImagePreview},
+        components: {UploadForm, DragDrop, ImagePreview},
         data() {
             return {
                 removeLoader: false,
@@ -695,7 +693,7 @@
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
-
+                this.$store.commit('contacts/STORE_CONTACT', []);
                 this.clearFields()
             },
             async bindContact(contact_id) {

@@ -25,7 +25,8 @@
                         Новое лицо
                     </v-tab>
                     <v-tab href="#tab-1" v-else>
-                        <v-icon small>mdi-pencil</v-icon> <span style="width: 10px"></span>ID#{{ face.id }}
+                        <v-icon small>mdi-pencil</v-icon>
+                        <span style="width: 10px"></span>ID#{{ face.id }}
                     </v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="tab" style="min-height: 595px">
@@ -83,23 +84,24 @@
                                     </v-row>
                                     <div v-if="face_found" class="scrollable-container mt-3">
                                         <div v-for="item in face_found"
-                                               :key="item.id"
-                                               class="mb-5"
-                                               style="display: flex; justify-content: space-between;align-items: flex-end;"
+                                             :key="item.id"
+                                             class="mb-5"
+                                             style="display: flex; justify-content: space-between;align-items: flex-end;"
                                         >
                                             <div style="font-size: 15px;font-style: italic;border-bottom: 1px dotted #999999;">
-                                                {{ item.full_name + (item.birthday ? ', ' + formatBirthday(item.birthday) + ' г.р.' : '') }}
+                                                {{ item.full_name + (item.birthday ? ', ' +
+                                                formatBirthday(item.birthday) + ' г.р.' : '') }}
                                             </div>
                                             <div>
                                                 <v-btn
-                                                    color="blue darken-1"
-                                                    outlined
-                                                    small
-                                                    dense
-                                                    @click="bindFace(item.id)"
-                                            >
-                                                Привязать
-                                            </v-btn>
+                                                        color="blue darken-1"
+                                                        outlined
+                                                        small
+                                                        dense
+                                                        @click="bindFace(item.id)"
+                                                >
+                                                    Привязать
+                                                </v-btn>
                                             </div>
                                         </div>
                                     </div>
@@ -155,35 +157,35 @@
                                     </div>
                                     <drag-drop v-model="form.image" v-if="!viewImage"/>
 
-<!--                                        <v-row>-->
-<!--                                            <v-col cols="12" md="12">-->
-<!--                                                <v-file-input-->
-<!--                                                        accept="image/png, image/jpeg, image/bmp"-->
-<!--                                                        placeholder="Выберите файл"-->
-<!--                                                        prepend-icon="mdi-camera"-->
-<!--                                                        label="Фото профиля"-->
-<!--                                                        v-model="form.image"-->
-<!--                                                        @change="onFileChange"-->
-<!--                                                        @click:clear="onFileClear"-->
-<!--                                                ></v-file-input>-->
-<!--                                            </v-col>-->
-<!--                                        </v-row>-->
-<!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
-<!--                                             v-if="imageUrl && !avatar &&!multi_insert && viewImage">-->
-<!--                                            <image-preview-->
-<!--                                                    :previewUrl="imageUrl"-->
-<!--                                                    :fullImageUrl="imageUrl"-->
-<!--                                            />-->
-<!--                                        </div>-->
-<!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
-<!--                                             v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">-->
-<!--                                            <image-preview-->
-<!--                                                    :previewUrl="avatar[0]['preview_url']"-->
-<!--                                                    :fullImageUrl="avatar[0]['original_url']"-->
-<!--                                            />-->
-<!--                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close-->
-<!--                                            </v-icon>-->
-<!--                                        </div>-->
+                                    <!--                                        <v-row>-->
+                                    <!--                                            <v-col cols="12" md="12">-->
+                                    <!--                                                <v-file-input-->
+                                    <!--                                                        accept="image/png, image/jpeg, image/bmp"-->
+                                    <!--                                                        placeholder="Выберите файл"-->
+                                    <!--                                                        prepend-icon="mdi-camera"-->
+                                    <!--                                                        label="Фото профиля"-->
+                                    <!--                                                        v-model="form.image"-->
+                                    <!--                                                        @change="onFileChange"-->
+                                    <!--                                                        @click:clear="onFileClear"-->
+                                    <!--                                                ></v-file-input>-->
+                                    <!--                                            </v-col>-->
+                                    <!--                                        </v-row>-->
+                                    <!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
+                                    <!--                                             v-if="imageUrl && !avatar &&!multi_insert && viewImage">-->
+                                    <!--                                            <image-preview-->
+                                    <!--                                                    :previewUrl="imageUrl"-->
+                                    <!--                                                    :fullImageUrl="imageUrl"-->
+                                    <!--                                            />-->
+                                    <!--                                        </div>-->
+                                    <!--                                        <div style="width: 230px; margin: 0 auto; position: relative"-->
+                                    <!--                                             v-if="avatar && avatar.length > 0 &&!multi_insert && viewImage">-->
+                                    <!--                                            <image-preview-->
+                                    <!--                                                    :previewUrl="avatar[0]['preview_url']"-->
+                                    <!--                                                    :fullImageUrl="avatar[0]['original_url']"-->
+                                    <!--                                            />-->
+                                    <!--                                            <v-icon class="close-btn" @click="removePhoto(avatar[0]['id'])">mdi mdi-close-->
+                                    <!--                                            </v-icon>-->
+                                    <!--                                        </div>-->
                                 </v-container>
                             </v-card-text>
                         </v-card>
@@ -230,9 +232,9 @@
                 tab: null,
                 form_editing: false,
                 sex: [
-                    {'id':'m', 'title': 'мужской' },
-                    {'id':'f', 'title': 'женский'},
-                    {'id':'none', 'title': 'не известен'}
+                    {'id': 'm', 'title': 'мужской'},
+                    {'id': 'f', 'title': 'женский'},
+                    {'id': 'none', 'title': 'не известен'}
                 ],
                 viewImage: false,
                 imageUrl: "",
@@ -240,7 +242,7 @@
                 form: {
                     surname: "",
                     name: "",
-                    parent_name:"",
+                    parent_name: "",
                     full_name: "",
                     birthday: "",
                     address: "",
@@ -251,11 +253,12 @@
             }
         },
         computed: {
-            ...mapState('faces', ['face','errors', 'success', 'form_loading', 'error', 'edit_face_loading',
+            ...mapState('faces', ['face', 'errors', 'success', 'form_loading', 'error', 'edit_face_loading',
                 'face_relation', 'face_relation_contact_id', 'face_found']),
             ...mapState('layout', ['device_types']),
-            ...mapState('documents', ['open_document_id']),
-            ...mapState('tasks', ['open_task_id']),
+            ...mapState('documents', ['open_document_id', 'document']),
+            ...mapState('tasks', ['open_task_id', 'task']),
+            ...mapState('contacts', ['contact']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -266,7 +269,7 @@
                 return ['error', 'warning', 'success'][Math.floor(this.progress / 40)]
             },
             full_name() {
-             return this.form.surname + " " + this.form.name + " " + this.form.parent_name
+                return this.form.surname + " " + this.form.name + " " + this.form.parent_name
             }
         },
         props: ['dialog'],
@@ -293,7 +296,7 @@
             formatBirthday(item) {
                 return formatDate(item)
             },
-            async onInput(){
+            async onInput() {
                 if (this.form.surname.length !== 0) {
                     this.loading = true;
                     const params = {
@@ -307,7 +310,7 @@
                         this.loading = false;
                         this.$store.commit('faces/SET_FACE_FOUND', []);
                     }
-                }else{
+                } else {
                     this.$store.commit('faces/SET_FACE_FOUND', []);
                 }
             },
@@ -339,28 +342,28 @@
                 }
                 formData.append('user_id', this.user_id);
 
-                if(this.form_editing) {
+                if (this.form_editing) {
                     await this.$store.dispatch('faces/UPDATE_FACE', formData)
-                    if(this.face_relation) {
+                    if (this.face_relation) {
                         await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
                     }
-                }else{
+                } else {
                     // Привязываем к контакту если есть такая необходимость
-                    if(this.face_relation){
+                    if (this.face_relation) {
                         formData.append('relation', true);
                         formData.append('contact_id', this.face_relation_contact_id);
                     }
                     await this.$store.dispatch('faces/CREATE_FACE', formData);
-                    if(this.face_relation) {
+                    if (this.face_relation) {
                         await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.face_relation_contact_id)
                     }
                 }
 
-                if(this.open_document_id){
+                if (this.open_document_id) {
                     const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
                     this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
                 }
-                if(this.open_task_id){
+                if (this.open_task_id) {
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
@@ -407,23 +410,20 @@
             },
             async bindFace(face_id) {
                 const formData = new FormData();
-                if (this.open_document_id) {
-                    formData.append('document_id', this.open_document_id);
-                }
-                if (this.open_task_id) {
-                    formData.append('task_id', this.open_task_id);
-                }
                 formData.append('face_id', face_id);
-                await this.$store.dispatch('faces/BIND_FACE', formData);
-                if (this.open_document_id) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if (this.contact && this.contact.id) {
+                    formData.append('contact_id', this.contact.id);
+                    await this.$store.dispatch('faces/BIND_FACE_TO_CONTACT', formData);
+                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', this.contact.id);
+                } else if (this.task && this.task.id) {
+                    formData.append('task_id', this.task.id);
+                    await this.$store.dispatch('faces/BIND_FACE_TO_TASK', formData);
+                    await this.$store.dispatch('tasks/GET_TASK_FROM_API', this.task.id);
+                } else if (this.document && this.document.id) {
+                    formData.append('document_id', this.document.id);
+                    await this.$store.dispatch('faces/BIND_FACE_TO_DOCUMENT', formData);
+                    await this.$store.dispatch('documents/GET_DOCUMENT_FROM_API', this.document.id);
                 }
-                if (this.open_task_id) {
-                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', documentResponse);
-                }
-                this.$store.commit('faces/SET_FACE_FOUND', []);
                 this.clearFields();
             },
         }
