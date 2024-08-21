@@ -113,7 +113,7 @@
                                                 ></v-file-input>
                                                 <div>
                                                     <div v-for="item in files_files" style="display: flex; justify-content: space-between">
-                                                        <div>
+                                                        <div style="max-width: 195px;">
                                                             <v-icon small>mdi mdi-paperclip</v-icon>{{ item.file_name }}
                                                         </div>
                                                         <div style="min-width: 55px;">
@@ -818,7 +818,8 @@
                 this.form.results = [];
                 this.form.files = [];
                 this.form.execution_date = "";
-                this.form.control = false
+                this.form.control = false;
+                this.files_files = [];
             },
             getFilterData(){
                 const formData = new FormData();
