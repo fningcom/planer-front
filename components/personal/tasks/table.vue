@@ -17,6 +17,20 @@
             >
                 <template v-slot:top>
                     <filters @submitFilter="submitFilter" @resetFilter="resetFilter"/>
+                    <div style="padding: 12px">
+                        <v-text-field
+                                label="Поиск по описанию, контактам, объектам, фио"
+                                append-icon="mdi mdi-magnify"
+                                required
+                                v-model="query"
+                                @keyup.enter="search"
+                                outlined
+                                dense
+                                hide-details
+                                @keydown.esc="clearSearch"
+                                style="background-color: #eae9fb;"
+                        ></v-text-field>
+                    </div>
                     <v-alert dense type="info" color="#4e4caf" style="margin-top: 5px;">
                         По вашему запросу найдено: {{ count }} задач
                     </v-alert>
@@ -128,6 +142,15 @@
                 </template>
             </v-data-table>
             <v-pagination
+                    v-if="query"
+                    v-model="currentPage"
+                    :length="lastPage"
+                    :total-visible="7"
+                    @input="searchPageChange"
+                    class="mt-4"
+            ></v-pagination>
+            <v-pagination
+                    v-else
                     v-model="currentPage"
                     :length="lastPage"
                     :total-visible="7"
@@ -150,6 +173,7 @@
         props: ['filterData'],
         data() {
             return {
+                query: '',
                 snackbar: false,
                 categories: [],
                 loading: false,
@@ -184,6 +208,13 @@
             this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
         },
         methods: {
+            async search(){
+                await this.$store.dispatch('tasks/SEARCH_TASKS_FROM_API', [this.query, this.currentPage]);
+            },
+            clearSearch(){
+                this.query = '';
+                this.resetFilter();
+            },
             timeAgo(date) {
                 return timeAgo(date)
             },
@@ -203,13 +234,16 @@
             async handlePageChange(page) {
                 this.getTasksList(this.filter_data, this.currentUserId, page)
             },
+            async searchPageChange(page) {
+                await this.$store.dispatch('tasks/SEARCH_TASKS_FROM_API', [this.query, page]);
+            },
             async submitFilter(data) {
                 this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
                 this.$store.commit('tasks/STORE_FILTER_DATA', data);
                 this.getTasksList(data, this.currentUserId, this.currentPage)
             },
             async resetFilter() {
-                this.getTasksList([], 1);
+                this.getTasksList([], this.currentUserId, 1);
                 this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
                 this.$store.commit('tasks/STORE_FILTER_DATA', []);
             },

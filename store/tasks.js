@@ -173,4 +173,26 @@ export const actions = {
         }
         commit('FORM_LOADING_OFF')
     },
+
+    async SEARCH_TASKS_FROM_API({commit, state}, [query, page]) {
+        commit('FORM_LOADING_ON')
+        try {
+            console.log(query)
+            const response = await this.$axios.get(`/api/tasks-search?query=${query}&page=${page}`);
+            if (response.data.success === false) {
+                commit('ERROR_ON');
+                commit("ERRORS_STORE", response.data);
+            } else {
+                commit('ERROR_OFF');
+                commit("ERRORS_STORE", []);
+                commit("STORE_TASKS", response.data.data);
+                commit("STORE_CURRENT_PAGE", response.data.current_page);
+                commit("STORE_LAST_PAGE", response.data.last_page);
+                commit("STORE_COUNT", response.data.total);
+            }
+        } catch (error) {
+            console.info(error);
+        }
+        commit('FORM_LOADING_OFF')
+    },
 }

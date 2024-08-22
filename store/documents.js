@@ -170,4 +170,24 @@ export const actions = {
         }
         commit('FORM_LOADING_OFF')
     },
+    async SEARCH_DOCUMENTS_FROM_API({commit, state}, [query, page]) {
+        commit('FORM_LOADING_ON')
+        try {
+            const response = await this.$axios.get(`/api/documents-search?query=${query}&page=${page}`);
+            if (response.data.success === false) {
+                commit('ERROR_ON');
+                commit("ERRORS_STORE", response.data);
+            } else {
+                commit('ERROR_OFF');
+                commit("ERRORS_STORE", []);
+                commit("STORE_DOCUMENTS", response.data.data);
+                commit("STORE_CURRENT_PAGE", response.data.current_page);
+                commit("STORE_LAST_PAGE", response.data.last_page);
+                commit("STORE_COUNT", response.data.total);
+            }
+        } catch (error) {
+            console.info(error);
+        }
+        commit('FORM_LOADING_OFF')
+    },
 };

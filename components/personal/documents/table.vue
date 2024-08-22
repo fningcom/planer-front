@@ -17,6 +17,20 @@
             >
                 <template v-slot:top>
                     <filters @submitFilter="submitFilter" @resetFilter="resetFilter"/>
+                    <div style="padding: 12px">
+                        <v-text-field
+                                label="Поиск по описанию, контактам, объектам, фио"
+                                append-icon="mdi mdi-magnify"
+                                required
+                                v-model="query"
+                                @keyup.enter="search"
+                                outlined
+                                dense
+                                hide-details
+                                @keydown.esc="clearSearch"
+                                style="background-color: #def0ff;"
+                        ></v-text-field>
+                    </div>
                     <v-alert dense type="info" style="margin-top: 5px;">
                         По вашему запросу найдено: {{ count }} документа
                     </v-alert>
@@ -137,6 +151,15 @@
                 </template>
             </v-data-table>
             <v-pagination
+                    v-if="query"
+                    v-model="currentPage"
+                    :length="lastPage"
+                    :total-visible="7"
+                    @input="searchPageChange"
+                    class="mt-4"
+            ></v-pagination>
+            <v-pagination
+                    v-else
                     v-model="currentPage"
                     :length="lastPage"
                     :total-visible="7"
@@ -159,6 +182,7 @@
         props: ['filterData'],
         data() {
             return {
+                query: '',
                 snackbar: false,
                 // documents: [],
                 categories: [],
@@ -199,6 +223,13 @@
             this.$store.commit('documents/STORE_CURRENT_PAGE', 1);
         },
         methods: {
+            async search(){
+                await this.$store.dispatch('documents/SEARCH_DOCUMENTS_FROM_API', [this.query, this.currentPage]);
+            },
+            clearSearch(){
+                this.query = '';
+                this.resetFilter();
+            },
             timeAgo(date) {
                 return timeAgo(date)
             },
@@ -218,13 +249,17 @@
             async handlePageChange(page) {
                 this.getDocumentsList(this.filter_data, this.currentUserId, page)
             },
+            async searchPageChange(page) {
+                this.getDocumentsList(this.filter_data, this.currentUserId, page)
+                await this.$store.dispatch('documents/SEARCH_DOCUMENTS_FROM_API', [this.query, page]);
+            },
             async submitFilter(data) {
                 this.$store.commit('documents/STORE_CURRENT_PAGE', 1);
                 this.$store.commit('documents/STORE_FILTER_DATA', data);
                 this.getDocumentsList(data, this.currentUserId, this.currentPage)
             },
             async resetFilter() {
-                this.getDocumentsList([], 1);
+                this.getDocumentsList([], this.currentUserId, 1);
                 this.$store.commit('documents/STORE_CURRENT_PAGE', 1);
                 this.$store.commit('documents/STORE_FILTER_DATA', []);
             },
