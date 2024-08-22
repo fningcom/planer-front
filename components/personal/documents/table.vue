@@ -224,7 +224,7 @@
         },
         methods: {
             async search(){
-                await this.$store.dispatch('documents/SEARCH_DOCUMENTS_FROM_API', [this.query, this.currentPage]);
+                await this.$store.dispatch('documents/SEARCH_DOCUMENTS_FROM_API', [this.query, 1]);
             },
             clearSearch(){
                 this.query = '';
