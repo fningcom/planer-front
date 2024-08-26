@@ -106,36 +106,56 @@
                                                 <v-img src="/img/icons/tiktok.png" max-width="24" class="v-icon-a"
                                                        @click="selectIcon(14)"></v-img>
                                             </div>
-                                            <v-row>
-                                                <v-col col="6" md="6">
-                                                    <v-autocomplete
-                                                            v-model="form.type_id"
-                                                            :items="contact_types"
-                                                            item-value="id"
-                                                            item-text="type"
-                                                            label="Тип контакта *"
-                                                            :error-messages="error ? errors.data.type_id: ''"
-                                                    ></v-autocomplete>
-                                                </v-col>
-                                                <v-col col="6" md="6"
-                                                       v-if="form.type_id !== 1 && !multi_insert && selectType">
-                                                    <v-text-field
-                                                            :label="hint"
-                                                            required
-                                                            v-model="form.code"
-                                                            :error-messages="error ? errors.data.code: ''"
-                                                            :loading="loading"
-                                                            hint="Для проверки по базе, жми Enter"
-                                                            @input="onInput"
-
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
 
                                         </v-col>
                                     </v-row>
 
+                                    <v-row v-if="!isFaceTypeSelected && !multi_insert && selectType">
+                                        <v-col col="6" md="6">
+                                            <v-autocomplete
+                                                    v-model="form.type_id"
+                                                    :items="contact_types"
+                                                    item-value="id"
+                                                    item-text="type"
+                                                    label="Тип контакта *"
+                                                    :error-messages="error ? errors.data.type_id: ''"
+                                            ></v-autocomplete>
+                                        </v-col>
+                                        <v-col col="6" md="6"
+                                               v-if="form.type_id !== 1 && !multi_insert && selectType">
+                                            <v-text-field
+                                                    :label="hint"
+                                                    required
+                                                    v-model="form.code"
+                                                    :error-messages="error ? errors.data.code: ''"
+                                                    :loading="loading"
+                                                    hint="Для проверки по базе, жми Enter"
+                                                    @input="onInput"
+
+                                            >
+                                            </v-text-field>
+                                        </v-col>
+                                        <v-col cols="6" md="6">
+                                            <v-text-field
+                                                    label="ФИО / Имя / Подписан"
+                                                    required
+                                                    v-model="form.name"
+                                                    :loading="loading_name"
+                                                    @input="findByName"
+                                                    :error-messages="error ? errors.data.name: ''"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="6" md="6">
+                                            <v-text-field
+                                                    label="ID"
+                                                    required
+                                                    v-model="form.uid"
+                                                    :loading="loading_uid"
+                                                    @input="findByUID"
+                                                    :error-messages="error ? errors.data.uid   : ''"
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
 
                                     <div v-if="contact_found && !multi_insert" class="scrollable-container mt-3">
                                         <v-row v-for="item in contact_found"
@@ -148,7 +168,7 @@
                                             <v-col cols="8" md="8">
                                                 <v-text-field
                                                         v-if="item.type"
-                                                        :value="item.code"
+                                                        :value="item.uid ? `${item.code}      ID ${item.uid} ` : `${item.code}`"
                                                         :label="item.type.type"
                                                         :hint="getFormattedHint(item)"
                                                         persistent-hint
@@ -167,34 +187,23 @@
                                                 </v-btn>
                                             </v-col>
                                         </v-row>
-
                                     </div>
-                                    <v-row v-if="!isFaceTypeSelected && !multi_insert && contact_found.length === 0 && selectType">
-                                        <v-col cols="6" md="6">
+                                    <v-row v-if="!multi_insert && selectType && contact_found.length === 0">
+                                        <v-col cols="8" md="8" v-if="!isFaceTypeSelected">
                                             <v-text-field
-                                                    label="ФИО / Имя / Подписан"
+                                                    label="Должность"
                                                     required
-                                                    v-model="form.name"
-                                                    :error-messages="error ? errors.data.name: ''"
+                                                    v-model="form.job"
+                                                    :error-messages="error ? errors.data.job: ''"
                                             ></v-text-field>
                                         </v-col>
-                                        <v-col cols="6" md="6">
+                                        <v-col cols="4" md="4">
                                             <v-text-field
                                                     type="date"
                                                     label="Дата рождения"
                                                     required
                                                     v-model="form.birthday"
                                                     :error-messages="error ? errors.data.birthday   : ''"
-                                            ></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row v-if="!multi_insert && selectType && contact_found.length === 0">
-                                        <v-col cols="12" md="12" v-if="!isFaceTypeSelected">
-                                            <v-text-field
-                                                    label="Должность"
-                                                    required
-                                                    v-model="form.job"
-                                                    :error-messages="error ? errors.data.job: ''"
                                             ></v-text-field>
                                         </v-col>
                                         <!--                                        <v-col cols="12" md="12">-->
@@ -414,6 +423,8 @@
                 multi_insert: false,
                 imageUrl: "",
                 loading: false,
+                loading_uid: false,
+                loading_name: false,
                 selectType: false,
                 viewImage: false,
                 form_editing: false,
@@ -426,6 +437,7 @@
                 form: {
                     type_id: "",
                     code: "",
+                    uid: "",
                     image: null,
                     screenshots: [],
                     import: "",
@@ -473,6 +485,7 @@
                     this.form_editing = true
                     this.form.type_id = value.type_id
                     this.form.code = value.code
+                    this.form.uid = value.uid
                     this.form.name = value.name
                     this.form.birthday = value.birthday
                     this.form.image = value.image
@@ -575,6 +588,40 @@
                     }
                 }
             },
+            async findByName() {
+                if (this.form.name.length !== 0) {
+                    this.loading_name = true;
+                    const params = {
+                        name: this.form.name,
+                        type_id: this.form.type_id,
+                    };
+                    const response = await this.$axios.$get('/api/contacts/find-by-name', {params});
+                    if (response && response.success && response.success === true) {
+                        this.loading_name = false;
+                        this.$store.commit('contacts/SET_CONTACT_FOUND', response.contact);
+                    } else {
+                        this.loading_name = false;
+                        this.$store.commit('contacts/SET_CONTACT_FOUND', []);
+                    }
+                }
+            },
+            async findByUID() {
+                if (this.form.uid.length !== 0) {
+                    this.loading_uid = true;
+                    const params = {
+                        uid: this.form.uid,
+                        type_id: this.form.type_id,
+                    };
+                    const response = await this.$axios.$get('/api/contacts/find-by-uid', {params});
+                    if (response && response.success && response.success === true) {
+                        this.loading_uid = false;
+                        this.$store.commit('contacts/SET_CONTACT_FOUND', response.contact);
+                    } else {
+                        this.loading_uid = false;
+                        this.$store.commit('contacts/SET_CONTACT_FOUND', []);
+                    }
+                }
+            },
             createImage(file) {
                 this.avatar = null;
                 const reader = new FileReader();
@@ -613,6 +660,7 @@
                 // this.form.type_id = "";
                 this.form.code = "";
                 this.form.name = "";
+                this.form.uid = "";
                 this.form.birthday = "";
                 this.form.job = "";
                 this.form.image = null;

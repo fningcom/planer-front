@@ -19,7 +19,7 @@
                     <filters @submitFilter="submitFilter" @resetFilter="resetFilter"/>
                     <div style="padding: 12px">
                         <v-text-field
-                                label="Поиск по описанию, контактам, объектам, фио"
+                                label="Поиск по UID, описанию, контактам, объектам, фио"
                                 append-icon="mdi mdi-magnify"
                                 required
                                 v-model="query"
