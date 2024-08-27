@@ -110,7 +110,7 @@
                                         </v-col>
                                     </v-row>
 
-                                    <v-row v-if="!isFaceTypeSelected && !multi_insert && selectType">
+                                    <v-row v-if="!multi_insert && selectType">
                                         <v-col col="6" md="6">
                                             <v-autocomplete
                                                     v-model="form.type_id"
@@ -135,7 +135,7 @@
                                             >
                                             </v-text-field>
                                         </v-col>
-                                        <v-col cols="6" md="6">
+                                        <v-col cols="6" md="6" v-if="!isFaceTypeSelected">
                                             <v-text-field
                                                     label="ФИО / Имя / Подписан"
                                                     required
@@ -145,7 +145,7 @@
                                                     :error-messages="error ? errors.data.name: ''"
                                             ></v-text-field>
                                         </v-col>
-                                        <v-col cols="6" md="6">
+                                        <v-col cols="6" md="6" v-if="!isFaceTypeSelected">
                                             <v-text-field
                                                     label="ID"
                                                     required
@@ -188,8 +188,8 @@
                                             </v-col>
                                         </v-row>
                                     </div>
-                                    <v-row v-if="!multi_insert && selectType && contact_found.length === 0">
-                                        <v-col cols="8" md="8" v-if="!isFaceTypeSelected">
+                                    <v-row v-if="!isFaceTypeSelected && !multi_insert && selectType && contact_found.length === 0">
+                                        <v-col cols="8" md="8">
                                             <v-text-field
                                                     label="Должность"
                                                     required
@@ -406,7 +406,7 @@
 
 <script>
     import {mapState} from 'vuex'
-    import {filterMediaByCollection, formatDate} from '../../plugins/helpers.js'
+    import {filterMediaByCollection, formatDate, generateUID} from '../../plugins/helpers.js'
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
@@ -416,6 +416,7 @@
         components: {UploadForm, DragDrop, ImagePreview},
         data() {
             return {
+                uid: generateUID(),
                 removeLoader: false,
                 bufferForm: false,
                 tab: null,
@@ -675,9 +676,11 @@
             findContactTypeById(contact_types, id) {
                 return contact_types.find(contact_type => contact_type.id === id);
             },
+
             selectIcon(id) {
                 if (id === 20) {
                     this.isFaceTypeSelected = true
+                    this.form.code = this.uid
                 } else {
                     if (id === 11 || id === 2) {
                         this.form.code = '+373'
