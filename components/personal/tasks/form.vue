@@ -60,7 +60,6 @@
                 </v-tabs>
                 <v-tabs-items v-model="tab" style="min-height: 595px">
                     <v-tab-item value="tab-1">
-
                         <v-card flat>
                             <v-card-text>
                                 <v-container>
@@ -397,6 +396,11 @@
                                                     label="Результат выполнения задачи"
                                                     dense
                                             ></v-textarea>
+                                            <div style="margin-left: 10px">
+                                                <a href="#" class="help" @click.prevent='addResultHelper("Информации не имеется")'>Информации не имеется</a>
+                                                <a href="#" class="help" @click.prevent='addResultHelper("Задача успешно выполнена.")'>Задача успешно выполнена.</a>
+                                                <a href="#" class="help" @click.prevent='addResultHelper("Установить не удалось")'>Установить не удалось</a>
+                                            </div>
                                         </v-col>
                                     <v-col cols="6" md="6">
                                         <v-file-input
@@ -694,6 +698,9 @@
             helpClick(value){
                 this.form.title = value;
             },
+            addResultHelper(value){
+                this.form.result = value;
+            },
             async fetchCustomers(query) {
                 this.loading = true;
                 try {
@@ -893,6 +900,9 @@
 </script>
 
 <style>
+    .v-textarea .v-text-field__details {
+        display: none;
+    }
     .quickly label {
         color: red !important;
     }
