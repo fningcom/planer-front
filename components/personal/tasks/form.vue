@@ -196,13 +196,24 @@
                                                     dense
                                             ></v-checkbox>
                                         </v-col>
-                                        <v-col cols="6" md="6">
+                                        <v-col cols="4" md="4">
                                             <v-text-field
                                                     type="number"
                                                     label="Число успешных деанонов"
                                                     required
                                                     v-model="form.deanon_success_count"
                                                     :error-messages="error ? errors.data.deanon_success_count: ''"
+                                                    dense
+                                                    outlined
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="4" md="4">
+                                            <v-text-field
+                                                    type="number"
+                                                    label="Количетсво объектов"
+                                                    required
+                                                    v-model="form.count"
+                                                    :error-messages="error ? errors.data.count: ''"
                                                     dense
                                                     outlined
                                             ></v-text-field>
@@ -608,6 +619,7 @@
                     quickly: false,
                     deanon: false,
                     deanon_success_count: 0,
+                    count: 0,
                     deadline_date: "",
                     comment: '',
                     result: '',
@@ -679,6 +691,7 @@
                     this.form.quickly = value.quickly;
                     this.form.deanon = value.deanon;
                     this.form.deanon_success_count = value.deanon_success_count ? value.deanon_success_count : 0;
+                    this.form.count = value.count ? value.count : 0;
                     this.form.deadline_date = value.formatted_deadline_date;
                     this.form.comment = value.comment;
                     this.form.result = value.result;
@@ -819,6 +832,7 @@
                 this.form.quickly = false;
                 this.form.deanon = false;
                 this.form.deanon_success_count = "";
+                this.form.count = "";
                 this.form.deadline_date = "";
                 this.form.comment = "";
                 this.form.result = "";

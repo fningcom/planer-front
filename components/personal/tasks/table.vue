@@ -72,14 +72,17 @@
                         </div>
                     </div>
                 </template>
-                <template v-slot:item.contacts="{ item }">
-                    {{ item.contacts.length }}
-                </template>
-                <template v-slot:item.devices="{ item }">
-                    {{ item.devices.length  }}
-                </template>
-                <template v-slot:item.faces="{ item }">
-                    {{ item.faces.length  }}
+<!--                <template v-slot:item.contacts="{ item }">-->
+<!--                    {{ item.contacts.length }}-->
+<!--                </template>-->
+<!--                <template v-slot:item.devices="{ item }">-->
+<!--                    {{ item.devices.length  }}-->
+<!--                </template>-->
+<!--                <template v-slot:item.faces="{ item }">-->
+<!--                    {{ item.faces.length  }}-->
+<!--                </template>-->
+                <template v-slot:item.count="{ item }">
+                    {{ item.count + item.contacts.length + item.devices.length + item.faces.length  }}
                 </template>
                 <template v-slot:item.files="{ item }">
                     <v-icon v-if="item.results_count > 0" color="#66bb6a" small>mdi mdi-paperclip-check</v-icon>
@@ -122,7 +125,6 @@
                             color="#66bb6a"
                             dark
                             label
-
                     >
                         <v-icon dark left small>mdi mdi-check-all</v-icon> {{ item.status.title }}
                     </v-chip>
@@ -188,10 +190,11 @@
                     {text: '', value: 'control', sortable: false, width: "40"},
                     {text: 'Заказчик', value: 'source', sortable: false},
                     {text: 'Задача', value: 'title', sortable: false},
-                    {text: 'Объектов', value: 'contacts', sortable: false},
-                    {text: 'Устройств', value: 'devices', sortable: false},
-                    {text: 'Лиц', value: 'faces', sortable: false},
-                    {text: 'Файлов', value: 'files', sortable: false},
+                    // {text: 'Контактов', value: 'contacts', sortable: false},
+                    // {text: 'Устройств', value: 'devices', sortable: false},
+                    // {text: 'Лиц', value: 'faces', sortable: false},
+                    {text: 'Объектов', value: 'count', sortable: false, align: 'center'},
+                    {text: 'Файлов', value: 'files', sortable: false, align: 'center'},
                     {text: 'Срок исполнения', value: 'formatted_deadline_date', sortable: false, width: "150"},
                     {text: '', value: 'actions', sortable: false}
                 ],
@@ -201,7 +204,7 @@
             ...mapState('tasks', ['filter_data', 'lastPage', 'currentPage', 'count', 'tasks', 'form_loading']),
             currentUserId() {
                 return this.$auth.user.id;
-            }
+            },
         },
         mounted() {
             this.getTasksList([], this.currentUserId, 1);
