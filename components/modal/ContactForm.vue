@@ -131,7 +131,6 @@
                                                     :loading="loading"
                                                     hint="Для проверки по базе, жми Enter"
                                                     @input="onInput"
-
                                             >
                                             </v-text-field>
                                         </v-col>
@@ -482,17 +481,17 @@
             },
             contact(value) {
                 if (value) {
-                    this.multi_insert = false
-                    this.form_editing = true
-                    this.form.type_id = value.type_id
-                    this.form.code = value.code
-                    this.form.uid = value.uid
-                    this.form.name = value.name
-                    this.form.birthday = value.birthday
-                    this.form.image = value.image
-                    this.form.job = value.job
+                    this.multi_insert = false;
+                    this.form_editing = true;
+                    this.form.type_id = value.type_id;
+                    this.form.code = value.code;
+                    this.form.uid = value.uid;
+                    this.form.name = value.name;
+                    this.form.birthday = value.birthday;
+                    this.form.image = value.image;
+                    this.form.job = value.job;
                     if (value.image_url) {
-                        this.viewImage = true
+                        this.viewImage = true;
                         this.imageUrl = value.image_url
                     }
                     if (value.media && value.media.length > 0) {
@@ -526,7 +525,7 @@
                 formData.append('contact_id', contact_id);
                 const response = await this.$axios.$post('/api/contacts-face-relation/remove', formData);
                 if (response) {
-                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', contact_id)
+                    await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', contact_id);
                     this.removeLoader = false;
                 }
             },
@@ -690,12 +689,12 @@
                     this.isFaceTypeSelected = false
                 }
 
-                this.form.type_id = id
+                this.form.type_id = id;
                 const contactType = this.findContactTypeById(this.contact_types, id);
                 this.hint = contactType['code']
             },
             async close() {
-                this.form_editing = false
+                this.form_editing = false;
                 this.$store.commit('contacts/SET_DIALOG');
                 this.$store.commit('contacts/ERROR_OFF');
                 this.$store.commit('contacts/ERRORS_STORE', []);
@@ -703,7 +702,7 @@
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
                 this.$store.commit('contacts/STORE_CONTACT', []);
                 this.$store.commit('faces/SET_FACE_RELATION_OFF');
-                this.clearFields()
+                this.clearFields();
                 this.tab = 1
             },
             async save() {
