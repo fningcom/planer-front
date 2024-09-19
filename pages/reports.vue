@@ -8,7 +8,7 @@
                 >
 
                     <v-col>
-                        <div style="display: flex; width: 100%;">
+                        <div style="display: flex; width: 950px;">
                             <v-text-field
                                     type="date"
                                     v-model="from"

@@ -45,8 +45,50 @@
                                 {{ item.title }}
                             </template>
                         </v-select>
-                    </v-col>
 
+                    </v-col>
+                    <v-col
+                            cols="12"
+                            md="2"
+                    >
+                    <v-select
+                            v-model="task_type"
+                            :items="task_types"
+                            label="Тип задачи"
+                            outlined
+                            dense
+                            @change="submitFilter"
+                            hide-details
+                            clearable
+                    >
+                        <template v-slot:item="{ item }">
+                            {{ item.title }}
+                        </template>
+                        <template v-slot:selection="{ item, index }">
+                            {{ item.title }}
+                        </template>
+                    </v-select>
+                        <div style="display: flex; margin-top: 10px;">
+                            <v-checkbox
+                                    v-model="quickly"
+                                    label="Срочные"
+                                    color="red"
+                                    value="1"
+                                    hide-details
+                                    @change="submitFilter"
+                                    class="mr-2"
+                            ></v-checkbox>
+                            <v-checkbox
+                                    v-model="control"
+                                    label="На контроле"
+                                    color="indigo darken-3"
+                                    value="1"
+                                    @change="submitFilter"
+                                    hide-details
+                            ></v-checkbox>
+                        </div>
+
+                    </v-col>
                     <div class="d_type_block"
                     >
                         <v-radio-group
@@ -178,6 +220,9 @@
             return {
                 group: '',
                 status: '',
+                task_type: '',
+                control: '',
+                quickly: '',
                 incoming_number: '',
                 outgoing_number: '',
                 finish_from: '',
@@ -190,7 +235,7 @@
             this.user_id = this.$auth.user.id
         },
         computed: {
-            ...mapState('documents', ['groups', 'statuses']),
+            ...mapState('documents', ['groups', 'statuses', 'task_types']),
             ...mapState('layout', ['users']),
             isAdmin() {
                 return this.$auth.user.isAdmin
@@ -200,6 +245,9 @@
             submitFilter() {
                 this.$emit('submitFilter', {
                     group: this.group,
+                    quickly: this.quickly,
+                    control: this.control,
+                    task_type: this.task_type,
                     incoming_number: this.incoming_number,
                     outgoing_number: this.outgoing_number,
                     finish_from: this.finish_from,
@@ -211,6 +259,9 @@
             },
             resetForm(e) {
                 this.group = "";
+                this.task_type = "";
+                this.quickly = "";
+                this.control = "";
                 this.incoming_number = "";
                 this.outgoing_number = "";
                 this.finish_from = "";
@@ -220,6 +271,9 @@
                 this.user_id = null;
                 this.$emit('resetFilter', {
                     group: "",
+                    task_type: "",
+                    quickly: "",
+                    control: "",
                     incoming_number: "",
                     outgoing_number: "",
                     finish_from: "",
