@@ -81,6 +81,7 @@
                                                     item-text="title"
                                                     dense
                                                     label="Тип задачи"
+                                                    @change="ChangeType"
                                                     :error-messages="error ? errors.data.type_id: ''"
                                             ></v-autocomplete>
                                         </v-col>
@@ -708,6 +709,15 @@
             }
         },
         methods: {
+            ChangeType(){
+                if(!this.open_task_id && (this.form.type_id === 2 || this.form.type_id === 5 || this.form.type_id === 8
+                    || this.form.type_id === 9 || this.form.type_id === 10 || this.form.type_id === 11 || this.form.type_id ===  14
+                    || this.form.type_id === 16 || this.form.type_id === 17)){
+                    this.form.count = 1;
+                }else{
+                    this.form.count = 0;
+                }
+            },
             helpClick(value){
                 this.form.title = value;
             },
