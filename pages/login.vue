@@ -64,6 +64,7 @@
             title: 'Авторизация'
         },
         layout: "auth",
+        middleware: [],
         data() {
             return {
                 valid: true,
