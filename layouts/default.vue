@@ -50,7 +50,6 @@
     export default {
         name: 'DefaultLayout',
         components: {Menu},
-        middleware: 'auth',
         data() {
             return {
                 clipped: false,

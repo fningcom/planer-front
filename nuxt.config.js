@@ -35,7 +35,10 @@ export default {
     '@mdi/font/css/materialdesignicons.min.css'
   ],
 
-
+  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  plugins: [
+    '~plugins/helpers.js',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -77,7 +80,6 @@ export default {
             method: 'get'
           },
         },
-        autoLogout: true,
       },
     },
     redirect: {
@@ -86,12 +88,6 @@ export default {
       home: "/personal/tasks"
     }
   },
-
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    { src: '~/plugins/axios.js', mode: 'client' },
-    '~plugins/helpers.js'
-  ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
