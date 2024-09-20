@@ -119,6 +119,7 @@
                                                     item-text="type"
                                                     label="Тип контакта *"
                                                     :error-messages="error ? errors.data.type_id: ''"
+                                                    @change="selectIcon(form.type_id)"
                                             ></v-autocomplete>
                                         </v-col>
                                         <v-col col="6" md="6"
@@ -671,6 +672,7 @@
                 this.tab = 1;
                 this.onFileClear();
                 this.form_editing = false;
+                this.selectType = false
             },
             findContactTypeById(contact_types, id) {
                 return contact_types.find(contact_type => contact_type.id === id);
@@ -678,8 +680,9 @@
 
             selectIcon(id) {
                 if (id === 20) {
-                    this.isFaceTypeSelected = true
-                    this.form.code = this.uid
+                    this.selectType = true
+                    this.isFaceTypeSelected = true;
+                    this.form.code = generateUID();
                 } else {
                     if (id === 11 || id === 2) {
                         this.form.code = '+373'
