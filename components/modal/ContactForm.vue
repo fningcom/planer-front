@@ -672,7 +672,6 @@
                 this.tab = 1;
                 this.onFileClear();
                 this.form_editing = false;
-                this.selectType = false
             },
             findContactTypeById(contact_types, id) {
                 return contact_types.find(contact_type => contact_type.id === id);
