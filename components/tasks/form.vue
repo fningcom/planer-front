@@ -261,7 +261,9 @@
                                             контакт
                                             <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
                                         </v-btn>
-                                        <contact-form :dialog="contactDialog"/>
+
+                                        <contact-form :dialog="contactDialog" />
+
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -546,16 +548,17 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
     import {filterMediaByCollection, formatDate, formatDateTime, toDay} from '../../plugins/helpers.js'
     import ImagePreview from "../imagePreview";
     import ContactForm from "../modal/ContactForm";
     import DeviceForm from "../modal/DeviceForm";
     import FaceForm from "../modal/FaceForm";
+    import ContactRelatedForm from "../modal/ContactRelatedForm";
 
     export default {
         name: "AllTaskForm",
-        components: {FaceForm, DeviceForm, ContactForm, ImagePreview},
+        components: {ContactRelatedForm, FaceForm, DeviceForm, ContactForm, ImagePreview},
         data() {
             return {
                 removeLoader: false,
@@ -665,6 +668,7 @@
                 return false;
             }
         },
+
         props: ['dialog'],
         mounted() {
             if (!this.open_task_id) {

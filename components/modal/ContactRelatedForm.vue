@@ -6,7 +6,7 @@
                 max-width="560px"
         >
             <v-card
-                    v-if="edit_contact_loading"
+                    v-if="load_relation_contact"
                     color="primary"
                     dark
             >
@@ -26,11 +26,9 @@
                     </v-tab>
                     <v-tab href="#tab-1" v-else>
                         <v-icon small>mdi-pencil</v-icon>
-                        <span style="width: 10px"></span>ID#{{ contact.id }}
+                        <span style="width: 10px"></span>ID#{{ related_contact.id }}
                     </v-tab>
-                    <v-tab href="#tab-2" v-if="form_editing">
-                        Связи
-                    </v-tab>
+
                     <v-tab href="#tab-3">
                         Комментарий
                     </v-tab>
@@ -38,7 +36,6 @@
                         Скриншоты
                     </v-tab>
                 </v-tabs>
-
                 <v-tabs-items v-model="tab" style="min-height: 595px">
                     <v-tab-item value="tab-1">
                         <v-card flat>
@@ -64,17 +61,17 @@
                                     </v-alert>
                                 </div>
                                 <v-container>
-                                    <v-row v-if="!form_editing">
-                                        <v-col>
-                                            <v-switch
-                                                    v-model="multi_insert"
-                                                    label="Массовый импорт"
-                                                    color="success"
-                                                    value="success"
-                                                    hide-details
-                                            ></v-switch>
-                                        </v-col>
-                                    </v-row>
+<!--                                    <v-row v-if="!form_editing">-->
+<!--                                        <v-col>-->
+<!--                                            <v-switch-->
+<!--                                                    v-model="multi_insert"-->
+<!--                                                    label="Массовый импорт"-->
+<!--                                                    color="success"-->
+<!--                                                    value="success"-->
+<!--                                                    hide-details-->
+<!--                                            ></v-switch>-->
+<!--                                        </v-col>-->
+<!--                                    </v-row>-->
                                     <v-row>
                                         <v-col>
                                             <div class="icons mb-3">
@@ -258,101 +255,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-2" v-if="selectType">
-                        <v-card flat class="d-flex justify-end">
-                            <v-card-text>
-                                <v-row>
-                                    <v-col>
-                                        <v-btn color="#cb205f" @click="openFaceDialog(false)" dark small
-                                               class="float-end">
-                                            <v-icon left>mdi mdi-plus</v-icon>
-                                            связать с лицом
-                                            <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <v-row>
-                                    <v-col v-if="contact && contact.faces">
-                                        <v-data-table
-                                                :headers="faces_headers"
-                                                :items="contact.faces"
-                                                :loading="removeLoader"
-                                                item-key="id"
-                                                class="elevation-1 my-2"
-                                                loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                                :items-per-page=8
-                                        >
-                                            <template v-slot:item.number="{ item, index }">
-                                                {{ index + 1 }}
-                                            </template>
-                                            <template v-slot:item.birthday="{ item }">
-                                                {{ formatBirthday(item.birthday) }}
-                                            </template>
-                                            <template v-slot:item.action="{ item }">
-                                                <v-icon style="cursor:pointer" @click="openEditFaceDialog(item.id)">
-                                                    mdi-pencil
-                                                </v-icon>
-                                                <v-icon style="cursor:pointer"
-                                                        @click="removeLink(item.id, contact.id)">mdi mdi-close
-                                                </v-icon>
-                                            </template>
-                                        </v-data-table>
-                                    </v-col>
-                                </v-row>
-                            </v-card-text>
-                        </v-card>
-                        <v-card flat class="d-flex justify-end">
-                            <v-card-text>
-                                <v-row>
-                                    <v-col>
-                                        <v-btn color="#4caf50" @click="openContactDialog(false)" dark small
-                                               class="float-end">
-                                            <v-icon left>mdi mdi-plus</v-icon>
-                                            связать с контактом
-                                            <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <v-row>
-                                    <v-col v-if="contact && contact.related_contacts">
-                                        <v-data-table
-                                                :headers="contact_headers"
-                                                :items="contact.related_contacts"
-                                                item-key="id"
-                                                class="elevation-1 my-2"
-                                                :loading="removeLoader"
-                                                loading-text="Загрузка данных... Пожалуйста ожидайте"
-                                                :items-per-page=8
-                                        >
-                                            <template v-slot:item.number="{ item, index }">
-                                                {{ index + 1 }}
-                                            </template>
-                                            <template v-slot:item.icon="{ item }">
-                                                <v-img :src="item.type.icon" width="24"/>
-                                            </template>
-                                            <template v-slot:item.code="{ item }">
-                                                <template v-if="item.code">
-                                                    <div v-if="item.name">&#171;{{ item.name }}&#187;</div>
-                                                    <div style="font-size: 12px;">{{ item.code }}</div>
-                                                </template>
-                                                <template v-else>
-                                                    {{ item.name }}
-                                                </template>
-                                            </template>
-                                            <template v-slot:item.action="{ item }">
-                                                <v-icon style="cursor:pointer" @click="openRelatedContactDialog(item.id)">
-                                                    mdi-pencil
-                                                </v-icon>
-                                                <v-icon style="cursor:pointer" v-if="isAccess"
-                                                        @click="removeContactLink(item.id, contact.id)">mdi mdi-close
-                                                </v-icon>
-                                            </template>
-                                        </v-data-table>
-                                    </v-col>
-                                </v-row>
-                            </v-card-text>
-                        </v-card>
-                    </v-tab-item>
+
                     <v-tab-item value="tab-3" v-if="selectType">
                         <v-card flat>
                             <v-card-text>
@@ -418,7 +321,6 @@
                     </v-tab-item>
                 </v-tabs-items>
                 <v-card tile>
-                    <contact-related-form :dialog="contactRelationDialog" />
                     <v-card-actions>
                         <v-spacer></v-spacer>
 
@@ -448,7 +350,6 @@
                         >
                             Сохранить
                         </v-btn>
-
                     </v-card-actions>
                 </v-card>
             </div>
@@ -464,11 +365,10 @@
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
-    import ContactRelatedForm from "./ContactRelatedForm";
 
     export default {
-        name: "ContactForm",
-        components: {ContactRelatedForm, UploadForm, DragDrop, ImagePreview},
+        name: "ContactRelatedForm",
+        components: {UploadForm, DragDrop, ImagePreview},
         data() {
             return {
                 uid: generateUID(),
@@ -521,7 +421,7 @@
             this.tab = 1
         },
         computed: {
-            ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found', 'edit_contact_loading', 'contactRelationDialog']),
+            ...mapState('contacts', ['contact','related_contact', 'errors', 'success', 'form_loading', 'error', 'contact_found', 'load_relation_contact', 'contact_relation_contact_id']),
             ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
@@ -551,29 +451,49 @@
             'form.type_id': function (newVal) {
                 this.selectType = !!newVal;
             },
-            contact(value) {
+            related_contact(value) {
                 if (value) {
                     this.multi_insert = false;
                     this.form_editing = true;
-                    this.form.type_id = value.type_id;
-                    this.form.code = value.code;
-                    this.form.uid = value.uid;
-                    this.form.name = value.name;
-                    this.form.birthday = value.birthday;
-                    this.form.image = value.image;
-                    this.form.job = value.job;
+
+                    if (value.type_id) {
+                        this.form.type_id = value.type_id;
+                    }
+                    if (value.code) {
+                        this.form.code = value.code;
+                    }
+                    if (value.uid) {
+                        this.form.uid = value.uid;
+                    }
+                    if (value.name) {
+                        this.form.name = value.name;
+                    }
+                    if (value.birthday) {
+                        this.form.birthday = value.birthday;
+                    }
+                    if (value.image) {
+                        this.form.image = value.image;
+                    }
+                    if (value.job) {
+                        this.form.job = value.job;
+                    }
                     if (value.image_url) {
                         this.viewImage = true;
-                        this.imageUrl = value.image_url
+                        this.imageUrl = value.image_url;
                     }
+
                     if (value.media && value.media.length > 0) {
                         this.viewImage = true;
                         this.avatar = filterMediaByCollection(value.media, 'avatar');
                         this.screenshots_src = filterMediaByCollection(value.media, 'screenshots');
                     }
-                    this.form.comment = value.comment
+
+                    if (value.comment) {
+                        this.form.comment = value.comment;
+                    }
                 }
             }
+
         },
         methods: {
             formatBirthday(item) {
@@ -587,13 +507,6 @@
             openContactDialog() {
                 this.$store.commit('contacts/SET_CONTACT_RELATION_ON', {contact_id: this.contact.id});
                 this.$store.commit('contacts/SET_CONTACT_DIALOG');
-            },
-            openRelatedContactDialog(id) {
-                this.$store.commit('contacts/SET_CONTACT_RELATION_ON', {contact_id: this.contact.id});
-                this.$store.commit('contacts/SET_CONTACT_DIALOG');
-                if (id) {
-                    this.$store.dispatch('contacts/GET_RELATED_CONTACT_FROM_API', id);
-                }
             },
             async openEditFaceDialog(id) {
                 this.$store.commit('faces/SET_FACE_DIALOG');
@@ -750,22 +663,7 @@
                 this.$store.commit('layout/LOAD_MODAL_IMG', img);
                 this.$store.commit('layout/SET_IMG_DIALOG');
             },
-            clearFields() {
-                // this.form.type_id = "";
-                this.form.code = "";
-                this.form.name = "";
-                this.form.uid = "";
-                this.form.birthday = "";
-                this.form.job = "";
-                this.form.image = null;
-                this.form.comment = "";
-                this.form.import = "";
-                this.screenshots_src = [];
-                this.form.screenshots = [];
-                this.tab = 1;
-                this.onFileClear();
-                this.form_editing = false;
-            },
+
             findContactTypeById(contact_types, id) {
                 return contact_types.find(contact_type => contact_type.id === id);
             },
@@ -787,25 +685,37 @@
                 const contactType = this.findContactTypeById(this.contact_types, id);
                 this.hint = contactType['code']
             },
+            clearFields() {
+                this.form.code = "";
+                this.form.name = "";
+                this.form.uid = "";
+                this.form.birthday = "";
+                this.form.job = "";
+                this.form.image = null;
+                this.form.comment = "";
+                this.form.import = "";
+                this.screenshots_src = [];
+                this.form.screenshots = [];
+                this.tab = 1;
+                this.onFileClear();
+                this.form_editing = false;
+            },
             async close() {
                 this.form_editing = false;
-                this.$store.commit('contacts/SET_DIALOG');
+                this.$store.commit('contacts/SET_CONTACT_DIALOG');
                 this.$store.commit('contacts/ERROR_OFF');
                 this.$store.commit('contacts/ERRORS_STORE', []);
                 this.$store.commit('contacts/SUCCESS_STORE', []);
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
-                this.$store.commit('contacts/STORE_CONTACT', []);
-                this.$store.commit('faces/SET_FACE_RELATION_OFF');
+                this.$store.commit('contacts/EMPTY_RELATED_CONTACT');
                 this.clearFields();
                 this.tab = 1
+
             },
             async save() {
                 const formData = new FormData();
-                if (this.open_document_id) {
-                    formData.append('document_id', this.open_document_id);
-                }
-                if (this.open_task_id) {
-                    formData.append('task_id', this.open_task_id);
+                if (this.contact_relation_contact_id) {
+                    formData.append('contact_relation_contact_id', this.contact_relation_contact_id);
                 }
                 formData.append('user_id', this.user_id);
 
@@ -823,43 +733,34 @@
                     this.form.screenshots.forEach((file, index) => {
                         formData.append(`screenshots[${index}]`, file);
                     });
-                    if (this.form_editing) {
+                    if (this.related_contact && this.related_contact.id) {
                         await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
                     } else {
                         await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
                     }
                 }
-                if (this.open_document_id) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if (this.contact_relation_contact_id) {
+                    const contactResponse = await this.$axios.get(`/api/contacts/${this.contact_relation_contact_id}/edit`);
+                    this.$store.commit('contacts/STORE_CONTACT', contactResponse.data);
                 }
-                if (this.open_task_id) {
-                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', documentResponse);
-                }
-                this.$store.commit('contacts/STORE_CONTACT', []);
+                this.$store.commit('contacts/SET_CONTACT_DIALOG');
+                this.$store.commit('contacts/EMPTY_RELATED_CONTACT');
                 this.clearFields()
             },
             async bindContact(contact_id) {
                 const formData = new FormData();
-                if (this.open_document_id) {
-                    formData.append('document_id', this.open_document_id);
-                }
-                if (this.open_task_id) {
-                    formData.append('task_id', this.open_task_id);
+                if (this.contact_relation_contact_id) {
+                    formData.append('contact_relation_contact_id', this.contact_relation_contact_id);
                 }
                 formData.append('contact_id', contact_id);
                 await this.$store.dispatch('contacts/BIND_CONTACT', formData);
-                if (this.open_document_id) {
-                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
-                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                if (this.contact_relation_contact_id) {
+                    const contactResponse = await this.$axios.get(`/api/contacts/${this.contact_relation_contact_id}/edit`);
+                    this.$store.commit('contacts/STORE_CONTACT', contactResponse.data);
                 }
-                if (this.open_task_id) {
-                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', documentResponse);
-                }
-                this.$store.commit('contacts/SET_CONTACT_FOUND', []);
-                this.clearFields();
+                this.$store.commit('contacts/SET_CONTACT_DIALOG');
+                this.$store.commit('contacts/EMPTY_RELATED_CONTACT');
+                this.clearFields()
             },
             changeQuickly() {
                 if (this.form.incoming_date) {

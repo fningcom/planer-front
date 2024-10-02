@@ -1,19 +1,38 @@
 export const state = () => ({
     contactDialog: false,
+    contactRelationDialog: false,
     error: false,
     errors: '',
     success: '',
     form_loading: false,
     contact:[],
+    related_contact:[],
     contact_found: [],
-    edit_contact_loading: false
+    edit_contact_loading: false,
+    load_relation_contact: false,
+    contact_relation: false, // Включен если при создании лица добавляетя связь к контакту
+    contact_relation_contact_id: null,
 });
 export const mutations = {
+    SET_CONTACT_DIALOG(state) {
+        state.contactRelationDialog = !state.contactRelationDialog
+    },
+    SET_CONTACT_RELATION_ON(state, { contact_id }) {
+        state.contact_relation_contact_id = contact_id;
+        state.contact_relation = true
+    },
+    SET_CONTACT_RELATION_OFF(state) {
+        state.contact_relation_contact_id = null;
+        state.contact_relation = false
+    },
     SET_DIALOG(state) {
         state.contactDialog = !state.contactDialog
     },
     EDIT_CONTACT_LOADING(state) {
         state.edit_contact_loading = !state.edit_contact_loading
+    },
+    LOAD_RELATION_CONTACT(state) {
+        state.load_relation_contact = !state.load_relation_contact
     },
     FORM_LOADING_OFF(state) {
         state.form_loading = false
@@ -39,10 +58,18 @@ export const mutations = {
     STORE_CONTACT(state, payload) {
         state.contact = payload.data
     },
+    STORE_RELATED_CONTACT(state, payload) {
+        state.related_contact = payload.data
+    },
+    EMPTY_RELATED_CONTACT(state, payload) {
+        state.related_contact = []
+        state.contact_relation = false;
+        state.contact_relation_contact_id = null
+    },
 };
 
 export const actions = {
-    async CREATE_CONTACT({ commit }, data) {
+    async CREATE_CONTACT({ state, commit }, data) {
         commit('FORM_LOADING_ON');
         try {
             const response = await this.$axios.post('/api/contacts', data, {
@@ -57,7 +84,9 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                commit('SET_DIALOG');
+                if(!state.contact_relation_contact_id) {
+                    commit('SET_DIALOG');
+                }
             }
         } catch (error) {
             console.info(error);
@@ -66,8 +95,14 @@ export const actions = {
     },
     async UPDATE_CONTACT({ state, commit }, data) {
         commit('FORM_LOADING_ON');
+        let url;
+        if(state.related_contact && state.related_contact.id) {
+            url = '/api/contacts/' + state.related_contact.id + '/update'
+        }else{
+            url = '/api/contacts/' + state.contact.id + '/update'
+        }
         try {
-            const response = await this.$axios.post('/api/contacts/' + state.contact.id + '/update', data, {
+            const response = await this.$axios.post(url, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -79,14 +114,16 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                commit('SET_DIALOG');
+                if(!state.contact_relation_contact_id) {
+                    commit('SET_DIALOG');
+                }
             }
         } catch (error) {
             console.info(error);
         }
         commit('FORM_LOADING_OFF');
     },
-    async BIND_CONTACT({ commit }, data) {
+    async BIND_CONTACT({ state, commit }, data) {
         commit('FORM_LOADING_ON');
         try {
             const response = await this.$axios.post('/api/contacts/bind', data);
@@ -96,7 +133,9 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                commit('SET_DIALOG');
+                if(!state.contact_relation_contact_id) {
+                    commit('SET_DIALOG');
+                }
             }
         } catch (error) {
             console.info(error);
@@ -128,5 +167,11 @@ export const actions = {
         const response = await this.$axios.get('/api/contacts/' + contact_id + '/edit');
         commit('STORE_CONTACT', response.data)
         commit('EDIT_CONTACT_LOADING')
+    },
+    async GET_RELATED_CONTACT_FROM_API({commit, state}, contact_id) {
+        commit('LOAD_RELATION_CONTACT')
+        const response = await this.$axios.get('/api/contacts/' + contact_id + '/edit');
+        commit('STORE_RELATED_CONTACT', response.data)
+        commit('LOAD_RELATION_CONTACT')
     },
 }
