@@ -68,10 +68,16 @@
                         </div>
                         <div>
                             <b>{{ item.type.title }} </b>
-                            <div class="smallRow" v-if="item && item.comment"><b>{{ item.title }}:</b> <i class="title-text">{{ item.comment }}</i></div>
+                            <div class="smallRow" v-if="item && item.comment">
+                                <b>{{ item.title }}:</b>
+                                <i class="title-text">{{ item.comment.length > 150 ? item.comment.substring(0, 150) + '...' : item.comment }}</i>
+                            </div>
                             <div class="smallRow" v-else-if="item && item.contacts.length">
                                 <b>{{ item.title }}:</b>
-                                <span v-if="item && item.contacts && item.contacts[0] && item.contacts[0]['code']">{{item.contacts[0]['code']}}</span><span v-if="item && item.contacts && item.contacts[1] && item.contacts[1]['code']">, {{item.contacts[1]['code']}}</span><span v-if="item && item.contacts && item.contacts[2] && item.contacts[2]['code']">, {{item.contacts[2]['code']}}</span><span v-if="item && item.contacts && item.contacts[3] && item.contacts[3]['code']">, {{item.contacts[3]['code']}}</span><span v-if="item && item.contacts && item.contacts[4] && item.contacts[4]['code']">, {{item.contacts[4]['code']}}</span><span v-if="item && item.contacts && item.contacts[5] && item.contacts[5]['code']">, {{item.contacts[5]['code']}}</span>
+                                <span v-for="(contact, index) in item.contacts.slice(0, 6)" :key="index">
+                                    <span v-if="contact['code']">{{ contact['code'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['code']">, </span>
+                                </span>
+                                <span v-if="item.contacts.length > 6">...</span>
                             </div>
                         </div>
                     </div>
