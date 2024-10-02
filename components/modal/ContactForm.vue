@@ -666,7 +666,7 @@
             },
 
             async onInput() {
-                if (this.form.code.length !== 0) {
+                if (this.form.code.length !== 0 && !this.form.name && !this.form.uid) {
                     this.loading = true;
                     const params = {
                         code: this.form.code,
@@ -683,7 +683,7 @@
                 }
             },
             async findByName() {
-                if (this.form.name.length !== 0) {
+                if (this.form.name.length !== 0 && !this.form.code && !this.form.uid) {
                     this.loading_name = true;
                     const params = {
                         name: this.form.name,
@@ -700,7 +700,7 @@
                 }
             },
             async findByUID() {
-                if (this.form.uid.length !== 0) {
+                if (this.form.uid.length !== 0 && !this.form.code && !this.form.name) {
                     this.loading_uid = true;
                     const params = {
                         uid: this.form.uid,
