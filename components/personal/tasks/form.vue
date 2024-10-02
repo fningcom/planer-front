@@ -219,6 +219,13 @@
                                                     outlined
                                             ></v-text-field>
                                         </v-col>
+                                        <v-col cols="2" md="2" v-if="isAdmin">
+                                            <v-checkbox
+                                                    v-model="form.fixed"
+                                                    label="Fixed"
+                                                    dense
+                                            ></v-checkbox>
+                                        </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col cols="5" md="5">
@@ -619,6 +626,7 @@
                     customer_id: 1,
                     quickly: false,
                     deanon: false,
+                    fixed: false,
                     deanon_success_count: 0,
                     count: 0,
                     deadline_date: "",
@@ -691,6 +699,7 @@
                     this.form.users = value.users.map(user => user.id);
                     this.form.quickly = value.quickly;
                     this.form.deanon = value.deanon;
+                    this.form.fixed = value.fixed;
                     this.form.deanon_success_count = value.deanon_success_count ? value.deanon_success_count : 0;
                     this.form.count = value.count ? value.count : 0;
                     this.form.deadline_date = value.formatted_deadline_date;
@@ -841,6 +850,7 @@
                 this.form.users[0] = this.$auth.user.id;
                 this.form.quickly = false;
                 this.form.deanon = false;
+                this.form.fixed = false;
                 this.form.deanon_success_count = "";
                 this.form.count = "";
                 this.form.deadline_date = "";
@@ -866,6 +876,7 @@
                 formData.append('user_id', this.user_id);
                 formData.append('quickly', this.form.quickly ? 1 : 0);
                 formData.append('deanon', this.form.deanon ? 1 : 0);
+                formData.append('fixed', this.form.fixed ? 1 : 0);
                 formData.append('control', this.form.control ? 1 : 0);
                 return formData;
             },

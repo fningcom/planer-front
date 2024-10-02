@@ -7,6 +7,7 @@
                     :items="tasks"
                     item-key="id"
                     class="elevation-1 my-2"
+                    :item-class="itemRowBackground"
                     :loading="form_loading"
                     loading-text="Загрузка данных... Пожалуйста ожидайте"
                     hide-default-footer
@@ -56,6 +57,7 @@
                 </template>
                 <template v-slot:item.control="{ item }" >
                     <div style="display: flex;">
+                        <v-icon v-if="item.fixed" color="success">mdi mdi-pin</v-icon>
                         <v-icon v-if="item.quickly" color="error">mdi mdi-lightning-bolt-outline</v-icon>
                         <v-icon v-if="item.control" color="#37474f" dense>mdi mdi-account-clock-outline</v-icon>
                     </div>
@@ -221,6 +223,9 @@
             this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
         },
         methods: {
+            itemRowBackground: function (item) {
+                return item.fixed === 1 ? 'fixed' : ''
+            },
             async search(){
                 await this.$store.dispatch('tasks/SEARCH_TASKS_FROM_API', [this.query, 1]);
             },
@@ -284,5 +289,13 @@
     }
     .title-text {
         font-family: monospace;
+    }
+    .mdi-pin::before {
+        transform: rotate(25deg)!important;
+    }
+</style>
+<style>
+    .fixed {
+        background-color: #ebf9ecb8;
     }
 </style>
