@@ -68,7 +68,11 @@
                         </div>
                         <div>
                             <b>{{ item.type.title }} </b>
-                            <div class="smallRow"><i class="title-text">{{ item.title }}</i></div>
+                            <div class="smallRow" v-if="item && item.comment"><b>{{ item.title }}:</b> <i class="title-text">{{ item.comment }}</i></div>
+                            <div class="smallRow" v-else-if="item && item.contacts.length">
+                                <b>{{ item.title }}:</b>
+                                <span v-if="item && item.contacts && item.contacts[0] && item.contacts[0]['code']">{{item.contacts[0]['code']}}</span><span v-if="item && item.contacts && item.contacts[1] && item.contacts[1]['code']">, {{item.contacts[1]['code']}}</span><span v-if="item && item.contacts && item.contacts[2] && item.contacts[2]['code']">, {{item.contacts[2]['code']}}</span><span v-if="item && item.contacts && item.contacts[3] && item.contacts[3]['code']">, {{item.contacts[3]['code']}}</span><span v-if="item && item.contacts && item.contacts[4] && item.contacts[4]['code']">, {{item.contacts[4]['code']}}</span><span v-if="item && item.contacts && item.contacts[5] && item.contacts[5]['code']">, {{item.contacts[5]['code']}}</span>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -189,7 +193,7 @@
                     {text: 'Статус', value: 'status', sortable: false, width: "150"},
                     {text: '', value: 'control', sortable: false, width: "40"},
                     {text: 'Заказчик', value: 'source', sortable: false},
-                    {text: 'Задача', value: 'title', sortable: false},
+                    {text: 'Задача', value: 'title', sortable: false,  width: "600"},
                     // {text: 'Контактов', value: 'contacts', sortable: false},
                     // {text: 'Устройств', value: 'devices', sortable: false},
                     // {text: 'Лиц', value: 'faces', sortable: false},
@@ -263,7 +267,6 @@
     .smallRow {
         font-size: 12px;
         font-family: monospace;
-        font-style: italic;
     }
 
     .text-red {

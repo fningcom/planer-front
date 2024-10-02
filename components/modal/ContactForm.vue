@@ -343,7 +343,7 @@
                                                 <v-icon style="cursor:pointer" @click="openRelatedContactDialog(item.id)">
                                                     mdi-pencil
                                                 </v-icon>
-                                                <v-icon style="cursor:pointer" v-if="isAccess"
+                                                <v-icon style="cursor:pointer"
                                                         @click="removeContactLink(item.id, contact.id)">mdi mdi-close
                                                 </v-icon>
                                             </template>
