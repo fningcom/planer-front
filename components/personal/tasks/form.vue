@@ -791,7 +791,7 @@
                 this.$store.commit('tasks/CHANGE_TASK_STATUS', status_id);
                 let url = '/api/tasks/' + this.open_task_id + '/status/' + status_id + '/' + this.user_id;
                 this.form.status_id = status_id;
-                this.form.execution_date = new Date().toISOString();
+                this.form.execution_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 const response = await this.$axios.$post(url);
             },
             async removeLink(contact_id, task_id) {
