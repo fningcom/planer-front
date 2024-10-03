@@ -84,9 +84,7 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                if(!state.contact_relation_contact_id) {
-                    commit('SET_DIALOG');
-                }
+                return response.data;
             }
         } catch (error) {
             console.info(error);
@@ -114,9 +112,9 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                if(!state.contact_relation_contact_id) {
-                    commit('SET_DIALOG');
-                }
+                // if(!state.contact_relation_contact_id) {
+                //     commit('SET_DIALOG');
+                // }
             }
         } catch (error) {
             console.info(error);

@@ -419,7 +419,7 @@
                 </v-tabs-items>
                 <v-card tile>
                     <contact-related-form :dialog="contactRelationDialog" />
-                    <v-card-actions>
+                    <v-card-actions  style="padding-top: 15px;">
                         <v-spacer></v-spacer>
 
                         <v-btn
@@ -447,6 +447,24 @@
                                 :loading="form_loading"
                         >
                             Сохранить
+                        </v-btn>
+                        <v-btn
+                                v-if="!selectType"
+                                color="danger"
+                                co text
+                                :loading="form_loading"
+                                disabled
+                        >
+                            Save&Close
+                        </v-btn>
+                        <v-btn
+                                v-else
+                                color="danger"
+                                co text
+                                @click="SaveAndClose()"
+                                :loading="form_loading"
+                        >
+                            Сохранить И Закрыть
                         </v-btn>
 
                     </v-card-actions>
@@ -555,23 +573,42 @@
                 if (value) {
                     this.multi_insert = false;
                     this.form_editing = true;
-                    this.form.type_id = value.type_id;
-                    this.form.code = value.code;
-                    this.form.uid = value.uid;
-                    this.form.name = value.name;
-                    this.form.birthday = value.birthday;
-                    this.form.image = value.image;
-                    this.form.job = value.job;
+
+                    if (value.type_id) {
+                        this.form.type_id = value.type_id;
+                    }
+                    if (value.code) {
+                        this.form.code = value.code;
+                    }
+                    if (value.uid) {
+                        this.form.uid = value.uid;
+                    }
+                    if (value.name) {
+                        this.form.name = value.name;
+                    }
+                    if (value.birthday) {
+                        this.form.birthday = value.birthday;
+                    }
+                    if (value.image) {
+                        this.form.image = value.image;
+                    }
+                    if (value.job) {
+                        this.form.job = value.job;
+                    }
                     if (value.image_url) {
                         this.viewImage = true;
-                        this.imageUrl = value.image_url
+                        this.imageUrl = value.image_url;
                     }
+
                     if (value.media && value.media.length > 0) {
                         this.viewImage = true;
                         this.avatar = filterMediaByCollection(value.media, 'avatar');
                         this.screenshots_src = filterMediaByCollection(value.media, 'screenshots');
                     }
-                    this.form.comment = value.comment
+
+                    if (value.comment) {
+                        this.form.comment = value.comment;
+                    }
                 }
             }
         },
@@ -823,10 +860,15 @@
                     this.form.screenshots.forEach((file, index) => {
                         formData.append(`screenshots[${index}]`, file);
                     });
+
                     if (this.form_editing) {
                         await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
                     } else {
-                        await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
+                        const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
+                        if(response && response.contact && response.contact.id){
+                            await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', response.contact.id);
+                            this.$store.commit('contacts/FORM_LOADING_OFF');
+                        }
                     }
                 }
                 if (this.open_document_id) {
@@ -837,8 +879,13 @@
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
+
+            },
+            SaveAndClose(){
+                this.save();
                 this.$store.commit('contacts/STORE_CONTACT', []);
-                this.clearFields()
+                this.clearFields();
+                this.$store.commit('contacts/SET_DIALOG');
             },
             async bindContact(contact_id) {
                 const formData = new FormData();
