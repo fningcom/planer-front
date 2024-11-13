@@ -35,6 +35,8 @@
         >
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
             <v-app-bar-title>{{ $config.TITLE }}</v-app-bar-title>
+            <v-spacer/>
+            <span style="font-size: 12px;"><b>Сейчас:</b> {{ currentTime }}</span>
         </v-app-bar>
         <v-main>
             <v-container>
@@ -58,13 +60,21 @@
                 miniVariant: false,
                 right: true,
                 rightDrawer: false,
-                title: 'Vuetify.js'
+                title: 'Vuetify.js',
+                currentTime: new Date().toLocaleTimeString(),
             }
         },
         mounted() {
-           this.loadData()
+           this.loadData();
+           this.interval = setInterval(this.updateTime, 1000);
+        },
+        beforeDestroy() {
+            clearInterval(this.interval); // Очищаем интервал при уничтожении компонента
         },
         methods: {
+            updateTime() {
+                this.currentTime = new Date().toLocaleTimeString();
+            },
             async loadData(){
                 // Справочник -> Статусы (Выпадающий список)
                 this.statuses = await this.$axios.$get('/api/helpers/statuses');
