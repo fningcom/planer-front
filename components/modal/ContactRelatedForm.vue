@@ -736,7 +736,11 @@
                     if (this.related_contact && this.related_contact.id) {
                         await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
                     } else {
-                        await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
+                        const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
+                        if(response && response.contact && response.contact.id){
+                            await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', response.contact.id);
+                            this.$store.commit('contacts/FORM_LOADING_OFF');
+                        }
                     }
                 }
                 if (this.contact_relation_contact_id) {
