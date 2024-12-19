@@ -29,7 +29,7 @@
                         <span style="width: 10px"></span>ID#{{ contact.id }}
                     </v-tab>
                     <v-tab href="#tab-2" v-if="form_editing">
-                        Связи
+                        Связи <span v-if="related_count">&nbsp;({{ related_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3">
                         Комментарий
@@ -561,7 +561,12 @@
                     return this.task.users.some(user => user.id === this.$auth.user.id);
                 }
                 return false;
-            }
+            },
+            related_count() {
+                if (this.contact && this.contact.faces.length > 0 || this.contact.related_contacts.length > 0) {
+                    return this.contact.faces.length + this.contact.related_contacts.length
+                }
+            },
 
         },
         props: ['dialog'],

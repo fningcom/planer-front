@@ -89,7 +89,8 @@
                                              v-for="item in task_subtypes[form.type_id]"
                                              :key="item.id"
                                              style="margin: -19px 0 0 6px;">
-                                            <a href="#" class="help" @click.prevent="helpClick(item.title)">{{ item.title }}</a>
+                                            <a href="#" class="help" @click.prevent="helpClick(item.title)">{{
+                                                item.title }}</a>
                                         </div>
                                         <v-col cols="7" md="7">
                                             <v-textarea
@@ -112,12 +113,16 @@
                                                         multiple
                                                 ></v-file-input>
                                                 <div>
-                                                    <div v-for="item in files_files" style="display: flex; justify-content: space-between">
+                                                    <div v-for="item in files_files"
+                                                         style="display: flex; justify-content: space-between">
                                                         <div style="max-width: 195px;">
-                                                            <v-icon small>mdi mdi-paperclip</v-icon>{{ item.file_name }}
+                                                            <v-icon small>mdi mdi-paperclip</v-icon>
+                                                            {{ item.file_name }}
                                                         </div>
                                                         <div style="min-width: 55px;">
-                                                            <a :href="item.original_url"><v-icon>mdi mdi-download</v-icon></a>
+                                                            <a :href="item.original_url">
+                                                                <v-icon>mdi mdi-download</v-icon>
+                                                            </a>
                                                             <v-icon style="cursor:pointer"
                                                                     @click="removeFile(item.id, task.id)">mdi mdi-close
                                                             </v-icon>
@@ -308,6 +313,13 @@
                                                     {{ item.name }}
                                                 </template>
                                             </template>
+                                            <template v-slot:item.related="{ item }">
+                                                <v-icon v-if="item.faces_count > 0 || item.related_contacts_count > 0"
+                                                        style="color: green"
+                                                        @click="removeLink(item.id, task.id)">
+                                                    mdi mdi-link-variant
+                                                </v-icon>
+                                            </template>
                                             <template v-slot:item.action="{ item }">
                                                 <v-icon style="cursor:pointer" @click="openContactDialog(item.id)">
                                                     mdi-pencil
@@ -326,7 +338,8 @@
                         <v-card-text>
                             <v-row>
                                 <v-col>
-                                    <v-btn color="#4e4caf" @click="openDeviceDialog(false)" dark small class="float-end">
+                                    <v-btn color="#4e4caf" @click="openDeviceDialog(false)" dark small
+                                           class="float-end">
                                         <v-icon left>mdi mdi-plus</v-icon>
                                         устройство
                                     </v-btn>
@@ -407,20 +420,26 @@
                         <v-card flat>
                             <v-card-text>
                                 <v-row>
-                                        <v-col cols="12" md="12">
-                                            <v-textarea
-                                                    v-model="form.result"
-                                                    outlined
-                                                    name="input-7-4"
-                                                    label="Результат выполнения задачи"
-                                                    dense
-                                            ></v-textarea>
-                                            <div style="margin-left: 10px">
-                                                <a href="#" class="help" @click.prevent='addResultHelper("Информации не имеется")'>Информации не имеется</a>
-                                                <a href="#" class="help" @click.prevent='addResultHelper("Задача успешно выполнена.")'>Задача успешно выполнена.</a>
-                                                <a href="#" class="help" @click.prevent='addResultHelper("Установить не удалось")'>Установить не удалось</a>
-                                            </div>
-                                        </v-col>
+                                    <v-col cols="12" md="12">
+                                        <v-textarea
+                                                v-model="form.result"
+                                                outlined
+                                                name="input-7-4"
+                                                label="Результат выполнения задачи"
+                                                dense
+                                        ></v-textarea>
+                                        <div style="margin-left: 10px">
+                                            <a href="#" class="help"
+                                               @click.prevent='addResultHelper("Информации не имеется")'>Информации не
+                                                имеется</a>
+                                            <a href="#" class="help"
+                                               @click.prevent='addResultHelper("Задача успешно выполнена.")'>Задача
+                                                успешно выполнена.</a>
+                                            <a href="#" class="help"
+                                               @click.prevent='addResultHelper("Установить не удалось")'>Установить не
+                                                удалось</a>
+                                        </div>
+                                    </v-col>
                                     <v-col cols="6" md="6">
                                         <v-file-input
                                                 accept=".pdf,.doc,.docx,.xls,.xlsx"
@@ -454,7 +473,9 @@
                                                 {{ dateTime(item.created_at) }}
                                             </template>
                                             <template v-slot:item.action="{ item }">
-                                                <a :href="item.original_url"><v-icon>mdi mdi-download</v-icon></a>
+                                                <a :href="item.original_url">
+                                                    <v-icon>mdi mdi-download</v-icon>
+                                                </a>
                                                 <v-icon style="cursor:pointer"
                                                         @click="removeFile(item.id, task.id)">mdi mdi-close
                                                 </v-icon>
@@ -591,6 +612,7 @@
                     {text: '', value: 'icon', sortable: false},
                     {text: 'Тип контакта', value: 'type.type', sortable: false},
                     {text: 'Контакт', value: 'code', sortable: false},
+                    {text: 'Связь', value: 'related', sortable: false,  width: '80'},
                     {text: '', value: 'action', sortable: false, width: '85'},
                 ],
                 device_headers: [
@@ -664,18 +686,18 @@
             currentUserId() {
                 return this.$auth.user.id;
             },
-            contact_count(){
-                if(this.task && this.task.contacts){
+            contact_count() {
+                if (this.task && this.task.contacts) {
                     return this.task.contacts.length
                 }
             },
-            device_count(){
-                if(this.task && this.task.devices) {
+            device_count() {
+                if (this.task && this.task.devices) {
                     return this.task.devices.length
                 }
             },
-            face_count(){
-                if(this.task && this.task.faces){
+            face_count() {
+                if (this.task && this.task.faces) {
                     return this.task.faces.length
                 }
             },
@@ -709,7 +731,7 @@
                     this.form.control = value.control;
                     this.form.status_id = value.status_id;
                     this.form.title = value.title;
-                    if (value.media){
+                    if (value.media) {
                         this.result_files = filterMediaByCollection(value.media, 'results');
                         this.files_files = filterMediaByCollection(value.media, 'files');
                     }
@@ -718,26 +740,26 @@
             }
         },
         methods: {
-            ChangeType(){
-                if(!this.open_task_id && (this.form.type_id === 2 || this.form.type_id === 5 || this.form.type_id === 8
-                    || this.form.type_id === 9 || this.form.type_id === 10 || this.form.type_id === 11 || this.form.type_id ===  14
-                    || this.form.type_id === 16 || this.form.type_id === 17)){
+            ChangeType() {
+                if (!this.open_task_id && (this.form.type_id === 2 || this.form.type_id === 5 || this.form.type_id === 8
+                    || this.form.type_id === 9 || this.form.type_id === 10 || this.form.type_id === 11 || this.form.type_id === 14
+                    || this.form.type_id === 16 || this.form.type_id === 17)) {
                     this.form.count = 1;
-                }else{
+                } else {
                     this.form.count = 0;
                 }
             },
-            helpClick(value){
+            helpClick(value) {
                 this.form.title = value;
             },
-            addResultHelper(value){
+            addResultHelper(value) {
                 this.form.result = value;
             },
             async fetchCustomers(query) {
                 this.loading = true;
                 try {
                     const response = await this.$axios.get('api/tasks-customers', {
-                        params: { q: query }
+                        params: {q: query}
                     });
                     this.customers = response.data;
                 } catch (error) {
@@ -749,7 +771,7 @@
             async addIfNotExists() {
                 if (!this.customers.find(item => item.title === this.search) && this.search) {
                     try {
-                        const response = await this.$axios.post('api/tasks-customers', { title: this.search });
+                        const response = await this.$axios.post('api/tasks-customers', {title: this.search});
                         this.customers.push(response.data);
                         this.form.customer_id = response.data.id;
                     } catch (error) {
@@ -862,7 +884,7 @@
                 this.form.control = false;
                 this.files_files = [];
             },
-            getFilterData(){
+            getFilterData() {
                 const formData = new FormData();
                 for (const [key, value] of Object.entries(this.form)) {
                     formData.append(key, value);
@@ -912,23 +934,23 @@
                 }
             },
             changeQuickly() {
-                    if (this.form.quickly === true) {
-                        const startDate = new Date();
-                        const endDate = new Date(startDate);
-                        endDate.setDate(startDate.getDate());
-                        this.form.deadline_date = endDate.toISOString().split('T')[0];
-                    } else {
-                        const startDate = new Date();
-                        const endDate = new Date(startDate);
-                        endDate.setDate(startDate.getDate() + 2);
-                        this.form.deadline_date = endDate.toISOString().split('T')[0];
-                    }
-            },
-            changeIncomingDate() {
+                if (this.form.quickly === true) {
+                    const startDate = new Date();
+                    const endDate = new Date(startDate);
+                    endDate.setDate(startDate.getDate());
+                    this.form.deadline_date = endDate.toISOString().split('T')[0];
+                } else {
                     const startDate = new Date();
                     const endDate = new Date(startDate);
                     endDate.setDate(startDate.getDate() + 2);
                     this.form.deadline_date = endDate.toISOString().split('T')[0];
+                }
+            },
+            changeIncomingDate() {
+                const startDate = new Date();
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 2);
+                this.form.deadline_date = endDate.toISOString().split('T')[0];
             },
         }
     }
@@ -938,6 +960,7 @@
     .v-textarea .v-text-field__details {
         display: none;
     }
+
     .quickly label {
         color: red !important;
     }
@@ -949,13 +972,15 @@
     .v-dialog:not(.v-dialog--fullscreen) {
         max-height: 95%;
     }
+
     a.help {
         font-size: 12px;
         text-decoration: none;
         border-bottom: 1px dashed;
         margin: 0 5px;
-        color:#91a7d9;
+        color: #91a7d9;
     }
+
     .att_file label {
         font-size: 12px;
     }
