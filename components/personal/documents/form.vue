@@ -1,5 +1,6 @@
 <template>
     <v-row justify="center">
+        <face-form :dialog="faceDialog"/>
         <v-dialog
                 v-model="dialog"
                 persistent
