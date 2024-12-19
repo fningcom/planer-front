@@ -738,7 +738,6 @@
                     } else {
                         const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
                         if(response && response.contact && response.contact.id){
-                            await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', response.contact.id);
                             this.$store.commit('contacts/FORM_LOADING_OFF');
                         }
                     }

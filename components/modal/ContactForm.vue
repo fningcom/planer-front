@@ -825,6 +825,7 @@
                 this.hint = contactType['code']
             },
             async close() {
+                this.clearFields();
                 this.form_editing = false;
                 this.$store.commit('contacts/SET_DIALOG');
                 this.$store.commit('contacts/ERROR_OFF');
@@ -833,7 +834,6 @@
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
                 this.$store.commit('contacts/STORE_CONTACT', []);
                 this.$store.commit('faces/SET_FACE_RELATION_OFF');
-                this.clearFields();
                 this.tab = 1
             },
             async save() {
@@ -879,13 +879,50 @@
                     const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
-
             },
-            SaveAndClose(){
-                this.save();
-                this.$store.commit('contacts/STORE_CONTACT', []);
-                this.clearFields();
-                this.$store.commit('contacts/SET_DIALOG');
+            async SaveAndClose(){
+                const formData = new FormData();
+                if (this.open_document_id) {
+                    formData.append('document_id', this.open_document_id);
+                }
+                if (this.open_task_id) {
+                    formData.append('task_id', this.open_task_id);
+                }
+                formData.append('user_id', this.user_id);
+
+                // Если массовая загрузка контактов
+                if (this.multi_insert) {
+                    const lines = this.form.import.split('\n'); // Разбить текст по строкам
+                    formData.append('codes', JSON.stringify(lines)); // Сериализовать массив в JSON и добавить в FormData
+                    formData.append('type_id', this.form.type_id);
+                    formData.append('comment', this.form.comment);
+                    await this.$store.dispatch('contacts/IMPORT_CONTACTS', formData);
+                } else {
+                    for (const [key, value] of Object.entries(this.form)) {
+                        formData.append(key, value);
+                    }
+                    this.form.screenshots.forEach((file, index) => {
+                        formData.append(`screenshots[${index}]`, file);
+                    });
+
+                    if (this.form_editing) {
+                        await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
+                    } else {
+                        const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
+                        if(response && response.contact && response.contact.id){
+                            this.$store.commit('contacts/FORM_LOADING_OFF');
+                        }
+                    }
+                }
+                if (this.open_document_id) {
+                    const documentResponse = await this.$axios.get(`/api/documents/${this.open_document_id}/edit`);
+                    this.$store.commit('documents/STORE_DOCUMENT', documentResponse);
+                }
+                if (this.open_task_id) {
+                    const documentResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
+                    this.$store.commit('tasks/STORE_TASK', documentResponse);
+                }
+                this.close()
             },
             async bindContact(contact_id) {
                 const formData = new FormData();
