@@ -316,7 +316,7 @@
                                             <template v-slot:item.related="{ item }">
                                                 <v-icon v-if="item.faces_count > 0 || item.related_contacts_count > 0"
                                                         style="color: green"
-                                                        @click="removeLink(item.id, task.id)">
+                                                        @click="openRelationDialog(item.id)">
                                                     mdi mdi-link-variant
                                                 </v-icon>
                                             </template>
@@ -792,6 +792,12 @@
                 return formatDateTime(item)
             },
             openContactDialog(id) {
+                this.$store.commit('contacts/SET_DIALOG');
+                if (id) {
+                    this.$store.dispatch('contacts/GET_CONTACT_FROM_API', id);
+                }
+            },
+            openRelationDialog(id) {
                 this.$store.commit('contacts/SET_DIALOG');
                 if (id) {
                     this.$store.dispatch('contacts/GET_CONTACT_FROM_API', id);

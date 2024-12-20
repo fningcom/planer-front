@@ -20,7 +20,7 @@
                 </v-card-text>
             </v-card>
             <div v-else>
-                <v-tabs v-model="tab">
+                <v-tabs v-model="activeTab">
                     <v-tab href="#tab-1" v-if="!form_editing">
                         Новый контакт
                     </v-tab>
@@ -39,7 +39,7 @@
                     </v-tab>
                 </v-tabs>
 
-                <v-tabs-items v-model="tab" style="min-height: 595px">
+                <v-tabs-items v-model="activeTab" style="min-height: 595px">
                     <v-tab-item value="tab-1">
                         <v-card flat>
                             <v-card-text>
@@ -340,7 +340,8 @@
                                                 </template>
                                             </template>
                                             <template v-slot:item.action="{ item }">
-                                                <v-icon style="cursor:pointer" @click="openRelatedContactDialog(item.id)">
+                                                <v-icon style="cursor:pointer"
+                                                        @click="openRelatedContactDialog(item.id)">
                                                     mdi-pencil
                                                 </v-icon>
                                                 <v-icon style="cursor:pointer"
@@ -418,8 +419,8 @@
                     </v-tab-item>
                 </v-tabs-items>
                 <v-card tile>
-                    <contact-related-form :dialog="contactRelationDialog" />
-                    <v-card-actions  style="padding-top: 15px;">
+                    <contact-related-form :dialog="contactRelationDialog"/>
+                    <v-card-actions style="padding-top: 15px;">
                         <v-spacer></v-spacer>
 
                         <v-btn
@@ -492,7 +493,7 @@
                 uid: generateUID(),
                 removeLoader: false,
                 bufferForm: false,
-                tab: null,
+                activeTab: 'tab-1',
                 hint: "",
                 multi_insert: false,
                 imageUrl: "",
@@ -535,11 +536,10 @@
                 ],
             }
         },
-        mounted() {
-            this.tab = 1
-        },
+        mounted() {},
         computed: {
-            ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found', 'edit_contact_loading', 'contactRelationDialog']),
+            ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found',
+                'edit_contact_loading', 'contactRelationDialog']),
             ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
@@ -553,8 +553,8 @@
             color() {
                 return ['error', 'warning', 'success'][Math.floor(this.progress / 40)]
             },
-            isAccess(){
-                if(this.$auth.user.id === 1){
+            isAccess() {
+                if (this.$auth.user.id === 1) {
                     return true;
                 }
                 if (this.task && this.task.users && this.task.users.length > 0) {
@@ -804,7 +804,7 @@
                 this.form.import = "";
                 this.screenshots_src = [];
                 this.form.screenshots = [];
-                this.tab = 1;
+                this.activeTab = 'tab-1';
                 this.onFileClear();
                 this.form_editing = false;
             },
@@ -830,6 +830,7 @@
                 this.hint = contactType['code']
             },
             async close() {
+                this.activeTab = 'tab-1';
                 this.clearFields();
                 this.form_editing = false;
                 this.$store.commit('contacts/SET_DIALOG');
@@ -839,9 +840,10 @@
                 this.$store.commit('contacts/SET_CONTACT_FOUND', []);
                 this.$store.commit('contacts/STORE_CONTACT', []);
                 this.$store.commit('faces/SET_FACE_RELATION_OFF');
-                this.tab = 1
+                this.$store.commit('contacts/SET_RELATED_TAB');
             },
             async save() {
+                this.activeTab = 'tab-1';
                 const formData = new FormData();
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
@@ -870,7 +872,7 @@
                         await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
                     } else {
                         const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
-                        if(response && response.contact && response.contact.id){
+                        if (response && response.contact && response.contact.id) {
                             await this.$store.dispatch('contacts/GET_CONTACT_FROM_API', response.contact.id);
                             this.$store.commit('contacts/FORM_LOADING_OFF');
                         }
@@ -885,7 +887,8 @@
                     this.$store.commit('tasks/STORE_TASK', documentResponse);
                 }
             },
-            async SaveAndClose(){
+            async SaveAndClose() {
+                this.activeTab = 'tab-1';
                 const formData = new FormData();
                 if (this.open_document_id) {
                     formData.append('document_id', this.open_document_id);
@@ -914,7 +917,7 @@
                         await this.$store.dispatch('contacts/UPDATE_CONTACT', formData);
                     } else {
                         const response = await this.$store.dispatch('contacts/CREATE_CONTACT', formData);
-                        if(response && response.contact && response.contact.id){
+                        if (response && response.contact && response.contact.id) {
                             this.$store.commit('contacts/FORM_LOADING_OFF');
                         }
                     }
