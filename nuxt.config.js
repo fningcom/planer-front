@@ -63,7 +63,7 @@ export default {
           name: 'XSRF-TOKEN',
           options: {
             maxAge: 60 * 60 * 2, // 2 часа
-            secure: true, // Включите, если используете HTTPS
+            secure: false,
           }
         }
       },

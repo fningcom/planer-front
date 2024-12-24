@@ -409,6 +409,7 @@
                                                     :previewUrl="item.preview_url"
                                                     :fullImageUrl="item.original_url"
                                             />
+                                            <span style="font-size: 12px; font-weight: 500;">{{ formatDateTime(item.created_at) }}</span>
                                             <v-icon class="close-btn" @click="removePhoto(item.id)">mdi mdi-close
                                             </v-icon>
                                         </div>
@@ -479,7 +480,7 @@
 
 <script>
     import {mapState} from 'vuex'
-    import {filterMediaByCollection, formatDate, generateUID} from '../../plugins/helpers.js'
+    import {filterMediaByCollection, formatDate, generateUID, formatDateTime} from '../../plugins/helpers.js'
     import ImagePreview from "../imagePreview";
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
@@ -620,6 +621,9 @@
         methods: {
             formatBirthday(item) {
                 return formatDate(item)
+            },
+            formatDateTime(item) {
+                return formatDateTime(item)
             },
             openFaceDialog() {
                 // this.$store.commit('contacts/SET_DIALOG');
