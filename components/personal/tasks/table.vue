@@ -69,18 +69,26 @@
                             <img v-else :src="item.type.icon" height="25" width="25"/>
                         </div>
                         <div>
-                            <b>{{ item.type.title }} </b>
-                            <div class="smallRow" v-if="item && item.comment">
-                                <b>{{ item.title }}:</b>
+                            <div><b>{{ item.type.title }} </b> </div>
+                            <span class="smallRow" v-if="item && item.title">
+                                <b>{{ item.title }}: </b>
+                            </span>
+                            <span class="smallRow" v-if="item && item.comment">
                                 <i class="title-text">{{ item.comment.length > 150 ? item.comment.substring(0, 150) + '...' : item.comment }}</i>
-                            </div>
-                            <div class="smallRow" v-else-if="item && item.contacts.length">
-                                <b>{{ item.title }}:</b>
+                            </span>
+                            <span class="smallRow" v-else-if="item && item.contacts.length">
                                 <span v-for="(contact, index) in item.contacts.slice(0, 6)" :key="index">
-                                    <span v-if="contact['code']">{{ contact['code'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['code']">, </span>
+                                    <span v-if="contact['name']">{{ contact['name'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['name']">, </span>
+                                    <span v-else-if="contact['code']">{{ contact['code'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['code']">, </span>
                                 </span>
                                 <span v-if="item.contacts.length > 6">...</span>
-                            </div>
+                            </span>
+                            <span class="smallRow" v-else-if="item && item.faces.length">
+                                <span v-for="(face, index) in item.faces.slice(0, 6)" :key="index">
+                                    <span v-if="face['surname'] && face['name']">{{ face['surname'] }} {{ face['name'] }}</span><span v-if="index < 5 && item.faces[index + 1] && face['surname']">, </span>
+                                </span>
+                                <span v-if="item.faces.length > 6">...</span>
+                            </span>
                         </div>
                     </div>
                 </template>
