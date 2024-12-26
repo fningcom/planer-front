@@ -76,31 +76,25 @@
                             <span class="smallRow" v-if="item && item.comment">
                                 <i class="title-text">{{ item.comment.length > 150 ? item.comment.substring(0, 150) + '...' : item.comment }}</i>
                             </span>
-                            <span class="smallRow" v-else-if="item && item.contacts.length">
-                                <span v-for="(contact, index) in item.contacts.slice(0, 6)" :key="index">
-                                    <span v-if="contact['name']">{{ contact['name'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['name']">, </span>
-                                    <span v-else-if="contact['code']">{{ contact['code'] }}</span><span v-if="index < 5 && item.contacts[index + 1] && contact['code']">, </span>
+                            <span class="smallRow" v-if="limitedItems(item).length">
+                                <span v-for="(data, index) in limitedItems(item)" :key="index">
+                                    <template v-if="index < 9"> <!-- Первые 9 элементов -->
+                                        <template v-if="data.type === 'contact'">
+                                            <span v-if="data.name">{{ data.name }}; </span>
+                                            <span v-else-if="data.code">{{ data.code }}; </span>
+                                        </template>
+                                        <template v-else-if="data.type === 'face'">
+                                            <span v-if="data.surname && data.name">{{ data.surname }} {{ data.name }}; </span>
+                                        </template>
+                                    </template>
+                                    <template v-else> <!-- Последний элемент -->
+                                        ...
+                                    </template>
                                 </span>
-                                <span v-if="item.contacts.length > 6">...</span>
-                            </span>
-                            <span class="smallRow" v-else-if="item && item.faces.length">
-                                <span v-for="(face, index) in item.faces.slice(0, 6)" :key="index">
-                                    <span v-if="face['surname'] && face['name']">{{ face['surname'] }} {{ face['name'] }}</span><span v-if="index < 5 && item.faces[index + 1] && face['surname']">, </span>
-                                </span>
-                                <span v-if="item.faces.length > 6">...</span>
                             </span>
                         </div>
                     </div>
                 </template>
-<!--                <template v-slot:item.contacts="{ item }">-->
-<!--                    {{ item.contacts.length }}-->
-<!--                </template>-->
-<!--                <template v-slot:item.devices="{ item }">-->
-<!--                    {{ item.devices.length  }}-->
-<!--                </template>-->
-<!--                <template v-slot:item.faces="{ item }">-->
-<!--                    {{ item.faces.length  }}-->
-<!--                </template>-->
                 <template v-slot:item.count="{ item }">
                     {{ item.count + item.contacts.length + item.devices.length + item.faces.length  }}
                 </template>
@@ -231,6 +225,16 @@
             this.$store.commit('tasks/STORE_CURRENT_PAGE', 1);
         },
         methods: {
+            limitedItems(item) {
+                if (!item || (!item.contacts && !item.faces)) return [];
+                // Объединяем contacts и faces с типами
+                const combined = [
+                    ...(item.contacts || []).map(contact => ({ ...contact, type: 'contact' })),
+                    ...(item.faces || []).map(face => ({ ...face, type: 'face' })),
+                ];
+                // Ограничиваем до 10 элементов
+                return combined.slice(0, 10);
+            },
             itemRowBackground: function (item) {
                 return item.fixed === 1 ? 'fixed' : ''
             },
