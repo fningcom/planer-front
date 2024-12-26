@@ -4,7 +4,7 @@
         <v-dialog
                 v-model="dialog"
                 persistent
-                max-width="720px"
+                max-width="880px"
         >
 
             <v-card
@@ -42,19 +42,22 @@
                     <v-tab href="#tab-1">
                         Общее
                     </v-tab>
-                    <v-tab href="#tab-2" v-if="open_task_id">
-                        Контакты <span v-if="contact_count">&nbsp;({{ contact_count }})</span>
+                    <v-tab href="#tab-2">
+                        <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon> Файлы <span v-if="files_count">&nbsp;({{ files_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3" v-if="open_task_id">
-                        Устройство <span v-if="device_count">&nbsp;({{ device_count }})</span>
+                        Контакты <span v-if="contact_count">&nbsp;({{ contact_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-4" v-if="open_task_id">
-                        Лицо <span v-if="face_count">&nbsp;({{ face_count }})</span>
+                        Устройство <span v-if="device_count">&nbsp;({{ device_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-5" v-if="open_task_id">
-                        Результат
+                        Лицо <span v-if="face_count">&nbsp;({{ face_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-6" v-if="open_task_id">
+                        Результат
+                    </v-tab>
+                    <v-tab href="#tab-7" v-if="open_task_id">
                         История
                     </v-tab>
                 </v-tabs>
@@ -92,7 +95,7 @@
                                             <a href="#" class="help" @click.prevent="helpClick(item.title)">{{
                                                 item.title }}</a>
                                         </div>
-                                        <v-col cols="7" md="7">
+                                        <v-col cols="12" md="12">
                                             <v-textarea
                                                     v-model="form.comment"
                                                     outlined
@@ -101,38 +104,7 @@
                                                     dense
                                             ></v-textarea>
                                         </v-col>
-                                        <v-col cols="5" md="5">
-                                            <div style="border: 1px dotted #ccc; padding: 5px; min-height: 145px">
-                                                <v-file-input
-                                                        class="att_file"
-                                                        accept=".pdf,.doc,.docx,.xls,.xlsx"
-                                                        placeholder="Выберите файл"
-                                                        prepend-icon="mdi mdi-paperclip-check"
-                                                        label="Дополнительные файлы"
-                                                        v-model="form.files"
-                                                        multiple
-                                                ></v-file-input>
-                                                <div>
-                                                    <div v-for="item in files_files"
-                                                         style="display: flex; justify-content: space-between">
-                                                        <div style="max-width: 195px;">
-                                                            <v-icon small>mdi mdi-paperclip</v-icon>
-                                                            {{ item.file_name }}
-                                                        </div>
-                                                        <div style="min-width: 55px;">
-                                                            <a :href="item.original_url">
-                                                                <v-icon>mdi mdi-download</v-icon>
-                                                            </a>
-                                                            <v-icon style="cursor:pointer"
-                                                                    @click="removeFile(item.id, task.id)">mdi mdi-close
-                                                            </v-icon>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
-
-                                        </v-col>
                                     </v-row>
                                     <v-row>
                                         <v-col cols="6" md="6">
@@ -274,6 +246,47 @@
                         </v-card>
                     </v-tab-item>
                     <v-tab-item value="tab-2">
+                        <v-card flat>
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="5" md="5">
+                                            <div>
+                                                <v-file-input
+                                                        class="att_file"
+                                                        accept=".pdf,.doc,.docx,.xls,.xlsx"
+                                                        placeholder="Выберите файл"
+                                                        prepend-icon="mdi mdi-paperclip-check"
+                                                        label="Дополнительные файлы"
+                                                        v-model="form.files"
+                                                        multiple
+                                                ></v-file-input>
+                                            </div>
+                                        </v-col>
+                                        <v-col cols="12" md="12">
+                                                <div v-for="item in files_files"
+                                                     style="display: flex; justify-content: space-between">
+                                                    <div>
+                                                        <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon>
+                                                        {{ item.file_name }}
+                                                    </div>
+                                                    <div style="min-width: 55px;">
+                                                        <a :href="item.original_url">
+                                                            <v-icon>mdi mdi-download</v-icon>
+                                                        </a>
+                                                        <v-icon style="cursor:pointer"
+                                                                @click="removeFile(item.id, task.id)">mdi mdi-close
+                                                        </v-icon>
+                                                    </div>
+                                                </div>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+
+                    <v-tab-item value="tab-3">
                         <v-card flat class="d-flex justify-end">
                             <v-card-text>
                                 <v-row>
@@ -334,7 +347,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-3">
+                    <v-tab-item value="tab-4">
                         <v-card-text>
                             <v-row>
                                 <v-col>
@@ -374,7 +387,7 @@
                             </v-row>
                         </v-card-text>
                     </v-tab-item>
-                    <v-tab-item value="tab-4">
+                    <v-tab-item value="tab-5">
                         <v-card-text>
                             <v-row>
                                 <v-col>
@@ -416,7 +429,7 @@
                             </v-row>
                         </v-card-text>
                     </v-tab-item>
-                    <v-tab-item value="tab-5">
+                    <v-tab-item value="tab-6">
                         <v-card flat>
                             <v-card-text>
                                 <v-row>
@@ -486,7 +499,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-6">
+                    <v-tab-item value="tab-7">
                         <v-card flat v-if="open_task_events">
                             <v-card-text>
                                 <v-simple-table height="520" fixed-header="true">
@@ -689,6 +702,11 @@
             contact_count() {
                 if (this.task && this.task.contacts) {
                     return this.task.contacts.length
+                }
+            },
+            files_count() {
+                if (this.task && this.task.media) {
+                    return this.task.media.length
                 }
             },
             device_count() {
@@ -989,5 +1007,10 @@
 
     .att_file label {
         font-size: 12px;
+    }
+    .tilted-paperclip {
+        transform: rotate(45deg);
+        transform-origin: center;
+        margin-right: 5px;
     }
 </style>
