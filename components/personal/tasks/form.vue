@@ -706,7 +706,7 @@
             },
             files_count() {
                 if (this.task && this.task.media) {
-                    return this.task.media.length
+                    return this.files_files.length
                 }
             },
             device_count() {
