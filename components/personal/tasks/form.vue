@@ -268,7 +268,7 @@
                                                      style="display: flex; justify-content: space-between">
                                                     <div>
                                                         <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon>
-                                                        {{ item.file_name }}
+                                                        <a :href="item.original_url">{{ item.file_name }}</a>
                                                     </div>
                                                     <div style="min-width: 55px;">
                                                         <a :href="item.original_url">
