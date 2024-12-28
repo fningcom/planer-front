@@ -42,7 +42,7 @@
                     <v-tab href="#tab-1">
                         Общее
                     </v-tab>
-                    <v-tab href="#tab-2">
+                    <v-tab href="#tab-2" v-if="open_task_id">
                         <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon> Файлы <span v-if="files_count">&nbsp;({{ files_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3" v-if="open_task_id">
@@ -615,7 +615,7 @@
         data() {
             return {
                 removeLoader: false,
-                tab: null,
+                tab: 0,
                 customers: [],
                 loading: false,
                 search: '',
