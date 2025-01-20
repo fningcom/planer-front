@@ -1,5 +1,6 @@
 export const state = () => ({
     dialog: false,
+    documentDialog: false,
     error: false,
     errors: '',
     success: '',
@@ -8,6 +9,7 @@ export const state = () => ({
     task_types: [],
     form_loading: false,
     document: [],
+    documentRelated: [],
     open_document_id: null,
     open_document_events: [],
     documents: [],
@@ -36,6 +38,9 @@ export const mutations = {
     SET_DIALOG(state) {
         state.dialog = !state.dialog
     },
+    SET_DOCUMENT_DIALOG(state) {
+        state.documentDialog = !state.documentDialog
+    },
     SET_GROUPS(state, payload) {
         // state.groups = payload.map(group => group.title);
         state.groups = payload;
@@ -51,6 +56,9 @@ export const mutations = {
     },
     SET_DOCUMENT(state, payload) {
         state.document = payload
+    },
+    STORE_DOCUMENT_RELATED(state, payload) {
+        state.documentRelated = payload.data
     },
     STORE_EVENTS(state, payload) {
         state.open_document_events = payload.data
@@ -147,6 +155,14 @@ export const actions = {
         const events = await this.$axios.get('/api/documents/' + document_id + '/events');
         commit('STORE_EVENTS', events)
         commit('STORE_DOCUMENT', response)
+    },
+    async GET_RELATED_DOCUMENT_FROM_API({commit, state}, document_id) {
+        commit('STORE_DOCUMENT_RELATED', [])
+        const response = await this.$axios.get('/api/documents/' + document_id + '/edit');
+        if(response && response.data && response.data.id){
+            commit('SET_OPEN_DOC_ID', response.data.id)
+        }
+        commit('STORE_DOCUMENT_RELATED', response)
     },
     async UPDATE_DOCUMENT({commit, state}, data) {
         commit('FORM_LOADING_ON')

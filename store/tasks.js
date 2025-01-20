@@ -1,5 +1,6 @@
 export const state = () => ({
     dialog: false,
+    taskDialog: false,
     error: false,
     errors: '',
     success: '',
@@ -8,6 +9,7 @@ export const state = () => ({
     task_types: [],
     form_loading: false,
     task: [],
+    taskRelated: [],
     open_task_id: null,
     open_task_events: [],
     tasks: [],
@@ -37,6 +39,9 @@ export const mutations = {
     SET_DIALOG(state) {
         state.dialog = !state.dialog
     },
+    SET_TASK_DIALOG(state) {
+        state.taskDialog = !state.taskDialog
+    },
     SET_GROUPS(state, payload) {
         // state.groups = payload.map(group => group.title);
         state.groups = payload;
@@ -49,6 +54,9 @@ export const mutations = {
     },
     STORE_TASK(state, payload) {
         state.task = payload.data
+    },
+    STORE_TASK_RELATED(state, payload) {
+        state.taskRelated = payload.data
     },
     SET_TASK(state, payload) {
         state.task = payload
@@ -127,6 +135,11 @@ export const actions = {
         const events = await this.$axios.get('/api/tasks/' + task_id + '/events');
         commit('STORE_EVENTS', events)
         commit('STORE_TASK', response)
+    },
+    async GET_RELATED_TASK_FROM_API({commit, state}, task_id) {
+        commit('STORE_TASK_RELATED', [])
+        const response = await this.$axios.get('/api/tasks/' + task_id + '/edit');
+        commit('STORE_TASK_RELATED', response)
     },
     async GET_TASKS_FROM_API({commit, state}, [filter_data, user_id, page]) {
         commit('FORM_LOADING_ON')

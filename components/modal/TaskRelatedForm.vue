@@ -57,9 +57,6 @@
                     <v-tab href="#tab-6" v-if="open_task_id">
                         Результат
                     </v-tab>
-                    <v-tab href="#tab-7" v-if="open_task_id">
-                        История
-                    </v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="tab" style="min-height: 595px">
                     <v-tab-item value="tab-1">
@@ -88,13 +85,7 @@
                                                     :error-messages="error ? errors.data.type_id: ''"
                                             ></v-autocomplete>
                                         </v-col>
-                                        <div v-if="task_subtypes[form.type_id] && task_subtypes[form.type_id].length > 0"
-                                             v-for="item in task_subtypes[form.type_id]"
-                                             :key="item.id"
-                                             style="margin: -19px 0 0 6px;">
-                                            <a href="#" class="help" @click.prevent="helpClick(item.title)">{{
-                                                item.title }}</a>
-                                        </div>
+
                                         <v-col cols="12" md="12">
                                             <v-textarea
                                                     v-model="form.comment"
@@ -201,6 +192,7 @@
                                                     v-model="form.fixed"
                                                     label="Fixed"
                                                     dense
+                                                    disabled
                                             ></v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -225,6 +217,7 @@
                                                     item-text="name"
                                                     dense
                                                     :error-messages="error ? errors.data.users: ''"
+                                                    disabled
                                             ></v-select>
                                             <v-select
                                                     v-else
@@ -260,46 +253,34 @@
                                                         label="Дополнительные файлы"
                                                         v-model="form.files"
                                                         multiple
+                                                        disabled
                                                 ></v-file-input>
                                             </div>
                                         </v-col>
                                         <v-col cols="12" md="12">
-                                                <div v-for="item in files_files"
-                                                     style="display: flex; justify-content: space-between">
-                                                    <div>
-                                                        <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon>
-                                                        <a :href="item.original_url">{{ item.file_name }}</a>
-                                                    </div>
-                                                    <div style="min-width: 55px;">
-                                                        <a :href="item.original_url">
-                                                            <v-icon>mdi mdi-download</v-icon>
-                                                        </a>
-                                                        <v-icon style="cursor:pointer"
-                                                                @click="removeFile(item.id, task.id)">mdi mdi-close
-                                                        </v-icon>
-                                                    </div>
+                                            <div v-for="item in files_files"
+                                                 style="display: flex; justify-content: space-between">
+                                                <div>
+                                                    <v-icon small class="tilted-paperclip">mdi mdi-paperclip</v-icon>
+                                                    <a :href="item.original_url">{{ item.file_name }}</a>
                                                 </div>
+                                                <div style="min-width: 55px;">
+                                                    <a :href="item.original_url">
+                                                        <v-icon>mdi mdi-download</v-icon>
+                                                    </a>
+
+                                                </div>
+                                            </div>
                                         </v-col>
                                     </v-row>
                                 </v-container>
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-
                     <v-tab-item value="tab-3">
                         <v-card flat class="d-flex justify-end">
                             <v-card-text>
-                                <v-row>
-                                    <v-col>
-                                        <v-btn color="#4e4caf" @click="openContactDialog(false)" dark small
-                                               class="float-end">
-                                            <v-icon left>mdi mdi-plus</v-icon>
-                                            контакт
-                                            <!--                                            <v-icon small>mdi mdi-at</v-icon>-->
-                                        </v-btn>
-                                        <contact-form :dialog="contactDialog"/>
-                                    </v-col>
-                                </v-row>
+
                                 <v-row>
                                     <v-col v-if="task && task.contacts">
                                         <v-data-table
@@ -333,14 +314,6 @@
                                                     mdi mdi-link-variant
                                                 </v-icon>
                                             </template>
-                                            <template v-slot:item.action="{ item }">
-                                                <v-icon style="cursor:pointer" @click="openContactDialog(item.id)">
-                                                    mdi-pencil
-                                                </v-icon>
-                                                <v-icon style="cursor:pointer"
-                                                        @click="removeLink(item.id, task.id)">mdi mdi-close
-                                                </v-icon>
-                                            </template>
                                         </v-data-table>
                                     </v-col>
                                 </v-row>
@@ -349,16 +322,7 @@
                     </v-tab-item>
                     <v-tab-item value="tab-4">
                         <v-card-text>
-                            <v-row>
-                                <v-col>
-                                    <v-btn color="#4e4caf" @click="openDeviceDialog(false)" dark small
-                                           class="float-end">
-                                        <v-icon left>mdi mdi-plus</v-icon>
-                                        устройство
-                                    </v-btn>
-                                    <device-form :dialog="deviceDialog"/>
-                                </v-col>
-                            </v-row>
+
                             <v-row>
                                 <v-col v-if="task && task.devices">
                                     <v-data-table
@@ -373,14 +337,7 @@
                                         <template v-slot:item.number="{ item, index }">
                                             {{ index + 1 }}
                                         </template>
-                                        <template v-slot:item.action="{ item }">
-                                            <v-icon style="cursor:pointer" @click="openDeviceDialog(item.id)">
-                                                mdi-pencil
-                                            </v-icon>
-                                            <v-icon style="cursor:pointer"
-                                                    @click="removeDeviceLink(item.id, task.id)">mdi mdi-close
-                                            </v-icon>
-                                        </template>
+
                                     </v-data-table>
                                 </v-col>
 
@@ -389,16 +346,6 @@
                     </v-tab-item>
                     <v-tab-item value="tab-5">
                         <v-card-text>
-                            <v-row>
-                                <v-col>
-                                    <v-btn color="#4e4caf" @click="openFaceDialog(false)" dark small class="float-end">
-                                        <v-icon left>mdi mdi-plus</v-icon>
-                                        лицо
-                                        <!--                                        <v-icon small>mdi mdi-account-check</v-icon>-->
-                                    </v-btn>
-
-                                </v-col>
-                            </v-row>
                             <v-row>
                                 <v-col v-if="task && task.faces">
                                     <v-data-table
@@ -416,14 +363,7 @@
                                         <template v-slot:item.birthday="{ item }">
                                             {{ formatBirthday(item.birthday) }}
                                         </template>
-                                        <template v-slot:item.action="{ item }">
-                                            <v-icon style="cursor:pointer" @click="openFaceDialog(item.id)">
-                                                mdi-pencil
-                                            </v-icon>
-                                            <v-icon style="cursor:pointer"
-                                                    @click="removeFaceLink(item.id, task.id)">mdi mdi-close
-                                            </v-icon>
-                                        </template>
+
                                     </v-data-table>
                                 </v-col>
                             </v-row>
@@ -461,6 +401,7 @@
                                                 label="Файлы результата"
                                                 v-model="form.results"
                                                 multiple
+                                                disabled
                                         ></v-file-input>
                                     </v-col>
                                 </v-row>
@@ -489,9 +430,7 @@
                                                 <a :href="item.original_url">
                                                     <v-icon>mdi mdi-download</v-icon>
                                                 </a>
-                                                <v-icon style="cursor:pointer"
-                                                        @click="removeFile(item.id, task.id)">mdi mdi-close
-                                                </v-icon>
+
                                             </template>
                                         </v-data-table>
                                     </v-col>
@@ -499,39 +438,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-7">
-                        <v-card flat v-if="open_task_events">
-                            <v-card-text>
-                                <v-simple-table height="520" fixed-header="true">
-                                    <template v-slot:default>
-                                        <thead>
-                                        <tr>
-                                            <th class="text-left">
-                                                Дата
-                                            </th>
-                                            <th class="text-left">
-                                                Событие
-                                            </th>
-                                            <th class="text-left">
-                                                Пользователь
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr
-                                                v-for="item in open_task_events"
-                                                :key="item.id"
-                                        >
-                                            <td>{{ item.formatted_created_at }}</td>
-                                            <td>{{ item.title }}</td>
-                                            <td>{{ item.user.name }}</td>
-                                        </tr>
-                                        </tbody>
-                                    </template>
-                                </v-simple-table>
-                            </v-card-text>
-                        </v-card>
-                    </v-tab-item>
+
                 </v-tabs-items>
                 <v-card tile>
                     <div v-if="errors && errors.success === false || success.length > 0">
@@ -562,22 +469,22 @@
                             {{ task.status.title }} {{ task.formatted_execution_date }}
                         </v-chip>
                         <v-spacer></v-spacer>
-                        <v-btn
-                                v-if="task && task.status_id === 1"
-                                color="red darken-2"
-                                text
-                                @click="setStatus(2)"
-                        >
-                            В работу
-                        </v-btn>
-                        <v-btn
-                                v-if="task && task.status_id === 2"
-                                color="red darken-2"
-                                text
-                                @click="setStatus(3)"
-                        >
-                            Завершить
-                        </v-btn>
+<!--                        <v-btn-->
+<!--                                v-if="task && task.status_id === 1"-->
+<!--                                color="red darken-2"-->
+<!--                                text-->
+<!--                                @click="setStatus(2)"-->
+<!--                        >-->
+<!--                            В работу-->
+<!--                        </v-btn>-->
+<!--                        <v-btn-->
+<!--                                v-if="task && task.status_id === 2"-->
+<!--                                color="red darken-2"-->
+<!--                                text-->
+<!--                                @click="setStatus(3)"-->
+<!--                        >-->
+<!--                            Завершить-->
+<!--                        </v-btn>-->
                         <v-btn
                                 color="blue darken-1"
                                 text
@@ -585,14 +492,14 @@
                         >
                             Закрыть
                         </v-btn>
-                        <v-btn
-                                color="success"
-                                co text
-                                @click="save()"
-                                :loading="form_loading"
-                        >
-                            Сохранить
-                        </v-btn>
+<!--                        <v-btn-->
+<!--                                color="success"-->
+<!--                                co text-->
+<!--                                @click="save()"-->
+<!--                                :loading="form_loading"-->
+<!--                        >-->
+<!--                            Сохранить-->
+<!--                        </v-btn>-->
                     </v-card-actions>
 
                 </v-card>
@@ -603,17 +510,18 @@
 
 <script>
     import {mapState} from 'vuex'
-    import {filterMediaByCollection, formatDate, formatDateTime, toDay} from '../../../plugins/helpers.js'
-    import ImagePreview from "../../imagePreview";
-    import ContactForm from "../../modal/ContactForm";
-    import DeviceForm from "../../modal/DeviceForm";
-    import FaceForm from "../../modal/FaceForm";
+    import {filterMediaByCollection, formatDate, formatDateTime, toDay} from '../../plugins/helpers.js'
+    import ImagePreview from "../imagePreview";
+    import DeviceForm from "./DeviceForm";
+    import FaceForm from "./FaceForm";
+    import ContactForm from "./ContactForm";
 
     export default {
-        name: "TaskForm",
-        components: {FaceForm, DeviceForm, ContactForm, ImagePreview},
+        name: "TaskRelatedForm",
+        components: {ContactForm, FaceForm, DeviceForm, ImagePreview},
         data() {
             return {
+                task: [],
                 removeLoader: false,
                 tab: 0,
                 customers: [],
@@ -677,7 +585,7 @@
         },
         computed: {
             ...mapState('tasks', ['form_loading', 'error', 'errors', 'success',
-                'open_task_id', 'task', 'open_task_events', 'filter_data', 'task_subtypes', 'taskDialog'
+                'open_task_id', 'taskRelated', 'open_task_events', 'filter_data', 'task_subtypes'
             ]),
             ...mapState('documents', ['groups', 'task_types']),
             ...mapState('contacts', ['contactDialog']),
@@ -728,6 +636,9 @@
             }
         },
         watch: {
+            taskRelated(val){
+                this.task = val
+            },
             search(val) {
                 this.fetchCustomers(val);
             },
@@ -833,60 +744,7 @@
                     this.$store.dispatch('faces/GET_FACE_FROM_API', id);
                 }
             },
-            async setStatus(status_id) {
-                this.$store.commit('tasks/CHANGE_TASK_STATUS', status_id);
-                let url = '/api/tasks/' + this.open_task_id + '/status/' + status_id + '/' + this.user_id;
-                this.form.status_id = status_id;
-                this.form.execution_date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                const response = await this.$axios.$post(url);
-            },
-            async removeLink(contact_id, task_id) {
-                this.removeLoader = true;
-                const formData = new FormData();
-                formData.append('task_id', task_id);
-                formData.append('contact_id', contact_id);
-                const response = await this.$axios.$post('/api/tasks/remove-contact-task', formData);
-                if (response) {
-                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', taskResponse);
-                    this.removeLoader = false;
-                }
-            },
-            async removeDeviceLink(device_id, task_id) {
-                this.removeLoader = true;
-                const formData = new FormData();
-                formData.append('task_id', task_id);
-                formData.append('device_id', device_id);
-                const response = await this.$axios.$post('/api/tasks/remove-device-task', formData);
-                if (response) {
-                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', taskResponse);
-                    this.removeLoader = false;
-                }
-            },
-            async removeFaceLink(face_id, task_id) {
-                this.removeLoader = true;
-                const formData = new FormData();
-                formData.append('task_id', task_id);
-                formData.append('face_id', face_id);
-                const response = await this.$axios.$post('/api/tasks/remove-face-task', formData);
-                if (response) {
-                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', taskResponse);
-                    this.removeLoader = false;
-                }
-            },
-            async removeFile(file_id, task_id) {
-                this.removeLoader = true;
-                const formData = new FormData();
-                formData.append('photo_id', file_id);
-                const response = await this.$axios.$post('/api/media/remove', formData);
-                if (response) {
-                    const taskResponse = await this.$axios.get(`/api/tasks/${task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', taskResponse);
-                    this.removeLoader = false;
-                }
-            },
+
             clearFields() {
                 this.form.title = "";
                 this.form.group_id = 1;
@@ -927,36 +785,22 @@
                 return formData;
             },
             async close() {
-                this.$store.commit('tasks/SET_DIALOG');
-                this.$store.commit('tasks/ERROR_OFF');
-                this.$store.commit('tasks/ERRORS_STORE', []);
-                this.$store.commit('tasks/SUCCESS_STORE', []);
-                this.$store.commit('tasks/SET_OPEN_TASK_ID', null);
-                this.$store.commit('tasks/STORE_TASK', []);
-                this.$store.commit('tasks/STORE_EVENTS', []);
-                this.clearFields();
-                if (!this.open_task_id) {
-                    this.form.incoming_date = toDay();
-                    this.changeIncomingDate();
-                }
+                this.$store.commit('tasks/SET_TASK_DIALOG');
+                this.$store.commit('tasks/STORE_TASK_RELATED', [])
+                // this.$store.commit('tasks/ERROR_OFF');
+                // this.$store.commit('tasks/ERRORS_STORE', []);
+                // this.$store.commit('tasks/SUCCESS_STORE', []);
+                // this.$store.commit('tasks/SET_OPEN_TASK_ID', null);
+                // this.$store.commit('tasks/STORE_TASK', []);
+                // this.$store.commit('tasks/STORE_EVENTS', []);
+                // this.clearFields();
+                // if (!this.open_task_id) {
+                //     this.form.incoming_date = toDay();
+                //     this.changeIncomingDate();
+                // }
                 //
             },
-            async save() {
-                const formData = this.getFilterData();
-                if (this.open_task_id) {
-                    formData.append('open_task_id', this.open_task_id);
-                    await this.$store.dispatch('tasks/UPDATE_TASK', formData);
-                    const taskResponse = await this.$axios.get(`/api/tasks/${this.open_task_id}/edit`);
-                    this.$store.commit('tasks/STORE_TASK', taskResponse);
-                    this.form.results = []
-                    this.form.files = []
-                } else {
-                    await this.$store.dispatch('tasks/CREATE_TASK', formData)
-                    this.form.results = []
-                    this.form.files = []
-                    await this.$store.dispatch('tasks/GET_TASKS_FROM_API', [this.filter_data, this.currentUserId, 1]);
-                }
-            },
+
             changeQuickly() {
                 if (this.form.quickly === true) {
                     const startDate = new Date();

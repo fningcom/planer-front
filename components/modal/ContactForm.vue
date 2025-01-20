@@ -3,7 +3,7 @@
         <v-dialog
                 v-model="dialog"
                 persistent
-                max-width="560px"
+                max-width="640px"
         >
             <v-card
                     v-if="edit_contact_loading"
@@ -31,10 +31,13 @@
                     <v-tab href="#tab-2" v-if="form_editing">
                         Связи <span v-if="related_count">&nbsp;({{ related_count }})</span>
                     </v-tab>
-                    <v-tab href="#tab-3">
+                    <v-tab href="#tab-3" v-if="form_editing">
+                        Задачи <span v-if="related_count">&nbsp;({{ related_count }})</span>
+                    </v-tab>
+                    <v-tab href="#tab-4">
                         Комментарий
                     </v-tab>
-                    <v-tab href="#tab-4" v-if="!multi_insert">
+                    <v-tab href="#tab-5" v-if="!multi_insert">
                         Скриншоты
                     </v-tab>
                 </v-tabs>
@@ -355,6 +358,130 @@
                         </v-card>
                     </v-tab-item>
                     <v-tab-item value="tab-3" v-if="selectType">
+                        <v-card flat class="d-flex justify-end">
+                            <v-card-text>
+                                <v-row>
+                                    <v-col>
+                                        <v-badge
+                                                bordered
+                                                color="#4e4caf"
+                                                icon="mdi mdi-check"
+                                                overlap
+                                                class="float-end"
+                                        >
+                                            <v-btn
+                                                    class="white--text"
+                                                    style="background-color: #4e4caf"
+                                                    depressed
+                                                    small
+                                            >
+                                                Задачи
+                                            </v-btn>
+                                        </v-badge>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col v-if="contact && contact.tasks">
+                                        <v-data-table
+                                                :headers="tasks_headers"
+                                                :items="contact.tasks"
+                                                :loading="removeLoader"
+                                                item-key="id"
+                                                class="elevation-1 my-2"
+                                                loading-text="Загрузка данных... Пожалуйста ожидайте"
+                                                :items-per-page=8
+                                        >
+                                            <template v-slot:item.number="{ item, index }">
+                                                {{ index + 1 }}
+                                            </template>
+                                            <template v-slot:item.created_at="{ item, index }">
+                                                {{ formatBirthday(item.created_at) }}
+                                            </template>
+                                            <template v-slot:item.title="{ item }">
+                                                <div style="display: flex; align-items: center;">
+                                                    <div style="margin-right: 5px;">
+                                                        <img v-if="item.type.icon === null" src="/img/icons/task2.png" height="25" width="25"/>
+                                                        <img v-else :src="item.type.icon" height="25" width="25"/>
+                                                    </div>
+                                                    <div>
+                                                        <span style="font-weight: 500;">{{ item.type.title }} </span>
+                                                        <div class="smallRow" style="font-size: 12px;" v-if="item && item.title">
+                                                           <i> {{ item.title }}</i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <template v-slot:item.action="{ item }">
+                                                <v-icon style="cursor:pointer" @click="openTaskDialog(item.id)">
+                                                    mdi-eye-arrow-right
+                                                </v-icon>
+                                            </template>
+                                        </v-data-table>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card>
+                        <v-card flat class="d-flex justify-end">
+                            <v-card-text>
+                                <v-row>
+                                    <v-col>
+                                        <v-badge
+                                                bordered
+                                                color="info"
+                                                icon="mdi mdi-check"
+                                                overlap
+                                                class="float-end"
+                                        >
+                                            <v-btn
+                                                    class="white--text"
+                                                    color="info"
+                                                    depressed
+                                                    small
+                                            >
+                                                Документы
+                                            </v-btn>
+                                        </v-badge>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col v-if="contact && contact.documents">
+                                        <v-data-table
+                                                :headers="documents_headers"
+                                                :items="contact.documents"
+                                                item-key="id"
+                                                class="elevation-1 my-2"
+                                                :loading="removeLoader"
+                                                loading-text="Загрузка данных... Пожалуйста ожидайте"
+                                                :items-per-page=8
+                                        >
+                                            <template v-slot:item.number="{ item, index }">
+                                                {{ index + 1 }}
+                                            </template>
+                                            <template v-slot:item.created_at="{ item, index }">
+                                                {{ formatBirthday(item.created_at) }}
+                                            </template>
+                                            <template v-slot:item.source="{ item }">
+                                                 {{ item.source.title }}
+                                            </template>
+                                            <template v-slot:item.doc="{ item, index }">
+                                                <div>
+                                                    <span style="font-weight: 500;">{{ item.type.title }} </span>
+                                                </div>
+                                                <div style="font-size: 12px;">№ {{ item.incoming_number }} от {{ formatBirthday(item.incoming_date) }}</div>
+                                                <div></div>
+                                            </template>
+                                            <template v-slot:item.action="{ item }">
+                                                <v-icon style="cursor:pointer" @click="openDocumentDialog(item.id)">
+                                                    mdi-eye-arrow-right
+                                                </v-icon>
+                                            </template>
+                                        </v-data-table>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                    <v-tab-item value="tab-4" v-if="selectType">
                         <v-card flat>
                             <v-card-text>
                                 <v-row v-if="!multi_insert && contact_found.length === 0 && selectType">
@@ -372,7 +499,7 @@
                             </v-card-text>
                         </v-card>
                     </v-tab-item>
-                    <v-tab-item value="tab-4" v-if="selectType">
+                    <v-tab-item value="tab-5" v-if="selectType">
                         <v-card flat>
                             <v-card-text>
                                 <v-row>
@@ -421,6 +548,10 @@
                 </v-tabs-items>
                 <v-card tile>
                     <contact-related-form :dialog="contactRelationDialog"/>
+                    <task-related-form :dialog="taskDialog"/>
+                    <!-- Related Document Form -->
+                    <document-related-form :dialog="documentDialog" />
+                    <!-- -->
                     <v-card-actions style="padding-top: 15px;">
                         <v-spacer></v-spacer>
 
@@ -485,10 +616,12 @@
     import DragDrop from "../DragDrop";
     import UploadForm from "./UploadForm";
     import ContactRelatedForm from "./ContactRelatedForm";
+    import TaskRelatedForm from "./TaskRelatedForm";
+    import DocumentRelatedForm from "./DocumentRelatedForm";
 
     export default {
         name: "ContactForm",
-        components: {ContactRelatedForm, UploadForm, DragDrop, ImagePreview},
+        components: {DocumentRelatedForm, TaskRelatedForm, ContactRelatedForm, UploadForm, DragDrop, ImagePreview},
         data() {
             return {
                 uid: generateUID(),
@@ -535,6 +668,20 @@
                     {text: 'Контакт', value: 'code', sortable: false},
                     {text: '', value: 'action', sortable: false, width: '85'},
                 ],
+                tasks_headers: [
+                    {text: '', value: 'number', sortable: false},
+                    {text: 'ID', value: 'id', sortable: false},
+                    {text: 'Дата', value: 'created_at', sortable: false},
+                    {text: 'Задача', value: 'title', sortable: false},
+                    {text: 'Просмотр', value: 'action', sortable: false, width: '85'},
+                ],
+                documents_headers: [
+                    {text: '', value: 'number', sortable: false},
+                    {text: 'ID', value: 'id', sortable: false},
+                    {text: 'Заказчик', value: 'source', sortable: false},
+                    {text: 'Документ', value: 'doc', sortable: false},
+                    {text: 'Просмотр', value: 'action', sortable: false, width: '85'},
+                ],
             }
         },
         mounted() {},
@@ -542,8 +689,8 @@
             ...mapState('contacts', ['contact', 'errors', 'success', 'form_loading', 'error', 'contact_found',
                 'edit_contact_loading', 'contactRelationDialog']),
             ...mapState('layout', ['contact_types', 'uploadForm']),
-            ...mapState('documents', ['open_document_id']),
-            ...mapState('tasks', ['open_task_id']),
+            ...mapState('documents', ['open_document_id', 'documentDialog']),
+            ...mapState('tasks', ['open_task_id', 'taskDialog']),
             ...mapState('faces', ['faceDialog']),
             user_id() {
                 return this.$auth.user.id;
@@ -646,6 +793,15 @@
                 if (id) {
                     this.$store.dispatch('faces/GET_FACE_FROM_API', id);
                 }
+            },
+            async openTaskDialog(id) {
+                this.$store.commit('tasks/SET_TASK_DIALOG');
+                // this.$store.commit('tasks/SET_OPEN_TASK_ID', id);
+                this.$store.dispatch('tasks/GET_RELATED_TASK_FROM_API', id);
+            },
+            async openDocumentDialog(id) {
+                this.$store.commit('documents/SET_DOCUMENT_DIALOG');
+                this.$store.dispatch('documents/GET_RELATED_DOCUMENT_FROM_API', id);
             },
             async removeLink(face_id, contact_id) {
                 this.removeLoader = true;
