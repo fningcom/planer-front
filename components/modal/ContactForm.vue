@@ -32,7 +32,7 @@
                         Связи <span v-if="related_count">&nbsp;({{ related_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-3" v-if="form_editing">
-                        Задачи <span v-if="related_count">&nbsp;({{ related_count }})</span>
+                        Задачи <span v-if="related_task_count">&nbsp;({{ related_task_count }})</span>
                     </v-tab>
                     <v-tab href="#tab-4">
                         Комментарий
@@ -711,9 +711,26 @@
                 return false;
             },
             related_count() {
-                if (this.contact && this.contact.faces.length > 0 || this.contact.related_contacts.length > 0) {
-                    return this.contact.faces.length + this.contact.related_contacts.length
+                let face = 0;
+                let contact = 0;
+                if (this.contact && this.contact.faces) {
+                    face = this.contact.faces.length
                 }
+                if (this.contact && this.contact.related_contacts) {
+                    contact = this.contact.related_contacts.length
+                }
+                return face + contact
+            },
+            related_task_count() {
+                let task = 0;
+                let document = 0;
+                if (this.contact && this.contact.tasks) {
+                   task = this.contact.tasks.length
+                }
+                if (this.contact && this.contact.documents) {
+                    document = this.contact.documents.length
+                }
+                return task + document
             },
 
         },
