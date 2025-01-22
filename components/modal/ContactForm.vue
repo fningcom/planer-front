@@ -3,7 +3,7 @@
         <v-dialog
                 v-model="dialog"
                 persistent
-                max-width="640px"
+                max-width="650px"
         >
             <v-card
                     v-if="edit_contact_loading"
@@ -19,7 +19,7 @@
                     ></v-progress-linear>
                 </v-card-text>
             </v-card>
-            <div v-else>
+            <div v-else style="overflow: hidden">
                 <v-tabs v-model="activeTab">
                     <v-tab href="#tab-1" v-if="!form_editing">
                         Новый контакт
@@ -42,7 +42,7 @@
                     </v-tab>
                 </v-tabs>
 
-                <v-tabs-items v-model="activeTab" style="min-height: 595px">
+                <v-tabs-items v-model="activeTab" style="min-height: 680px">
                     <v-tab-item value="tab-1">
                         <v-card flat>
                             <v-card-text>
@@ -384,7 +384,7 @@
                                     <v-col v-if="contact && contact.tasks">
                                         <v-data-table
                                                 :headers="tasks_headers"
-                                                :items="contact.tasks"
+                                                :items="filteredTasks"
                                                 :loading="removeLoader"
                                                 item-key="id"
                                                 class="elevation-1 my-2"
@@ -447,7 +447,7 @@
                                     <v-col v-if="contact && contact.documents">
                                         <v-data-table
                                                 :headers="documents_headers"
-                                                :items="contact.documents"
+                                                :items="filteredDocuments"
                                                 item-key="id"
                                                 class="elevation-1 my-2"
                                                 :loading="removeLoader"
@@ -692,6 +692,14 @@
             ...mapState('documents', ['open_document_id', 'documentDialog']),
             ...mapState('tasks', ['open_task_id', 'taskDialog']),
             ...mapState('faces', ['faceDialog']),
+            filteredTasks() {
+                if (!this.contact || !this.contact.tasks) return [];
+                   return this.contact.tasks.filter(task => task.id !== this.open_task_id);
+            },
+            filteredDocuments() {
+                if (!this.contact || !this.contact.documents) return [];
+                   return this.contact.documents.filter(document => document.id !== this.open_document_id);
+            },
             user_id() {
                 return this.$auth.user.id;
             },
@@ -730,7 +738,7 @@
                 if (this.contact && this.contact.documents) {
                     document = this.contact.documents.length
                 }
-                return task + document
+                return task + document - 1
             },
 
         },
