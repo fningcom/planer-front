@@ -108,12 +108,12 @@
                                     <v-row>
                                         <v-col cols="6" md="6">
                                             <v-autocomplete
-                                                    v-model="form.sex"
-                                                    :items="sex"
-                                                    item-value="id"
+                                                    v-model="form.citizen"
+                                                    :items="citizen"
+                                                    item-value="title"
                                                     item-text="title"
-                                                    label="Пол"
-                                                    :error-messages="error ? errors.data.sex: ''"
+                                                    label="Гражданство"
+                                                    :error-messages="error ? errors.data.citizen: ''"
                                             ></v-autocomplete>
                                         </v-col>
                                         <v-col cols="6" md="6">
@@ -125,13 +125,23 @@
                                                     :error-messages="error ? errors.data.birthday   : ''"
                                             ></v-text-field>
                                         </v-col>
-                                        <v-col cols="12" md="12">
+                                        <v-col cols="8" md="8">
                                             <v-text-field
                                                     label="Адрес"
                                                     required
                                                     v-model="form.address"
                                                     :error-messages="error ? errors.data.address   : ''"
                                             ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="4" md="4">
+                                            <v-autocomplete
+                                                    v-model="form.sex"
+                                                    :items="sex"
+                                                    item-value="id"
+                                                    item-text="title"
+                                                    label="Пол"
+                                                    :error-messages="error ? errors.data.sex: ''"
+                                            ></v-autocomplete>
                                         </v-col>
                                         <v-col>
                                             <v-textarea
@@ -236,6 +246,17 @@
                     {'id': 'f', 'title': 'женский'},
                     {'id': 'none', 'title': 'не известен'}
                 ],
+                citizen: [
+                    {'id': '1', 'title': 'ПМР'},
+                    {'id': '2', 'title': 'РФ'},
+                    {'id': '3', 'title': 'Молдова'},
+                    {'id': '4', 'title': 'Украина'},
+                    {'id': '4', 'title': 'США'},
+                    {'id': '4', 'title': 'Великобритания'},
+                    {'id': '4', 'title': 'Германи'},
+                    {'id': '4', 'title': 'Франция'},
+                    {'id': '4', 'title': 'Иное'},
+                ],
                 viewImage: false,
                 imageUrl: "",
                 avatar: [],
@@ -283,6 +304,7 @@
                     this.form.sex = value.sex
                     this.form.birthday = value.birthday
                     this.form.address = value.address
+                    this.form.citizen = value.citizen
                     this.form.comment = value.comment
                     this.form.image = value.image
                     if (value.media && value.media.length > 0) {
@@ -318,6 +340,7 @@
                 this.form.surname = "";
                 this.form.name = "";
                 this.form.parent_name = "";
+                this.form.citizen = "";
                 this.form.full_name = "";
                 this.form.birthday = "";
                 this.form.address = "";

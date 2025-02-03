@@ -575,7 +575,7 @@
                     {text: '', value: 'number', sortable: false},
                     {text: 'ФИО', value: 'full_name', sortable: false},
                     {text: 'Дата рождения', value: 'birthday', sortable: false},
-                    {text: 'Адрес', value: 'address', sortable: false},
+                    {text: 'Гражданство', value: 'citizen', sortable: false},
                     {text: '', value: 'action', sortable: false, width: '85'},
                 ],
                 result_headers: [
@@ -650,6 +650,7 @@
         mounted() {
             if (!this.open_document_id) {
                 this.form.incoming_date = toDay();
+                this.form.outgoing_date = toDay();
                 this.changeIncomingDate();
                 this.form.users[0] = this.$auth.user.id
             }
