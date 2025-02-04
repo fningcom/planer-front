@@ -406,6 +406,7 @@
                     {text: '', value: 'number', sortable: false},
                     {text: 'ФИО', value: 'full_name', sortable: false},
                     {text: 'Дата рождения', value: 'birthday', sortable: false},
+                    {text: 'Гражданство', value: 'citizen', sortable: false},
                     {text: '', value: 'action', sortable: false, width: '85'},
                 ],
                 contact_headers: [
@@ -425,7 +426,7 @@
             ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id']),
             ...mapState('tasks', ['open_task_id']),
-            ...mapState('faces', ['faceDialog']),
+            ...mapState('faces', ['faceDialog', 'face']),
             user_id() {
                 return this.$auth.user.id;
             },
@@ -501,7 +502,7 @@
             },
             openFaceDialog() {
                 // this.$store.commit('contacts/SET_DIALOG');
-                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: this.contact.id});
+                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: this.face.id});
                 this.$store.commit('faces/SET_FACE_DIALOG');
             },
             openContactDialog() {

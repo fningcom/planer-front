@@ -548,6 +548,7 @@
                 </v-tabs-items>
                 <v-card tile>
                     <contact-related-form :dialog="contactRelationDialog"/>
+                    <face-related-form :dialog="faceRelationDialog" />
                     <task-related-form :dialog="taskDialog"/>
                     <!-- Related Document Form -->
                     <document-related-form :dialog="documentDialog" />
@@ -618,10 +619,13 @@
     import ContactRelatedForm from "./ContactRelatedForm";
     import TaskRelatedForm from "./TaskRelatedForm";
     import DocumentRelatedForm from "./DocumentRelatedForm";
+    import FaceRelatedForm from "./FaceRelatedForm";
 
     export default {
         name: "ContactForm",
-        components: {DocumentRelatedForm, TaskRelatedForm, ContactRelatedForm, UploadForm, DragDrop, ImagePreview},
+        components: {
+            FaceRelatedForm,
+            DocumentRelatedForm, TaskRelatedForm, ContactRelatedForm, UploadForm, DragDrop, ImagePreview},
         data() {
             return {
                 uid: generateUID(),
@@ -659,6 +663,7 @@
                     {text: '', value: 'number', sortable: false},
                     {text: 'ФИО', value: 'full_name', sortable: false},
                     {text: 'Дата рождения', value: 'birthday', sortable: false},
+                    {text: 'Гражданство', value: 'citizen', sortable: false},
                     {text: '', value: 'action', sortable: false, width: '85'},
                 ],
                 contact_headers: [
@@ -691,7 +696,7 @@
             ...mapState('layout', ['contact_types', 'uploadForm']),
             ...mapState('documents', ['open_document_id', 'documentDialog']),
             ...mapState('tasks', ['open_task_id', 'taskDialog']),
-            ...mapState('faces', ['faceDialog']),
+            ...mapState('faces', ['faceDialog', 'face', 'faceRelationDialog']),
             filteredTasks() {
                 if (!this.contact || !this.contact.tasks) return [];
                    return this.contact.tasks.filter(task => task.id !== this.open_task_id);
@@ -799,8 +804,8 @@
             },
             openFaceDialog() {
                 // this.$store.commit('contacts/SET_DIALOG');
-                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: this.contact.id});
-                this.$store.commit('faces/SET_FACE_DIALOG');
+                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: this.face.id});
+                this.$store.commit('faces/SET_FACE_RELATION_DIALOG');
             },
             openContactDialog() {
                 this.$store.commit('contacts/SET_CONTACT_RELATION_ON', {contact_id: this.contact.id});
@@ -814,7 +819,8 @@
                 }
             },
             async openEditFaceDialog(id) {
-                this.$store.commit('faces/SET_FACE_DIALOG');
+                this.$store.commit('faces/SET_FACE_RELATION_ON', {contact_id: id});
+                this.$store.commit('faces/SET_FACE_RELATION_DIALOG');
                 if (id) {
                     this.$store.dispatch('faces/GET_FACE_FROM_API', id);
                 }

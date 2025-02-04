@@ -1,5 +1,6 @@
 export const state = () => ({
     faceDialog: false,
+    faceRelationDialog: false,
     error: false,
     errors: '',
     success: '',
@@ -13,11 +14,17 @@ export const state = () => ({
 
 
 export const mutations = {
+    SET_FACE_RELATION_DIALOG(state) {
+        state.faceRelationDialog = !state.faceRelationDialog
+    },
     SET_FACE_FOUND(state, payload) {
         state.face_found = payload
     },
     SET_FACE_DIALOG(state) {
         state.faceDialog = !state.faceDialog
+    },
+    FACE_DIALOG_OFF(state) {
+        state.faceDialog = false
     },
     SET_FACE_RELATION_ON(state, { contact_id }) {
         state.face_relation_contact_id = contact_id;
@@ -68,7 +75,7 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                commit('SET_FACE_DIALOG');
+                commit('FACE_DIALOG_OFF');
             }
         } catch (error) {
             console.info(error);
@@ -85,7 +92,7 @@ export const actions = {
             } else {
                 commit('ERROR_OFF');
                 commit('ERRORS_STORE', []);
-                commit('SET_FACE_DIALOG');
+                commit('FACE_DIALOG_OFF');
             }
         } catch (error) {
             console.info(error);
