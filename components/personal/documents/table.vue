@@ -111,7 +111,8 @@
                             label
                             outlined
                     >
-                        <v-icon dark left small>mdi mdi-invoice-text-plus</v-icon>  В ожидании...
+<!--                        <v-icon dark left small>mdi mdi-invoice-text-plus</v-icon>  В ожидании...-->
+                        <b>Ждет:&nbsp;</b> {{ timeAgo(item.incoming_date) }}
                     </v-chip>
                     <v-chip v-if="item && item.formatted_execution_date"
                             :class="{ 'text-red': isPastDeadline(item.formatted_execution_date) && item.status_id !== 3}"
@@ -131,7 +132,7 @@
                             label
                             outlined
                     >
-                        <b>В работе:&nbsp;</b> {{ timeAgo(item.started_work_date) }}
+                        <b>В работе:&nbsp;</b> {{ timeAgo(item.incoming_date) }}
                     </v-chip>
                 </template>
                 <template v-slot:item.type.title="{ item }">
