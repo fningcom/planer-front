@@ -10,6 +10,7 @@ export const state = () => ({
     face_relation: false, // Включен если при создании лица добавляетя связь к контакту
     face_relation_contact_id: null,
     face_found: [],
+    parent_names_list: []
 });
 
 
@@ -19,6 +20,9 @@ export const mutations = {
     },
     SET_FACE_FOUND(state, payload) {
         state.face_found = payload
+    },
+    SET_PARENT_NAMES_LIST(state, payload) {
+        state.parent_names_list = payload.data
     },
     SET_FACE_DIALOG(state) {
         state.faceDialog = !state.faceDialog

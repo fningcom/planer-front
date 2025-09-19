@@ -71,6 +71,7 @@
                                                     required
                                                     v-model="form.name"
                                                     :error-messages="error ? errors.data.name: ''"
+                                                    @input="onInput"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="4" md="4">
@@ -106,6 +107,15 @@
                                         </div>
                                     </div>
                                     <v-row>
+                                      <v-col cols="6" md="6">
+                                        <v-text-field
+                                          type="date"
+                                          label="Дата рождения"
+                                          required
+                                          v-model="form.birthday"
+                                          :error-messages="error ? errors.data.birthday   : ''"
+                                        ></v-text-field>
+                                      </v-col>
                                         <v-col cols="6" md="6">
                                             <v-autocomplete
                                                     v-model="form.citizen"
@@ -115,15 +125,6 @@
                                                     label="Гражданство"
                                                     :error-messages="error ? errors.data.citizen: ''"
                                             ></v-autocomplete>
-                                        </v-col>
-                                        <v-col cols="6" md="6">
-                                            <v-text-field
-                                                    type="date"
-                                                    label="Дата рождения"
-                                                    required
-                                                    v-model="form.birthday"
-                                                    :error-messages="error ? errors.data.birthday   : ''"
-                                            ></v-text-field>
                                         </v-col>
                                         <v-col cols="8" md="8">
                                             <v-text-field
@@ -318,24 +319,26 @@
             formatBirthday(item) {
                 return formatDate(item)
             },
-            async onInput() {
-                if (this.form.surname.length !== 0) {
-                    this.loading = true;
-                    const params = {
-                        query: this.form.surname,
-                    };
-                    const response = await this.$axios.$get('/api/faces/search', {params});
-                    if (response && response.success && response.success === true) {
-                        this.loading = false;
-                        this.$store.commit('faces/SET_FACE_FOUND', response.data);
-                    } else {
-                        this.loading = false;
-                        this.$store.commit('faces/SET_FACE_FOUND', []);
-                    }
-                } else {
-                    this.$store.commit('faces/SET_FACE_FOUND', []);
-                }
-            },
+          async onInput() {
+            if (this.form.surname.length !== 0) {
+              this.loading = true;
+              const params = {
+                // query: this.form.surname,
+                surname: this.form.surname,
+                name: this.form.name,
+              };
+              const response = await this.$axios.$get('/api/faces/search', {params});
+              if (response && response.success && response.success === true) {
+                this.loading = false;
+                this.$store.commit('faces/SET_FACE_FOUND', response.data);
+              } else {
+                this.loading = false;
+                this.$store.commit('faces/SET_FACE_FOUND', []);
+              }
+            } else {
+              this.$store.commit('faces/SET_FACE_FOUND', []);
+            }
+          },
             clearFields() {
                 this.form.surname = "";
                 this.form.name = "";

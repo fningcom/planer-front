@@ -97,6 +97,9 @@
                 // Справочник -> Типы устройств (Выпадающий список при добавлении нового устройства)
                 this.device_types = await this.$axios.$get('/api/helpers/device-types');
                 this.$store.commit('layout/SET_DEVICE_TYPES', this.device_types);
+                // Справочник -> Список отчеств
+                // this.parent_names = await this.$axios.$get('/api/helpers/parent-names');
+                // this.$store.commit('faces/SET_PARENT_NAMES_LIST', this.parent_names);
             },
 
             async logout() {
