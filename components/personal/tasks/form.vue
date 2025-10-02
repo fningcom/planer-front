@@ -624,6 +624,7 @@
                     {text: '', value: 'number', sortable: false},
                     {text: '', value: 'icon', sortable: false},
                     {text: 'Тип контакта', value: 'type.type', sortable: false},
+                    {text: 'ID', value: 'uid', sortable: false},
                     {text: 'Контакт', value: 'code', sortable: false},
                     {text: 'Связь', value: 'related', sortable: false,  width: '80'},
                     {text: '', value: 'action', sortable: false, width: '85'},
