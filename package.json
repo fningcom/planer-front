@@ -15,6 +15,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@vueuse/core": "^10.11.1",
     "core-js": "^3.25.3",
+    "libphonenumber-js": "^1.12.23",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
@@ -22,6 +23,7 @@
     "vuetify": "^2.6.10"
   },
   "devDependencies": {
+    "@nuxt/types": "~2.18.0",
     "@nuxtjs/vuetify": "^1.12.3",
     "cross-env": "^7.0.3",
     "webpack": "^4.0.0"

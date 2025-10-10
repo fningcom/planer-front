@@ -1,5 +1,5 @@
 export const state = () => ({
-    dialog: false,
+    document_dialog: false,
     documentDialog: false,
     error: false,
     errors: '',
@@ -36,7 +36,7 @@ export const mutations = {
         state.filter_data = payload
     },
     SET_DIALOG(state) {
-        state.dialog = !state.dialog
+        state.document_dialog = !state.document_dialog
     },
     SET_DOCUMENT_DIALOG(state) {
         state.documentDialog = !state.documentDialog

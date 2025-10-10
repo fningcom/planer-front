@@ -6,7 +6,7 @@
                 <v-icon left>mdi mdi-plus</v-icon>документ
             </v-btn>
         </v-card>
-        <document-form :dialog="dialog" />
+        <document-form :dialog="document_dialog" />
         <data-table/>
     </div>
 </template>
@@ -23,7 +23,7 @@
             title: 'Мои документы'
         },
         computed: {
-            ...mapState('documents', ['dialog']),
+            ...mapState('documents', ['document_dialog']),
         },
         data() {
             return {

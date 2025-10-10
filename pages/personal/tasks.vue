@@ -7,7 +7,7 @@
                 <v-icon left>mdi mdi-plus</v-icon>задачу
             </v-btn>
         </v-card>
-        <task-form :dialog="dialog" />
+        <task-form :dialog="task_dialog" />
         <data-table/>
     </div>
 </template>
@@ -23,7 +23,7 @@
         },
         components: {TaskForm, DataTable},
         computed: {
-            ...mapState('tasks', ['dialog']),
+            ...mapState('tasks', ['task_dialog']),
         },
         data() {
             return {

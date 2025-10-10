@@ -50,6 +50,11 @@
             return {
                 personal_menus: [
                     {
+                        icon: 'mdi mdi-home',
+                        title: 'Главная',
+                        to: '/'
+                    },
+                  {
                         icon: 'mdi mdi-checkbox-marked-circle-plus-outline',
                         title: 'Мои задачи',
                         to: '/personal/tasks'
