@@ -17,12 +17,12 @@
       >
         <template v-slot:top>
           <h3 style="margin: 10px 0 0 10px; color: #4e4caf;">Контакты</h3>
-          <v-alert dense type="info" color="#4e4caf" style="margin:0 5px 10px 10px; font-size: 14px;">
+          <v-alert dense text type="info" icon="mdi mdi-phone-in-talk" color="#4e4caf" style="margin:0 5px 10px 10px; font-size: 14px;">
             По вашему запросу найдено: {{ face_count_contacts }} контактов
           </v-alert>
         </template>
         <template v-slot:item.icon="{ item }">
-          <v-img :src="item.type.icon" width="24"/>
+          <v-img :src="item.type.icon" width="18"/>
         </template>
         <template v-slot:item.code="{ item }">
           {{ formatPhone(item.code) }}
@@ -38,7 +38,7 @@
                 <div style="font-size: 14px;">
                   <span>
                     <v-icon style="color: green;   font-size: 16px;">mdi mdi-link-variant </v-icon>
-                    {{ face.full_name }} <span v-if="face.birthday">, {{ formatDate(face.birthday) }} г.р.</span><span v-if="face.citizen">, {{ face.citizen }}</span>
+                   {{ face.id }} | {{ face.full_name }} <span v-if="face.birthday">, {{ formatDate(face.birthday) }} г.р.</span><span v-if="face.citizen">, {{ face.citizen }}</span>
                   </span>
                 </div>
               </li>

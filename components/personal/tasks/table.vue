@@ -114,8 +114,8 @@
                     <div class="smallRow">{{ item.user.name }}</div>
                 </template>
 
-                <template v-slot:item.formatted_deadline_date="{ item }">
-                      <span :class="{ 'text-red': isPastDeadline(item.formatted_deadline_date) && item.status_id !== 3}">
+                <template v-slot:item.formatted_deadline_date="{ item }" >
+                      <span  :class="{ 'text-red': isPastDeadline(item.formatted_deadline_date) && item.status_id !== 3}">
                           {{ item.formatted_deadline_date }}
                           <v-icon color="red"
                                   v-if="isPastDeadline(item.formatted_deadline_date) && item.status_id !== 3">
@@ -124,7 +124,7 @@
                       </span>
                 </template>
                 <template v-slot:item.status="{ item }">
-                    <v-chip v-if="item && !item.formatted_execution_date && !item.started_work_date"
+                    <v-chip v-if="item && item.status_id === 1"
                             style="font-size: 12px;margin: 4px 0;"
                             color="#78909C"
                             dark
@@ -134,7 +134,7 @@
 <!--                        <v-icon dark left small>mdi mdi-invoice-text-plus</v-icon>  В ожидании...-->
                         <b>Ждет:&nbsp;</b> {{ timeAgo(item.created_at) }}
                     </v-chip>
-                    <v-chip v-if="item && item.formatted_execution_date"
+                    <v-chip v-if="item && item.status_id === 3"
                             :class="{ 'text-red': isPastDeadline(item.formatted_execution_date) && item.status_id !== 3}"
                             style="font-size: 12px;margin: 4px 0;"
                             color="#66bb6a"
@@ -144,7 +144,7 @@
                         <v-icon dark left small>mdi mdi-check-all</v-icon> {{ item.status.title }}
                     </v-chip>
                     <v-chip
-                            v-else-if="item.started_work_date"
+                            v-if="item && item.status_id === 2"
                             style="font-size: 12px;margin: 4px 0;"
                             color="#00838f"
                             dark
@@ -250,12 +250,16 @@
                 return timeAgo(date)
             },
             isPastDeadline(dateString) {
+              if(dateString){
                 const [day, month, year] = dateString.split('.');
                 const date = new Date(year, month - 1, day);
                 date.setHours(0, 0, 0, 0);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 return date <= today;
+              }else{
+                return ''
+              }
             },
             async getTasksList(filter_data, user_id, page) {
                 if (this.currentUserId) {
