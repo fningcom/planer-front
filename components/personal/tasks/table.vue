@@ -96,7 +96,7 @@
                     </div>
                 </template>
                 <template v-slot:item.count="{ item }">
-                    {{ item.count + item.contacts.length + item.devices.length + item.faces.length  }}
+                    {{ (item.count || 0) + (item.contacts ? item.contacts.length : 0) + (item.devices ? item.devices.length : 0) + (item.faces ? item.faces.length : 0)  }}
                 </template>
                 <template v-slot:item.files="{ item }">
                     <v-icon v-if="item.results_count > 0" color="#66bb6a" small>mdi mdi-paperclip-check</v-icon>
@@ -111,7 +111,7 @@
                 </template>
                 <template v-slot:item.formatted_created_at="{ item }">
                     <b> {{ item.formatted_created_at }}</b>
-                    <div class="smallRow">{{ item.user.name }}</div>
+                    <div class="smallRow" v-if="item.user">{{ item.user.name }}</div>
                 </template>
 
                 <template v-slot:item.formatted_deadline_date="{ item }" >

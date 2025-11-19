@@ -155,9 +155,9 @@ export const actions = {
                 commit('ERROR_OFF');
                 commit("ERRORS_STORE", []);
                 commit("STORE_TASKS", response.data.data);
-                commit("STORE_CURRENT_PAGE", response.data.current_page);
-                commit("STORE_LAST_PAGE", response.data.last_page);
-                commit("STORE_COUNT", response.data.total);
+                commit("STORE_CURRENT_PAGE", response.data.meta.current_page);
+                commit("STORE_LAST_PAGE", response.data.meta.last_page);
+                commit("STORE_COUNT", response.data.meta.total);
             }
         } catch (error) {
             console.info(error);
@@ -199,9 +199,9 @@ export const actions = {
                 commit('ERROR_OFF');
                 commit("ERRORS_STORE", []);
                 commit("STORE_TASKS", response.data.data);
-                commit("STORE_CURRENT_PAGE", response.data.current_page);
-                commit("STORE_LAST_PAGE", response.data.last_page);
-                commit("STORE_COUNT", response.data.total);
+                commit("STORE_CURRENT_PAGE", response.data.meta.current_page);
+                commit("STORE_LAST_PAGE", response.data.meta.last_page);
+                commit("STORE_COUNT", response.data.meta.total);
             }
         } catch (error) {
             console.info(error);
