@@ -98,12 +98,12 @@
                         })
                         .catch((error) => {
                             this.errors = true;
-                            errors.push(error.response.data.errors)
+                            errors.push(error.response.data.message)
                             this.valid = true
                         })
                 } catch (error) {
                     this.errors = true;
-                    errors.push(error.response.data.errors)
+                    errors.push(error.response.data.message)
                     this.valid = true
                 }
                 this.error_text = errors;
